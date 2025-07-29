@@ -6,6 +6,8 @@ import IdentifierPage from './assets/pages/IdentifierPage';
 import EmergencyPage from './assets/pages/EmergencyPage';
 import LearnPage from './assets/pages/LearnPage';
 import MapPage from './assets/pages/MapPage';
+import AnimalDetailPage from './assets/pages/AnimalDetailPage';
+import CommunityFeedPage from './assets/pages/CommunityFeedPage';
 
 // Import the reusable Header and Footer components from your 'components' directory
 import Header from './assets/components/Header';
@@ -31,6 +33,8 @@ export default function App() {
                 {page === 'emergency' && <EmergencyPage />}
                 {page === 'learning' && <LearnPage />}
                 {page === 'map' && <MapPage />}
+                {page === 'animalDetail' && <AnimalDetailPage />}
+                {page === 'communityFeed' && <CommunityFeedPage />}
             </main>
 
             {/* The Footer component also needs the setPage function for its links to work. */}

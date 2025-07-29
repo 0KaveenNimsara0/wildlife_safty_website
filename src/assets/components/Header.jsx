@@ -10,7 +10,9 @@ export default function Header({ page, setPage }) {
         { id: 'home', name: 'Identifier', icon: Camera },
         { id: 'emergency', name: 'Emergency', icon: Phone },
         { id: 'learning', name: 'Learn', icon: BookOpen },
-        { id: 'map', name: 'Map', icon: MapPin }
+        { id: 'map', name: 'Map', icon: MapPin },
+        { id: 'animalDetail', name: 'Animal Details', icon: Search },
+        { id:'communityFeed', name: 'Community Feed', icon: User }
     ];
 
     const handleLogin = () => {
