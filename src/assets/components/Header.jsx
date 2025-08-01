@@ -1,22 +1,45 @@
 import React, { useState } from 'react';
-// FIXED: Added MapPin to the import list
 import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin } from 'lucide-react';
+import { useAuth } from './AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-export default function Header({ page, setPage }) {
+export default function Header({ page, setPage, setAuthPage }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { currentUser, logout, googleSignIn } = useAuth();
+    const navigate = useNavigate();
 
     const navigation = [
-        { id: 'home', name: 'Identifier', icon: Camera },
-        { id: 'emergency', name: 'Emergency', icon: Phone },
-        { id: 'learning', name: 'Learn', icon: BookOpen },
-        { id: 'map', name: 'Map', icon: MapPin },
-        { id: 'animalDetail', name: 'Animal Details', icon: Search },
-        { id:'communityFeed', name: 'Community Feed', icon: User }
+        { id: 'home', name: 'Identifier', icon: Camera, path: '/home' },
+        { id: 'emergency', name: 'Emergency', icon: Phone, path: '/emergency' },
+        { id: 'learning', name: 'Learn', icon: BookOpen, path: '/learning' },
+        { id: 'map', name: 'Map', icon: MapPin, path: '/map' },
+        { id: 'animalDetail', name: 'Animal Details', icon: Search, path: '/animalDetail' },
+        { id: 'communityFeed', name: 'Community Feed', icon: User, path: '/communityFeed' }
     ];
 
-    const handleLogin = () => {
-        setIsLoggedIn(!isLoggedIn);
+
+    const handleAuth = () => {
+        if (currentUser) {
+            logout();
+            navigate('/');
+        } else {
+            setAuthPage('login');
+        }
+    };
+
+    const handleGoogleSignIn = async () => {
+        try {
+            await googleSignIn();
+            navigate('/dashboard');
+        } catch (error) {
+            console.error('Google sign-in failed:', error);
+        }
+    };
+
+    const handleNavigation = (path) => {
+        setPage(path.split('/')[1] || 'home');
+        navigate(path);
+        setMobileMenuOpen(false);
     };
 
     return (
@@ -51,7 +74,7 @@ export default function Header({ page, setPage }) {
                                 return (
                                     <button
                                         key={item.id}
-                                        onClick={() => setPage(item.id)}
+                                        onClick={() => handleNavigation(item.path)}
                                         className={`group flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                                             page === item.id 
                                                 ? 'bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/20' 
@@ -69,26 +92,32 @@ export default function Header({ page, setPage }) {
 
                         {/* Login Button */}
                         <div className="flex items-center space-x-3 border-l border-green-700/50 pl-6">
-                            {isLoggedIn ? (
+                            {currentUser ? (
                                 <div className="flex items-center space-x-2">
-                                    <div className="bg-green-500 p-2 rounded-full">
+                                    <button 
+                                        onClick={() => navigate('/dashboard')}
+                                        className="bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors"
+                                    >
                                         <User className="w-4 h-4 text-white" />
-                                    </div>
+                                    </button>
                                     <button
-                                        onClick={handleLogin}
+                                        onClick={handleAuth}
                                         className="text-sm text-green-200 hover:text-white transition-colors"
                                     >
-                                        Profile
+                                        Logout
                                     </button>
                                 </div>
                             ) : (
-                                <button
-                                    onClick={handleLogin}
-                                    className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-                                >
-                                    <LogIn className="w-4 h-4" />
-                                    <span>Sign In</span>
-                                </button>
+                                <div className="flex space-x-2">
+                                    
+                                    <button
+                                        onClick={handleAuth}
+                                        className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                    >
+                                        <LogIn className="w-4 h-4" />
+                                        <span>Sign In</span>
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -111,10 +140,7 @@ export default function Header({ page, setPage }) {
                                 return (
                                     <button
                                         key={item.id}
-                                        onClick={() => {
-                                            setPage(item.id);
-                                            setMobileMenuOpen(false);
-                                        }}
+                                        onClick={() => handleNavigation(item.path)}
                                         className={`flex items-center space-x-3 w-full px-4 py-3.5 rounded-xl text-left transition-all duration-200 ${
                                             page === item.id 
                                                 ? 'bg-white/20 text-white shadow-lg border border-white/20' 
@@ -129,29 +155,43 @@ export default function Header({ page, setPage }) {
                             
                             {/* Mobile Login */}
                             <div className="border-t border-green-700/50 pt-4 mt-4">
-                                {isLoggedIn ? (
+                                {currentUser ? (
                                     <div className="flex items-center justify-between px-4 py-3">
                                         <div className="flex items-center space-x-3">
-                                            <div className="bg-green-500 p-2 rounded-full">
+                                            <button 
+                                                onClick={() => navigate('/dashboard')}
+                                                className="bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors"
+                                            >
                                                 <User className="w-4 h-4 text-white" />
-                                            </div>
-                                            <span className="text-white font-medium">Welcome back!</span>
+                                            </button>
+                                            <span className="text-white font-medium">
+                                                {currentUser.email}
+                                            </span>
                                         </div>
                                         <button
-                                            onClick={handleLogin}
+                                            onClick={handleAuth}
                                             className="text-sm text-green-300 hover:text-white transition-colors"
                                         >
-                                            Profile
+                                            Logout
                                         </button>
                                     </div>
                                 ) : (
-                                    <button
-                                        onClick={handleLogin}
-                                        className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg"
-                                    >
-                                        <LogIn className="w-4 h-4" />
-                                        <span>Sign In</span>
-                                    </button>
+                                    <div className="space-y-3">
+                                        <button
+                                            onClick={handleGoogleSignIn}
+                                            className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg"
+                                        >
+                                            <Google className="w-4 h-4" />
+                                            <span>Sign in with Google</span>
+                                        </button>
+                                        <button
+                                            onClick={handleAuth}
+                                            className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg"
+                                        >
+                                            <LogIn className="w-4 h-4" />
+                                            <span>Sign In</span>
+                                        </button>
+                                    </div>
                                 )}
                             </div>
                         </div>

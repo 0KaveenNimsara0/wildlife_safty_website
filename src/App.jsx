@@ -1,44 +1,63 @@
 import React, { useState } from 'react';
 import 'leaflet/dist/leaflet.css';
+import { AuthProvider } from './assets/components/AuthContext';
+import { Routes, Route } from 'react-router-dom';
 
-// Import the new page components from your 'pages' directory
+// Page components
 import IdentifierPage from './assets/pages/IdentifierPage';
 import EmergencyPage from './assets/pages/EmergencyPage';
 import LearnPage from './assets/pages/LearnPage';
 import MapPage from './assets/pages/MapPage';
 import AnimalDetailPage from './assets/pages/AnimalDetailPage';
 import CommunityFeedPage from './assets/pages/CommunityFeedPage';
+import LoginPage from './assets/pages/auth/LoginPage';
+import RegisterPage from './assets/pages/auth/RegisterPage';
+import ResetPasswordPage from './assets/pages/auth/ResetPasswordPage';
+import Dashboard from './assets/pages/Dashboard';
+import PrivateRoute from './assets/components/PrivateRoute';
 
-// Import the reusable Header and Footer components from your 'components' directory
+// Components
 import Header from './assets/components/Header';
 import Footer from './assets/components/Footer';
 
-// The main App component is now much simpler. Its only job is to
-// manage which page is currently active and render it.
 export default function App() {
-    // This state determines which page is shown. Default is 'home'.
-    const [page, setPage] = useState('home'); // 'home', 'emergency', 'learning', or 'map'
+    const [page, setPage] = useState('home'); 
+    const [authPage, setAuthPage] = useState(null);
 
     return (
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans text-gray-800">
-            
-            {/* The Header component controls navigation. We pass it the current
-                page state and the function to update it ('setPage'). */}
-            <Header page={page} setPage={setPage} />
+        <AuthProvider>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen font-sans text-gray-800">
+                {authPage ? (
+                    <div className="flex items-center justify-center min-h-screen p-4">
+                        {authPage === 'login' && <LoginPage setPage={setAuthPage} />}
+                        {authPage === 'register' && <RegisterPage setPage={setAuthPage} />}
+                        {authPage === 'resetPassword' && <ResetPasswordPage setPage={setAuthPage} />}
+                    </div>
+                ) : (
+                    <>
+                        <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />
+                        <main className="container mx-auto px-6 py-12">
+                            <Routes>
+                                <Route path="/" element={<IdentifierPage />} />
+                                <Route path="/home" element={<IdentifierPage />} />
+                                <Route path="/emergency" element={<EmergencyPage />} />
+                                <Route path="/learning" element={<LearnPage />} />
+                                <Route path="/map" element={<MapPage />} />
+                                <Route path="/animalDetail" element={<AnimalDetailPage />} />
+                                <Route path="/communityFeed" element={<CommunityFeedPage />} />
 
-            <main className="container mx-auto px-6 py-12">
-                {/* This is conditional rendering. It checks the value of the 'page' state
-                    and displays only the component that matches. */}
-                {page === 'home' && <IdentifierPage />}
-                {page === 'emergency' && <EmergencyPage />}
-                {page === 'learning' && <LearnPage />}
-                {page === 'map' && <MapPage />}
-                {page === 'animalDetail' && <AnimalDetailPage />}
-                {page === 'communityFeed' && <CommunityFeedPage />}
-            </main>
 
-            {/* The Footer component also needs the setPage function for its links to work. */}
-            <Footer setPage={setPage} />
-        </div>
+                                <Route element={<PrivateRoute />}>
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/animalDetail" element={<AnimalDetailPage />} />
+                                {/* Add other protected routes here */}
+                            </Route>
+                            </Routes>
+                        </main>
+                        <Footer setPage={setPage} />
+                    </>
+                )}
+            </div>
+        </AuthProvider>
     );
 }
