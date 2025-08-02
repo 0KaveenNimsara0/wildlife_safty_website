@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FaHeart, FaRegHeart, FaComment, FaShare } from 'react-icons/fa';
 import { useAuth } from '../components/AuthContext';
-import { db } from '../Database/firebase';
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  query, 
-  orderBy, 
-  onSnapshot, 
-  doc, 
-  updateDoc, 
-  arrayUnion, 
-  arrayRemove,
-  serverTimestamp,
-  getDoc
-} from 'firebase/firestore';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api'; // Replace with your backend URL
 
 const CommunityFeedPage = () => {
   const { currentUser } = useAuth();
@@ -25,51 +13,49 @@ const CommunityFeedPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Fetch posts from Firestore
+  // Fetch posts from MongoDB
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, 'posts'), orderBy('createdAt', 'desc')),
-      (snapshot) => {
-        const postsData = [];
-        snapshot.forEach((doc) => {
-          postsData.push({
-            id: doc.id,
-            ...doc.data()
-          });
-        });
-        setPosts(postsData);
-      },
-      (err) => {
-        console.error('Error fetching posts:', err);
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${API_URL}/posts`);
+        setPosts(response.data);
+      } catch (err) {
         setError('Failed to fetch posts');
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchPosts();
   }, []);
 
   // Handle post submission
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) return;
-    if (!newPost.animalName.trim() && !newPost.experience.trim()) return;
+    if (!newPost.animalName.trim() && !newPost.experience.trim() && !newPost.photo) return;
 
     try {
       setLoading(true);
       
-      // For simplicity, we're not handling image uploads in this example
-      // In a real app, you would integrate with Firebase Storage for images
-      
-      await addDoc(collection(db, 'posts'), {
-        animalName: newPost.animalName,
-        experience: newPost.experience,
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || currentUser.email,
-        createdAt: serverTimestamp(),
-        likes: [],
-        comments: []
+      const formData = new FormData();
+      formData.append('animalName', newPost.animalName);
+      formData.append('experience', newPost.experience);
+      formData.append('authorId', currentUser.uid);
+      formData.append('authorName', currentUser.displayName || currentUser.email);
+      if (newPost.photo) {
+        formData.append('photo', newPost.photo);
+      }
+
+      const response = await axios.post(`${API_URL}/posts`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
+      setPosts([response.data, ...posts]);
       setNewPost({ animalName: '', experience: '', photo: null });
     } catch (err) {
       setError('Failed to create post');
@@ -85,18 +71,23 @@ const CommunityFeedPage = () => {
     
     try {
       setLoading(true);
-      
-      const postRef = doc(db, 'posts', postId);
-      await updateDoc(postRef, {
-        comments: arrayUnion({
-          id: Date.now().toString(),
-          authorId: currentUser.uid,
-          authorName: currentUser.displayName || currentUser.email,
-          text: commentText,
-          createdAt: serverTimestamp()
-        })
+      const response = await axios.post(`${API_URL}/posts/${postId}/comments`, {
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || currentUser.email,
+        text: commentText
       });
 
+      const updatedPosts = posts.map(post => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            comments: [...(post.comments || []), response.data]
+          };
+        }
+        return post;
+      });
+
+      setPosts(updatedPosts);
       setCommentText('');
     } catch (err) {
       setError('Failed to add comment');
@@ -112,29 +103,22 @@ const CommunityFeedPage = () => {
     
     try {
       setLoading(true);
-      
-      const postRef = doc(db, 'posts', postId);
-      const postSnap = await getDoc(postRef);
-      
-      if (!postSnap.exists()) {
-        setError('Post not found');
-        return;
-      }
-      
-      const postData = postSnap.data();
-      const userLiked = postData.likes?.includes(currentUser.uid);
-      
-      if (userLiked) {
-        // Unlike the post
-        await updateDoc(postRef, {
-          likes: arrayRemove(currentUser.uid)
-        });
-      } else {
-        // Like the post
-        await updateDoc(postRef, {
-          likes: arrayUnion(currentUser.uid)
-        });
-      }
+      const response = await axios.post(`${API_URL}/posts/${postId}/like`, {
+        userId: currentUser.uid
+      });
+
+      const updatedPosts = posts.map(post => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            likes: response.data.likes,
+            likedBy: response.data.likedBy
+          };
+        }
+        return post;
+      });
+
+      setPosts(updatedPosts);
     } catch (err) {
       setError('Failed to update like');
       console.error(err);
@@ -145,8 +129,8 @@ const CommunityFeedPage = () => {
 
   // Check if current user has liked a post
   const hasUserLikedPost = (post) => {
-    if (!currentUser || !post.likes) return false;
-    return post.likes.includes(currentUser.uid);
+    if (!currentUser || !post.likedBy) return false;
+    return post.likedBy.includes(currentUser.uid);
   };
 
   if (loading) {
@@ -251,18 +235,18 @@ const CommunityFeedPage = () => {
           <p className="text-center text-gray-500 py-8">No sightings yet. Be the first to share!</p>
         ) : (
           posts.map((post) => (
-            <div key={post.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div key={post._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
               {/* Post Header */}
               <div className="p-4 border-b border-gray-100">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-semibold text-blue-700">{post.animalName}</h4>
                     <p className="text-xs text-gray-500">
-                      by {post.authorName} • {post.createdAt?.toDate ? post.createdAt.toDate().toLocaleString() : 'Just now'}
+                      by {post.authorName} • {new Date(post.createdAt).toLocaleString()}
                     </p>
                   </div>
                   <button
-                    onClick={() => handleLike(post.id)}
+                    onClick={() => handleLike(post._id)}
                     className={`flex items-center gap-1 transition ${
                       currentUser 
                         ? hasUserLikedPost(post) 
@@ -273,7 +257,7 @@ const CommunityFeedPage = () => {
                     disabled={!currentUser || loading}
                   >
                     {hasUserLikedPost(post) ? <FaHeart /> : <FaRegHeart />}
-                    <span className="text-sm">{post.likes?.length || 0}</span>
+                    <span className="text-sm">{post.likes || 0}</span>
                   </button>
                 </div>
               </div>
@@ -281,7 +265,13 @@ const CommunityFeedPage = () => {
               {/* Post Content */}
               <div className="p-4">
                 <p className="text-gray-800 leading-relaxed">{post.experience}</p>
-                {/* Photo display would go here if implemented */}
+                {post.photoUrl && (
+                  <img
+                    src={post.photoUrl}
+                    alt="Sighting"
+                    className="mt-3 w-full h-64 object-cover rounded-lg border border-gray-200"
+                  />
+                )}
               </div>
 
               {/* Comments Section */}
@@ -301,7 +291,7 @@ const CommunityFeedPage = () => {
                       className="flex-1 px-3 py-2 border border-gray-300 rounded-full text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
                     <button
-                      onClick={() => handleCommentSubmit(post.id)}
+                      onClick={() => handleCommentSubmit(post._id)}
                       className="bg-gray-700 hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-full transition disabled:opacity-50"
                       disabled={loading}
                     >
@@ -319,11 +309,11 @@ const CommunityFeedPage = () => {
                 {/* Comments List */}
                 <ul className="mt-4 space-y-3">
                   {(post.comments || []).map((comment) => (
-                    <li key={comment.id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                    <li key={comment._id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
                       <div className="flex justify-between">
                         <strong className="text-sm text-gray-800">{comment.authorName}</strong>
                         <span className="text-xs text-gray-500">
-                          {comment.createdAt?.toDate ? comment.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
+                          {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
                       <p className="text-gray-700 text-sm mt-1">{comment.text}</p>

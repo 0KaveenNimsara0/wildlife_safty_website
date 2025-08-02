@@ -35,7 +35,6 @@ const googleProvider = new GoogleAuthProvider();
 // Export the services you'll need
 export { 
   auth,
-  db,
   googleProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
