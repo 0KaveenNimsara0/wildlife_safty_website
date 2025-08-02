@@ -1,139 +1,164 @@
-// src/pages/CommunityFeedPage.jsx
 import React, { useState, useEffect } from 'react';
 import { FaHeart, FaRegHeart, FaComment, FaShare } from 'react-icons/fa';
-import { useAuth } from '../components/AuthContext'; // Import useAuth hook
+import { useAuth } from '../components/AuthContext';
+import { db } from '../Database/firebase';
+import { 
+  collection, 
+  addDoc, 
+  getDocs, 
+  query, 
+  orderBy, 
+  onSnapshot, 
+  doc, 
+  updateDoc, 
+  arrayUnion, 
+  arrayRemove,
+  serverTimestamp,
+  getDoc
+} from 'firebase/firestore';
 
 const CommunityFeedPage = () => {
-  const { currentUser } = useAuth(); // Get current user from AuthContext
+  const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [newPost, setNewPost] = useState({ animalName: '', experience: '', photo: null });
   const [commentText, setCommentText] = useState('');
-  const [comments, setComments] = useState({});
-  const [userLikes, setUserLikes] = useState({}); // Track user likes
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  // Load from localStorage
+  // Fetch posts from Firestore
   useEffect(() => {
-    const savedPosts = localStorage.getItem('wildlifePosts');
-    const savedComments = localStorage.getItem('wildlifeComments');
-    const savedUserLikes = localStorage.getItem('userLikes');
-    
-    if (savedPosts) setPosts(JSON.parse(savedPosts));
-    if (savedComments) setComments(JSON.parse(savedComments));
-    if (savedUserLikes) setUserLikes(JSON.parse(savedUserLikes));
+    const unsubscribe = onSnapshot(
+      query(collection(db, 'posts'), orderBy('createdAt', 'desc')),
+      (snapshot) => {
+        const postsData = [];
+        snapshot.forEach((doc) => {
+          postsData.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+        setPosts(postsData);
+      },
+      (err) => {
+        console.error('Error fetching posts:', err);
+        setError('Failed to fetch posts');
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
-  const savePosts = (updated) => {
-    setPosts(updated);
-    localStorage.setItem('wildlifePosts', JSON.stringify(updated));
-  };
-
-  const saveComments = (updated) => {
-    setComments(updated);
-    localStorage.setItem('wildlifeComments', JSON.stringify(updated));
-  };
-
-  const saveUserLikes = (updated) => {
-    setUserLikes(updated);
-    localStorage.setItem('userLikes', JSON.stringify(updated));
-  };
-
-  const handlePostSubmit = (e) => {
+  // Handle post submission
+  const handlePostSubmit = async (e) => {
     e.preventDefault();
-    if (!newPost.animalName.trim() && !newPost.experience.trim() && !newPost.photo) return;
+    if (!currentUser) return;
+    if (!newPost.animalName.trim() && !newPost.experience.trim()) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const photoData = reader.result;
-      const post = {
-        id: Date.now(),
-        animalName: newPost.animalName || 'Unknown Animal',
+    try {
+      setLoading(true);
+      
+      // For simplicity, we're not handling image uploads in this example
+      // In a real app, you would integrate with Firebase Storage for images
+      
+      await addDoc(collection(db, 'posts'), {
+        animalName: newPost.animalName,
         experience: newPost.experience,
-        photo: photoData,
-        author: currentUser ? (currentUser.displayName || currentUser.email) : 'Anonymous',
-        timestamp: new Date().toLocaleString(),
-        likes: 0,
-      };
-      savePosts([post, ...posts]);
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || currentUser.email,
+        createdAt: serverTimestamp(),
+        likes: [],
+        comments: []
+      });
+
       setNewPost({ animalName: '', experience: '', photo: null });
-    };
-
-    if (newPost.photo) {
-      reader.readAsDataURL(newPost.photo);
-    } else {
-      const post = {
-        id: Date.now(),
-        animalName: newPost.animalName || 'Unknown Animal',
-        experience: newPost.experience,
-        photo: null,
-        author: currentUser ? (currentUser.displayName || currentUser.email) : 'Anonymous',
-        timestamp: new Date().toLocaleString(),
-        likes: 0,
-      };
-      savePosts([post, ...posts]);
-      setNewPost({ animalName: '', experience: '', photo: null });
+    } catch (err) {
+      setError('Failed to create post');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCommentSubmit = (postId) => {
-    if (!commentText.trim()) return;
-    if (!currentUser) return; // Only logged-in users can comment
+  // Handle comment submission
+  const handleCommentSubmit = async (postId) => {
+    if (!currentUser || !commentText.trim()) return;
     
-    const updated = { ...comments };
-    if (!updated[postId]) updated[postId] = [];
-    updated[postId].unshift({
-      id: Date.now(),
-      author: currentUser.displayName || currentUser.email,
-      text: commentText,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    });
-    saveComments(updated);
-    setCommentText('');
+    try {
+      setLoading(true);
+      
+      const postRef = doc(db, 'posts', postId);
+      await updateDoc(postRef, {
+        comments: arrayUnion({
+          id: Date.now().toString(),
+          authorId: currentUser.uid,
+          authorName: currentUser.displayName || currentUser.email,
+          text: commentText,
+          createdAt: serverTimestamp()
+        })
+      });
+
+      setCommentText('');
+    } catch (err) {
+      setError('Failed to add comment');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleLike = (postId) => {
-    if (!currentUser) return; // Only logged-in users can like posts
+  // Handle like/unlike
+  const handleLike = async (postId) => {
+    if (!currentUser) return;
     
-    const userId = currentUser.uid;
-    const updatedUserLikes = { ...userLikes };
-    
-    // Initialize user likes for this post if not exists
-    if (!updatedUserLikes[userId]) {
-      updatedUserLikes[userId] = [];
+    try {
+      setLoading(true);
+      
+      const postRef = doc(db, 'posts', postId);
+      const postSnap = await getDoc(postRef);
+      
+      if (!postSnap.exists()) {
+        setError('Post not found');
+        return;
+      }
+      
+      const postData = postSnap.data();
+      const userLiked = postData.likes?.includes(currentUser.uid);
+      
+      if (userLiked) {
+        // Unlike the post
+        await updateDoc(postRef, {
+          likes: arrayRemove(currentUser.uid)
+        });
+      } else {
+        // Like the post
+        await updateDoc(postRef, {
+          likes: arrayUnion(currentUser.uid)
+        });
+      }
+    } catch (err) {
+      setError('Failed to update like');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    
-    // Check if user already liked this post
-    const userLikedPostIndex = updatedUserLikes[userId].indexOf(postId);
-    const postIndex = posts.findIndex(p => p.id === postId);
-    
-    if (postIndex === -1) return; // Post not found
-    
-    const updatedPosts = [...posts];
-    
-    if (userLikedPostIndex === -1) {
-      // User hasn't liked this post yet, add like
-      updatedUserLikes[userId].push(postId);
-      updatedPosts[postIndex] = {
-        ...updatedPosts[postIndex],
-        likes: updatedPosts[postIndex].likes + 1
-      };
-    } else {
-      // User already liked this post, remove like
-      updatedUserLikes[userId].splice(userLikedPostIndex, 1);
-      updatedPosts[postIndex] = {
-        ...updatedPosts[postIndex],
-        likes: updatedPosts[postIndex].likes - 1
-      };
-    }
-    
-    savePosts(updatedPosts);
-    saveUserLikes(updatedUserLikes);
   };
 
-  // Check if current user has liked a specific post
-  const hasUserLikedPost = (postId) => {
-    if (!currentUser || !userLikes[currentUser.uid]) return false;
-    return userLikes[currentUser.uid].includes(postId);
+  // Check if current user has liked a post
+  const hasUserLikedPost = (post) => {
+    if (!currentUser || !post.likes) return false;
+    return post.likes.includes(currentUser.uid);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading community feed...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -154,6 +179,7 @@ const CommunityFeedPage = () => {
                 value={newPost.animalName}
                 onChange={(e) => setNewPost({ ...newPost, animalName: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
               />
 
               <textarea
@@ -162,6 +188,7 @@ const CommunityFeedPage = () => {
                 onChange={(e) => setNewPost({ ...newPost, experience: e.target.value })}
                 rows="3"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
               />
 
               <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -181,9 +208,10 @@ const CommunityFeedPage = () => {
 
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition disabled:opacity-50"
+                disabled={loading}
               >
-                Post Sighting
+                {loading ? 'Posting...' : 'Post Sighting'}
               </button>
             </form>
           </div>
@@ -208,6 +236,15 @@ const CommunityFeedPage = () => {
         </div>
       )}
 
+      {/* Error Message */}
+      {error && (
+        <div className="max-w-3xl mx-auto p-4">
+          <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
+            {error}
+          </div>
+        </div>
+      )}
+
       {/* Posts Feed */}
       <div className="max-w-3xl mx-auto p-4 space-y-6">
         {posts.length === 0 ? (
@@ -221,22 +258,22 @@ const CommunityFeedPage = () => {
                   <div>
                     <h4 className="font-semibold text-blue-700">{post.animalName}</h4>
                     <p className="text-xs text-gray-500">
-                      by {post.author} • {post.timestamp}
+                      by {post.authorName} • {post.createdAt?.toDate ? post.createdAt.toDate().toLocaleString() : 'Just now'}
                     </p>
                   </div>
                   <button
                     onClick={() => handleLike(post.id)}
                     className={`flex items-center gap-1 transition ${
                       currentUser 
-                        ? hasUserLikedPost(post.id) 
+                        ? hasUserLikedPost(post) 
                           ? 'text-red-500 hover:text-red-600' 
                           : 'text-gray-400 hover:text-red-500'
                         : 'text-gray-300 cursor-not-allowed'
                     }`}
-                    disabled={!currentUser}
+                    disabled={!currentUser || loading}
                   >
-                    {hasUserLikedPost(post.id) ? <FaHeart /> : <FaRegHeart />}
-                    <span className="text-sm">{post.likes}</span>
+                    {hasUserLikedPost(post) ? <FaHeart /> : <FaRegHeart />}
+                    <span className="text-sm">{post.likes?.length || 0}</span>
                   </button>
                 </div>
               </div>
@@ -244,19 +281,13 @@ const CommunityFeedPage = () => {
               {/* Post Content */}
               <div className="p-4">
                 <p className="text-gray-800 leading-relaxed">{post.experience}</p>
-                {post.photo && (
-                  <img
-                    src={post.photo}
-                    alt="Sighting"
-                    className="mt-3 w-full h-64 object-cover rounded-lg border border-gray-200"
-                  />
-                )}
+                {/* Photo display would go here if implemented */}
               </div>
 
               {/* Comments Section */}
               <div className="p-4 bg-gray-50 border-t border-gray-100">
                 <h5 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-1">
-                  <FaComment className="text-gray-500" /> Comments
+                  <FaComment className="text-gray-500" /> Comments ({post.comments?.length || 0})
                 </h5>
 
                 {/* Add Comment - Only for logged-in users */}
@@ -271,7 +302,8 @@ const CommunityFeedPage = () => {
                     />
                     <button
                       onClick={() => handleCommentSubmit(post.id)}
-                      className="bg-gray-700 hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-full transition"
+                      className="bg-gray-700 hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-full transition disabled:opacity-50"
+                      disabled={loading}
                     >
                       Post
                     </button>
@@ -286,13 +318,15 @@ const CommunityFeedPage = () => {
 
                 {/* Comments List */}
                 <ul className="mt-4 space-y-3">
-                  {(comments[post.id] || []).map((c) => (
-                    <li key={c.id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
+                  {(post.comments || []).map((comment) => (
+                    <li key={comment.id} className="bg-white p-3 rounded-lg shadow-sm border border-gray-100">
                       <div className="flex justify-between">
-                        <strong className="text-sm text-gray-800">{c.author}</strong>
-                        <span className="text-xs text-gray-500">{c.timestamp}</span>
+                        <strong className="text-sm text-gray-800">{comment.authorName}</strong>
+                        <span className="text-xs text-gray-500">
+                          {comment.createdAt?.toDate ? comment.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
+                        </span>
                       </div>
-                      <p className="text-gray-700 text-sm mt-1">{c.text}</p>
+                      <p className="text-gray-700 text-sm mt-1">{comment.text}</p>
                     </li>
                   ))}
                 </ul>
