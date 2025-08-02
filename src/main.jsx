@@ -4,12 +4,19 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import App from './App.jsx';
 import 'leaflet/dist/leaflet.css';
+import { ErrorBoundary } from '../src/assets/components/ErrorBoundary.jsx';
 
-const root = createRoot(document.getElementById('root'));
+// Create root element
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+// Render the app
 root.render(
   <React.StrictMode>
-    <Router>
-      <App />
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <App />
+      </Router>
+    </ErrorBoundary>
   </React.StrictMode>
 );

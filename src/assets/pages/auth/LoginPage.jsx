@@ -19,7 +19,8 @@ async function handleSubmit(e) {
     setLoading(true);
     const userCredential = await login(email, password);
     console.log('Login successful, user:', userCredential.user);
-    navigate('/dashboard', { replace: true }); // Add replace:true
+    setPage(null); // Reset authPage state to show main app
+    navigate('/home', { replace: true });
   } catch (error) {
     setError(error.message || 'Failed to log in');
     console.error('Login error:', error);
@@ -33,8 +34,9 @@ async function handleGoogleSignIn() {
         setError('');
         setLoading(true);
         await googleSignIn();
-        navigate('/dashboard');  // Changed from '/' to '/dashboard'
-    } catch {
+        setPage(null); // Reset authPage state to show main app
+        navigate('/home');  // Changed from '/' to '/dashboard'
+    } catch (error) {
         setError(error.message || 'Failed to sign in with Google');
     }
     setLoading(false);
@@ -149,7 +151,8 @@ async function handleGoogleSignIn() {
                 disabled={loading}
                 className="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-            {/* <Google className="w-4 h-4 mr-2" /> */}
+            <img src="./src/assets/icons/google-icon-logo-svgrepo-com.svg" alt="Google" className="w-5 h-5 mr-2" />
+            <span className="sr-only">Sign in with Google</span>
             Google
           </button>
         </div>

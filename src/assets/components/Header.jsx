@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin } from 'lucide-react';
+import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin} from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,7 +17,6 @@ export default function Header({ page, setPage, setAuthPage }) {
         { id: 'communityFeed', name: 'Community Feed', icon: User, path: '/communityFeed' }
     ];
 
-
     const handleAuth = () => {
         if (currentUser) {
             logout();
@@ -30,7 +29,8 @@ export default function Header({ page, setPage, setAuthPage }) {
     const handleGoogleSignIn = async () => {
         try {
             await googleSignIn();
-            navigate('/dashboard');
+            setAuthPage(null); // Reset authPage state to show main app
+            navigate('/home');
         } catch (error) {
             console.error('Google sign-in failed:', error);
         }
@@ -40,6 +40,45 @@ export default function Header({ page, setPage, setAuthPage }) {
         setPage(path.split('/')[1] || 'home');
         navigate(path);
         setMobileMenuOpen(false);
+    };
+
+    // Get user profile picture or default icon
+    const getUserAvatar = () => {
+        // First check if user has a profile picture (Google users typically do)
+        if (currentUser?.photoURL) {
+            return (
+                <img 
+                    src={currentUser.photoURL} 
+                    alt="Profile" 
+                    className="w-8 h-8 rounded-full object-cover border-2 border-white"
+                />
+            );
+        }
+        
+        // Check if user signed in with Google (providerId check)
+        const isGoogleUser = currentUser?.providerData?.some(provider => provider.providerId === 'google.com');
+        
+        if (isGoogleUser) {
+            // Show Google logo for Google-authenticated users without profile pictures
+            return (
+                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border-2 border-white">
+                    <img 
+                        src="./src/assets/icons/google-icon-logo-svgrepo-com.svg" 
+                        alt="Google" 
+                        className="w-5 h-5"
+                    />
+                </div>
+            );
+        } else if (currentUser?.email) {
+            // Create avatar with user initials
+            const initials = currentUser.email.charAt(0).toUpperCase();
+            return (
+                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold border-2 border-white">
+                    {initials}
+                </div>
+            );
+        }
+        return <User className="w-4 h-4 text-white" />;
     };
 
     return (
@@ -58,7 +97,7 @@ export default function Header({ page, setPage, setAuthPage }) {
                         </div>
                         <div>
                             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
-                                WildGuard AI
+                                WildLife Safty
                             </h1>
                             <p className="text-green-300 text-sm hidden sm:block font-medium">
                                 Smart Wildlife Protection
@@ -93,12 +132,15 @@ export default function Header({ page, setPage, setAuthPage }) {
                         {/* Login Button */}
                         <div className="flex items-center space-x-3 border-l border-green-700/50 pl-6">
                             {currentUser ? (
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-4">
                                     <button 
                                         onClick={() => navigate('/dashboard')}
-                                        className="bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors"
+                                        className="flex items-center space-x-2 hover:bg-white/10 p-1.5 rounded-full transition-colors"
                                     >
-                                        <User className="w-4 h-4 text-white" />
+                                        {getUserAvatar()}
+                                        <span className="text-sm text-green-200 hidden lg:inline">
+                                            {currentUser.displayName || currentUser.email.split('@')[0]}
+                                        </span>
                                     </button>
                                     <button
                                         onClick={handleAuth}
@@ -109,7 +151,6 @@ export default function Header({ page, setPage, setAuthPage }) {
                                 </div>
                             ) : (
                                 <div className="flex space-x-2">
-                                    
                                     <button
                                         onClick={handleAuth}
                                         className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
@@ -160,13 +201,13 @@ export default function Header({ page, setPage, setAuthPage }) {
                                         <div className="flex items-center space-x-3">
                                             <button 
                                                 onClick={() => navigate('/dashboard')}
-                                                className="bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors"
+                                                className="flex items-center space-x-2"
                                             >
-                                                <User className="w-4 h-4 text-white" />
+                                                {getUserAvatar()}
+                                                <span className="text-white font-medium">
+                                                    {currentUser.displayName || currentUser.email.split('@')[0]}
+                                                </span>
                                             </button>
-                                            <span className="text-white font-medium">
-                                                {currentUser.email}
-                                            </span>
                                         </div>
                                         <button
                                             onClick={handleAuth}
@@ -181,7 +222,11 @@ export default function Header({ page, setPage, setAuthPage }) {
                                             onClick={handleGoogleSignIn}
                                             className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg"
                                         >
-                                            <Google className="w-4 h-4" />
+                                            <img 
+                                                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" 
+                                                alt="Google" 
+                                                className="w-4 h-4"
+                                            />
                                             <span>Sign in with Google</span>
                                         </button>
                                         <button
