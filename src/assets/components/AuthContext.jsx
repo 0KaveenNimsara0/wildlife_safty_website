@@ -62,8 +62,8 @@ export function AuthProvider({ children }) {
     return updatePassword(currentUser, password);
   }
 
-  function sendEmailVerification() {
-    return firebaseSendEmailVerification(currentUser);
+  function sendEmailVerification(user) {
+    return firebaseSendEmailVerification(user || currentUser);
   }
 
   useEffect(() => {
