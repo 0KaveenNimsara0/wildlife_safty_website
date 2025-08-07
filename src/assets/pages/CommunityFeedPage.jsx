@@ -260,17 +260,35 @@ const CommunityFeedPage = () => {
                 <FaBars size={20} className="text-green-700" />
               </button>
             )}
-            <h1 className="text-2xl font-bold text-green-700 flex items-center">
-              <span className="mr-2">🌿</span> Wildlife Community Center
-            </h1>
+            <div>
+              <h1 className="text-2xl font-bold text-green-700 flex items-center">
+                <span className="mr-2">🌿</span> Wildlife Community Center
+              </h1>
+              
+            </div>
           </div>
           {currentUser && (
             <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                {currentUser.displayName || currentUser.email.split('@')[0]}
-              </span>
               <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
                 {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                  {currentUser.displayName || currentUser.email.split('@')[0]}
+                </span>
+                <p className="text-xs text-gray-500 mt-1">
+                  {currentTime.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })} • {currentTime.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                  })}
+                </p>
               </div>
             </div>
           )}
@@ -335,8 +353,24 @@ const CommunityFeedPage = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-800">{post.animalName}</h4>
-                    <div className="flex items-center space-x-2">
-                      <p className="text-xs text-gray-500">{post.authorName}</p>
+                    <p className="text-sm text-gray-600">{post.authorName}</p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.createdAt).toLocaleDateString('en-US', {
+                          weekday: 'short',
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      {/* <span className="text-gray-300">•</span>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.createdAt).toLocaleTimeString('en-US', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          hour12: true
+                        })}
+                      </p> */}
                       <span className="text-gray-300">•</span>
                       <p className="text-xs text-gray-500">
                         {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
