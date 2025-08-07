@@ -3,6 +3,7 @@ import { FaHeart, FaRegHeart, FaComment, FaEdit, FaTrash, FaCheck, FaTimes } fro
 import { useAuth } from '../components/AuthContext';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
+import { FaCamera } from 'react-icons/fa';  // Add this line
 
 const API_URL = 'http://localhost:5000/api';
 
