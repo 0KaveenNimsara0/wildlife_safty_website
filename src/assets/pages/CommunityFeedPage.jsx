@@ -8,12 +8,16 @@ import { Link } from 'react-router-dom';
 
 const API_URL = 'http://localhost:5000/api';
 
+import UserPostsPage from './UserPostsPage';
+import { FaBars, FaArrowLeft } from 'react-icons/fa';
+
 const CommunityFeedPage = () => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showMyPosts, setShowMyPosts] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -237,30 +241,54 @@ const CommunityFeedPage = () => {
       {/* Header */}
       <header className="bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-green-700 flex items-center">
-            <span className="mr-2">🌿</span> Wildlife Community Center
-          </h1>
-          {currentUser && (
-            <div className="flex items-center space-x-4">
-              <Link 
-                to="/my-posts" 
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+          <div className="flex items-center gap-4">
+            {currentUser && (
+              <button
+                onClick={() => setShowMyPosts(true)}
+                className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                aria-label="Open My Posts"
               >
-                <FaUser />
-                <span className="hidden sm:inline">My Posts</span>
-              </Link>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                  {currentUser.displayName || currentUser.email.split('@')[0]}
-                </span>
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
-                  {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
-                </div>
+                <FaBars size={20} className="text-green-700" />
+              </button>
+            )}
+            <h1 className="text-2xl font-bold text-green-700 flex items-center">
+              <span className="mr-2">🌿</span> Wildlife Community Center
+            </h1>
+          </div>
+          {currentUser && (
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                {currentUser.displayName || currentUser.email.split('@')[0]}
+              </span>
+              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
+                {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
               </div>
             </div>
           )}
         </div>
       </header>
+
+      {/* My Posts Sidebar */}
+      {showMyPosts && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowMyPosts(false)} />
+          <div className="absolute left-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold text-gray-800">My Posts</h2>
+              <button
+                onClick={() => setShowMyPosts(false)}
+                className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                aria-label="Close My Posts"
+              >
+                <FaArrowLeft size={20} className="text-gray-600" />
+              </button>
+            </div>
+            <div className="h-full overflow-y-auto">
+              <UserPostsPage />
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-2xl mx-auto px-4 py-6">
         {/* Error Message */}
