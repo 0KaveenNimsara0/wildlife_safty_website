@@ -18,6 +18,15 @@ const CommunityFeedPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showMyPosts, setShowMyPosts] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -239,8 +248,8 @@ const CommunityFeedPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="bg-white shadow-sm sticky top-0 z-10 w-full">
+        <div className="max-w-full mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             {currentUser && (
               <button
