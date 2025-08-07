@@ -127,6 +127,100 @@ const CommunityFeedPage = () => {
     return post.likedBy.includes(currentUser.uid);
   };
 
+  // Utility to find comment by id in nested comments
+  const findCommentById = (comment, id) => {
+    if (comment._id === id) return comment;
+    if (!comment.replies) return null;
+    for (const reply of comment.replies) {
+      const found = findCommentById(reply, id);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  // Utility to add a reply to the correct comment in nested comments
+  const addReplyToComment = (comments, parentId, newReply) => {
+    return comments.map(comment => {
+      if (comment._id === parentId) {
+        return {
+          ...comment,
+          replies: [...(comment.replies || []), newReply]
+        };
+      }
+      if (comment.replies) {
+        return {
+          ...comment,
+          replies: addReplyToComment(comment.replies, parentId, newReply)
+        };
+      }
+      return comment;
+    });
+  };
+
+  // Utility to update a comment in nested comments
+  const updateCommentInTree = (comments, commentId, updatedComment) => {
+    return comments.map(comment => {
+      if (comment._id === commentId) {
+        return updatedComment;
+      }
+      if (comment.replies) {
+        return {
+          ...comment,
+          replies: updateCommentInTree(comment.replies, commentId, updatedComment)
+        };
+      }
+      return comment;
+    });
+  };
+
+  // Utility to remove a comment from nested comments
+  const removeCommentFromTree = (comments, commentId) => {
+    return comments
+      .filter(comment => comment._id !== commentId)
+      .map(comment => {
+        if (comment.replies) {
+          return {
+            ...comment,
+            replies: removeCommentFromTree(comment.replies, commentId)
+          };
+        }
+        return comment;
+      });
+  };
+
+  // Handle comment updates (reply, edit, delete)
+  const handleReply = (parentId, newReply) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => {
+        if (post.comments?.some(c => c._id === parentId || findCommentById(c, parentId))) {
+          return {
+            ...post,
+            comments: addReplyToComment(post.comments, parentId, newReply)
+          };
+        }
+        return post;
+      })
+    );
+  };
+
+  const handleUpdateComment = (commentId, updatedComment) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => ({
+        ...post,
+        comments: updateCommentInTree(post.comments, commentId, updatedComment)
+      }))
+    );
+  };
+
+  const handleDeleteComment = (commentId) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => ({
+        ...post,
+        comments: removeCommentFromTree(post.comments, commentId)
+      }))
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -287,6 +381,12 @@ const CommunityFeedPage = () => {
                         key={comment._id}
                         comment={comment}
                         postId={post._id}
+                        onReply={handleReply}
+                        onUpdate={handleUpdateComment}
+                        onDelete={handleDeleteComment}
+                        depth={0}
+                        maxDepth={3}
+                        postAuthorId={post.authorId}
                         currentUser={currentUser}
                       />
                     ))}
