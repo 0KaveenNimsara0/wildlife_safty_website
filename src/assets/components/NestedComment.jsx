@@ -5,18 +5,6 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
-// Helper function to convert timestamp to relative time string
-const getRelativeTime = (date) => {
-  const now = new Date();
-  const diff = (now - new Date(date)) / 1000; // difference in seconds
-
-  if (diff < 60) return `${Math.floor(diff)}s`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}m`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}d`;
-  return `${Math.floor(diff / 604800)}w`;
-};
-
 const NestedComment = ({ 
   comment, 
   postId, 
@@ -25,7 +13,7 @@ const NestedComment = ({
   onDelete, 
   depth = 0, 
   maxDepth = 3,
-  postAuthorId // new prop to identify post author for badge
+  postAuthorId
 }) => {
   const { currentUser } = useAuth();
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -33,29 +21,81 @@ const NestedComment = ({
   const [editingText, setEditingText] = useState(comment.text);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeReaction, setActiveReaction] = useState(null);
 
   const isAuthor = currentUser && comment.authorId === currentUser.uid;
+  const isPostAuthor = comment.authorId === postAuthorId;
   const canReply = depth < maxDepth;
 
-  // Handle reaction
-  const handleReaction = async (reactionType) => {
-    if (!currentUser) return;
-    
-    try {
-      setLoading(true);
-      const response = await axios.post(`${API_URL}/posts/${postId}/comments/${comment._id}/react`, {
-        userId: currentUser.uid,
-        userName: currentUser.displayName || currentUser.email,
-        type: reactionType
-      });
-      
-      onUpdate(comment._id, response.data);
-    } catch (err) {
-      console.error('Failed to add reaction:', err);
-    } finally {
-      setLoading(false);
-    }
+  // Format timestamp to match CommunityFeedPage
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = (now - date) / 1000; // difference in seconds
+
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
+
+  const handleReaction = async (postId, commentId, reactionType) => {
+  if (!currentUser) return;
+  
+  try {
+    setLoading(true);
+    const endpoint = commentId 
+      ? `${API_URL}/posts/${postId}/comments/${commentId}/react`
+      : `${API_URL}/posts/${postId}/react`;
+
+    const response = await axios.post(endpoint, {
+      userId: currentUser.uid,
+      userName: currentUser.displayName || currentUser.email,
+      type: reactionType
+    });
+    
+    // Update state based on whether it's a post or comment reaction
+    if (commentId) {
+      setPosts(prevPosts => prevPosts.map(post => {
+        if (post._id === postId) {
+          return {
+            ...post,
+            comments: post.comments.map(comment => {
+              if (comment._id === commentId) {
+                return response.data;
+              }
+              // Handle nested replies
+              if (comment.replies) {
+                return {
+                  ...comment,
+                  replies: comment.replies.map(reply => {
+                    if (reply._id === commentId) {
+                      return response.data;
+                    }
+                    return reply;
+                  })
+                };
+              }
+              return comment;
+            })
+          };
+        }
+        return post;
+      }));
+    } else {
+      setPosts(prevPosts => prevPosts.map(post => {
+        if (post._id === postId) {
+          return response.data;
+        }
+        return post;
+      }));
+    }
+  } catch (err) {
+    console.error('Failed to add reaction:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Handle reply submission
   const handleReplySubmit = async () => {
@@ -117,7 +157,7 @@ const NestedComment = ({
   // Get user's reaction
   const userReaction = comment.reactions?.find(r => r.userId === currentUser?.uid)?.type;
 
-  // Calculate reaction counts from reactions array
+  // Calculate reaction counts
   const reactionCounts = {};
   if (comment.reactions) {
     comment.reactions.forEach(reaction => {
@@ -135,41 +175,72 @@ const NestedComment = ({
   };
 
   return (
-    <div className={`${depth > 0 ? 'ml-8 border-l-2 border-gray-200 pl-4' : ''}`}>
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+    <div className={`${depth > 0 ? 'ml-6 pl-4 border-l-2 border-gray-200' : ''} transition-all duration-150`}>
+      <div className={`bg-white rounded-lg p-4 mb-3 shadow-sm hover:shadow-md transition-shadow ${
+        depth % 2 === 0 ? 'border border-gray-200' : 'bg-gray-50'
+      }`}>
+        {/* Comment Header */}
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm font-bold">
-            {comment.authorName?.charAt(0)?.toUpperCase() || '?'}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium ${
+            isPostAuthor ? 'bg-green-600' : 'bg-blue-600'
+          }`}>
+            {comment.authorName?.charAt(0)?.toUpperCase() || 'U'}
           </div>
           
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <div>
-                <strong className="text-sm text-gray-800">{comment.authorName}</strong>
-                <span className="text-xs text-gray-500 ml-2">
-                  {new Date(comment.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-gray-800 truncate">
+                  {comment.authorName}
+                  {isPostAuthor && (
+                    <span className="ml-1 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                      OP
+                    </span>
+                  )}
                 </span>
-                {comment.isEdited && <span className="text-xs text-gray-400 ml-1">(edited)</span>}
+                <span className="text-xs text-gray-500">
+                  {formatTime(comment.createdAt)}
+                </span>
+                {comment.isEdited && (
+                  <span className="text-xs text-gray-400">(edited)</span>
+                )}
               </div>
               
               {isAuthor && (
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   {isEditing ? (
                     <>
-                      <button onClick={handleEdit} className="text-green-600 hover:text-green-700 text-xs">
-                        <FaCheck size={12} />
+                      <button 
+                        onClick={handleEdit}
+                        disabled={loading}
+                        className="p-1 text-green-600 hover:text-green-700 rounded-full hover:bg-green-50"
+                        aria-label="Save edit"
+                      >
+                        <FaCheck size={14} />
                       </button>
-                      <button onClick={() => setIsEditing(false)} className="text-red-600 hover:text-red-700 text-xs">
-                        <FaTimes size={12} />
+                      <button 
+                        onClick={() => setIsEditing(false)}
+                        className="p-1 text-red-600 hover:text-red-700 rounded-full hover:bg-red-50"
+                        aria-label="Cancel edit"
+                      >
+                        <FaTimes size={14} />
                       </button>
                     </>
                   ) : (
                     <>
-                      <button onClick={() => setIsEditing(true)} className="text-blue-600 hover:text-blue-700 text-xs">
-                        <FaEdit size={12} />
+                      <button 
+                        onClick={() => setIsEditing(true)}
+                        className="p-1 text-blue-600 hover:text-blue-700 rounded-full hover:bg-blue-50"
+                        aria-label="Edit comment"
+                      >
+                        <FaEdit size={14} />
                       </button>
-                      <button onClick={handleDelete} className="text-red-600 hover:text-red-700 text-xs">
-                        <FaTrash size={12} />
+                      <button 
+                        onClick={handleDelete}
+                        className="p-1 text-red-600 hover:text-red-700 rounded-full hover:bg-red-50"
+                        aria-label="Delete comment"
+                      >
+                        <FaTrash size={14} />
                       </button>
                     </>
                   )}
@@ -177,82 +248,133 @@ const NestedComment = ({
               )}
             </div>
             
+            {/* Comment Content */}
             {isEditing ? (
               <textarea
                 value={editingText}
                 onChange={(e) => setEditingText(e.target.value)}
-                className="w-full mt-2 p-2 text-sm border border-gray-300 rounded"
-                rows="2"
+                className="w-full mt-2 p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows="3"
+                autoFocus
               />
             ) : (
-              <p className="text-gray-700 text-sm mt-1">{comment.text}</p>
+              <p className="text-gray-700 text-sm mt-2 whitespace-pre-wrap break-words">
+                {comment.text}
+              </p>
             )}
             
-            {/* Reactions */}
-            <div className="flex items-center gap-3 mt-2">
-              <div className="flex items-center gap-1">
-                {Object.entries(reactionIcons).map(([type, icon]) => (
+            {/* Comment Actions */}
+            <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center gap-2">
+                {/* Reactions */}
+                <div className="relative">
                   <button
-                    key={type}
-                    onClick={() => handleReaction(type)}
-                    className={`text-sm transition ${userReaction === type ? 'scale-125' : 'hover:scale-110'}`}
-                    title={type}
+                    onClick={() => setActiveReaction(activeReaction ? null : 'like')}
+                    className={`flex items-center gap-1 text-xs px-3 py-1 rounded-full ${
+                      userReaction ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
                     disabled={!currentUser || loading}
                   >
-                    {icon}
+                    {userReaction ? (
+                      <>
+                        <span>{reactionIcons[userReaction]}</span>
+                        <span>{reactionCounts[userReaction] || 1}</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaRegHeart size={12} />
+                        <span>Like</span>
+                      </>
+                    )}
                   </button>
-                ))}
+
+                  {activeReaction && (
+                    <div className="absolute bottom-full left-0 mb-2 bg-white shadow-lg rounded-full px-2 py-1 flex gap-1 border border-gray-200 z-10">
+                      {Object.entries(reactionIcons).map(([type, icon]) => (
+                        <button
+                          key={type}
+                          onClick={() => handleReaction(type)}
+                          className={`text-lg p-1 rounded-full transform transition ${
+                            userReaction === type 
+                              ? 'scale-125 bg-blue-50' 
+                              : 'hover:scale-110 hover:bg-gray-100'
+                          }`}
+                          title={type}
+                          disabled={!currentUser || loading}
+                        >
+                          {icon}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Other reactions count */}
+                {Object.entries(reactionCounts).filter(([type]) => type !== userReaction).length > 0 && (
+                  <div className="flex gap-1">
+                    {Object.entries(reactionCounts)
+                      .filter(([type]) => type !== userReaction)
+                      .map(([type, count]) => (
+                        <span 
+                          key={type} 
+                          className="text-xs bg-gray-100 px-2 py-1 rounded-full flex items-center gap-1"
+                        >
+                          {reactionIcons[type]} {count}
+                        </span>
+                      ))}
+                  </div>
+                )}
               </div>
               
-              {Object.keys(reactionCounts).length > 0 && (
-                <div className="flex gap-1 text-xs">
-                  {Object.entries(reactionCounts).map(([type, count]) => (
-                    <span key={type} className="bg-gray-100 px-2 py-1 rounded">
-                      {reactionIcons[type]} {count}
-                    </span>
-                  ))}
-                </div>
-              )}
-              
-              {canReply && (
+              {/* Reply button */}
+              {canReply && currentUser && (
                 <button
-                  onClick={() => setShowReplyInput(!showReplyInput)}
-                  className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                  onClick={() => {
+                    setShowReplyInput(!showReplyInput);
+                    if (!showReplyInput) {
+                      setTimeout(() => document.getElementById(`reply-input-${comment._id}`)?.focus(), 100);
+                    }
+                  }}
+                  className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 px-3 py-1 rounded-full hover:bg-blue-50"
+                  disabled={loading}
                 >
-                  <FaReply size={12} /> Reply
+                  <FaReply size={12} />
+                  <span>Reply</span>
                 </button>
               )}
             </div>
+            
+            {/* Reply Input */}
+            {showReplyInput && canReply && (
+              <div className="mt-3">
+                <div className="flex gap-2">
+                  <input
+                    id={`reply-input-${comment._id}`}
+                    type="text"
+                    placeholder="Write your reply..."
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleReplySubmit()}
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    onClick={handleReplySubmit}
+                    disabled={!replyText.trim() || loading}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg transition disabled:opacity-50"
+                  >
+                    Post
+                  </button>
+                  <button
+                    onClick={() => setShowReplyInput(false)}
+                    className="text-gray-600 hover:text-gray-700 text-xs px-4 py-2 rounded-lg hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-        
-        {/* Reply Input */}
-        {showReplyInput && canReply && (
-          <div className="mt-3 ml-11">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Write a reply..."
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded"
-              />
-              <button
-                onClick={handleReplySubmit}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded"
-                disabled={loading}
-              >
-                Reply
-              </button>
-              <button
-                onClick={() => setShowReplyInput(false)}
-                className="text-gray-600 hover:text-gray-700 text-xs"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
       </div>
       
       {/* Nested Replies */}
@@ -268,6 +390,7 @@ const NestedComment = ({
               onDelete={onDelete}
               depth={depth + 1}
               maxDepth={maxDepth}
+              postAuthorId={postAuthorId}
             />
           ))}
         </div>

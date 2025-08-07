@@ -15,6 +15,7 @@ import RegisterPage from './assets/pages/auth/RegisterPage';
 import ResetPasswordPage from './assets/pages/auth/ResetPasswordPage';
 import Dashboard from './assets/pages/Dashboard';
 import PrivateRoute from './assets/components/PrivateRoute';
+import UserPostsPage from './assets/pages/UserPostsPage';
 
 // Components
 import Header from './assets/components/Header';
@@ -45,6 +46,7 @@ export default function App() {
                                 <Route path="/map" element={<MapPage />} />
                                 <Route path="/animalDetail" element={<AnimalDetailPage />} />
                                 <Route path="/communityFeed" element={<CommunityFeedPage />} />
+                                <Route path="/my-posts" element={<UserPostsPage />} />
 
 
                                 <Route element={<PrivateRoute />}>
