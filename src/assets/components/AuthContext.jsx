@@ -10,6 +10,8 @@ import {
 } from '../Database/firebase';
 import { onAuthStateChanged, signOut, updateEmail, updatePassword } from 'firebase/auth';
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -66,12 +68,78 @@ export function AuthProvider({ children }) {
     return firebaseSendEmailVerification(user || currentUser);
   }
 
+  // Upload profile picture to MongoDB
+  async function uploadProfilePicture(file) {
+    try {
+      if (!currentUser) throw new Error('No user logged in');
+      
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      const response = await fetch(`${API_BASE_URL}/users/${currentUser.uid}/profile-picture`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload profile picture');
+      }
+
+      const data = await response.json();
+      return data.photoURL;
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      throw error;
+    }
+  }
+
+  // Update user profile in MongoDB
+  async function updateUserProfile(profileData) {
+    try {
+      if (!currentUser) throw new Error('No user logged in');
+      
+      const response = await fetch(`${API_BASE_URL}/users/${currentUser.uid}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update user profile');
+      }
+
+      const data = await response.json();
+      return data.user;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
+  }
+
+  // Get user profile from MongoDB
+  async function getUserProfile(uid) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${uid}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch user profile');
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      throw error;
+    }
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
-      // Add this debug log:
-    console.log('Auth state changed:', user);
+      console.log('Auth state changed:', user);
     });
 
     return unsubscribe;
@@ -86,7 +154,10 @@ export function AuthProvider({ children }) {
     resetPassword,
     updateEmail: updateUserEmail,
     updatePassword: updateUserPassword,
-    sendEmailVerification
+    sendEmailVerification,
+    uploadProfilePicture,
+    updateUserProfile,
+    getUserProfile
   };
 
   return (

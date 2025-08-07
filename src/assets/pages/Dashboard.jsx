@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Shield, User, LogOut, Mail, Lock, Camera, CheckCircle, XCircle } from 'lucide-react';
+import ProfilePictureUpload from '../components/ProfilePictureUpload';
+import UserFilesSection from '../components/UserFilesSection';
 
 function Dashboard() {
-    const { currentUser, logout, updateEmail, updatePassword, sendEmailVerification } = useAuth();
+    const { currentUser, logout, updateEmail, updatePassword, sendEmailVerification, uploadProfilePicture } = useAuth();
     const navigate = useNavigate();
     
     const [editMode, setEditMode] = useState(false);
@@ -13,6 +15,7 @@ function Dashboard() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showProfileUpload, setShowProfileUpload] = useState(false);
 
     const handleLogout = async () => {
         await logout();
@@ -68,6 +71,29 @@ function Dashboard() {
         return <User className="h-12 w-12 text-emerald-600" />;
     };
 
+    const handleProfilePhotoUpdate = async (file, previewUrl) => {
+        try {
+            setError('');
+            setSuccess('');
+            
+            // Show loading state
+            setSuccess('Uploading profile picture...');
+            
+            // Upload the profile picture using the new function
+            const photoURL = await uploadProfilePicture(file);
+            
+            setSuccess('Profile picture updated successfully!');
+            setShowProfileUpload(false);
+            
+            // Force refresh the user data
+            window.location.reload();
+            
+        } catch (error) {
+            console.error('Error updating profile picture:', error);
+            setError(error.message || 'Failed to update profile picture');
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -116,9 +142,9 @@ function Dashboard() {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Profile Card */}
-                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <div className="lg:col-span-2 bg-gray-50 p-6 rounded-lg border border-gray-200">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center space-x-4">
                                     <div className="bg-emerald-100 p-3 rounded-full">
@@ -226,7 +252,6 @@ function Dashboard() {
                                             <XCircle className="h-4 w-4 mr-2 text-red-500" />
                                         )}
                                         Email {currentUser?.emailVerified ? 'Verified' : 'Not Verified'}
-                                        {/* Show verify button for all users, including Google users */}
                                         <button 
                                             onClick={handleVerifyEmail}
                                             className="ml-2 text-sm text-emerald-600 hover:text-emerald-800"
@@ -241,32 +266,73 @@ function Dashboard() {
                             )}
                         </div>
 
-                        {/* Actions Card */}
+                        {/* Profile Picture Card */}
                         <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                            <h3 className="text-lg font-medium text-gray-800 mb-4">Quick Actions</h3>
-                            <div className="space-y-3">
-                                <button
-                                    onClick={() => navigate('/animalDetail')}
-                                    className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
-                                >
-                                    <span>View Animals</span>
-                                    <span>→</span>
-                                </button>
-                                <button
-                                    onClick={() => navigate('/map')}
-                                    className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
-                                >
-                                    <span>View Map</span>
-                                    <span>→</span>
-                                </button>
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full flex items-center space-x-2 px-4 py-2 bg-red-50 border border-red-100 rounded-md text-red-600 hover:bg-red-100 mt-4"
-                                >
-                                    <LogOut className="h-4 w-4" />
-                                    <span>Logout</span>
-                                </button>
+                            <h3 className="text-lg font-medium text-gray-800 mb-4">Profile Picture</h3>
+                            <div className="text-center">
+                                <div className="mx-auto mb-4">
+                                    {showProfileUpload ? (
+                                        <ProfilePictureUpload 
+                                            currentPhoto={currentUser?.photoURL}
+                                            onPhotoChange={handleProfilePhotoUpdate}
+                                        />
+                                    ) : (
+                                        <div className="relative inline-block">
+                                            <img 
+                                                src={currentUser?.photoURL || '/default-avatar.png'} 
+                                                alt="Profile" 
+                                                className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+                                            />
+                                            <button
+                                                onClick={() => setShowProfileUpload(true)}
+                                                className="absolute bottom-0 right-0 bg-emerald-600 p-2 rounded-full text-white hover:bg-emerald-700"
+                                            >
+                                                <Camera className="h-4 w-4" />
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* User Files Section */}
+                    <div className="mt-6">
+                        <UserFilesSection userId={currentUser?.uid} />
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="mt-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <h3 className="text-lg font-medium text-gray-800 mb-4">Quick Actions</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button
+                                onClick={() => navigate('/animalDetail')}
+                                className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
+                            >
+                                <span>View Animals</span>
+                                <span>→</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/map')}
+                                className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
+                            >
+                                <span>View Map</span>
+                                <span>→</span>
+                            </button>
+                            <button
+                                onClick={() => navigate('/community')}
+                                className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
+                            >
+                                <span>Community Feed</span>
+                                <span>→</span>
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center justify-center space-x-2 px-4 py-2 bg-red-50 border border-red-100 rounded-md text-red-600 hover:bg-red-100"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                <span>Logout</span>
+                            </button>
                         </div>
                     </div>
                 </div>
