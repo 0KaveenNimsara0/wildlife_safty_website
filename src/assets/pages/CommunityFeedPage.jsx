@@ -247,9 +247,9 @@ const CommunityFeedPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-10 w-full">
-        <div className="max-w-full mx-auto px-4 py-4 flex justify-between items-center">
+      {/* Header - positioned under the main header */}
+      <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-20 z-40 w-full border-b border-gray-200">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             {currentUser && (
               <button

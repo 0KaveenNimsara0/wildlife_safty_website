@@ -43,33 +43,29 @@ const AnimalDetailPage = () => {
   }, [selectedAnimal]);
 
   return (
-    <div style={{
-      fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
-      margin: 0,
-      padding: 0,
-      backgroundColor: '#f5f7fa',
-      color: '#2c3e50',
-      minHeight: '100vh',
-    }}>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900">
       {/* Header - Full Width */}
       <header style={{
         width: '100%',
-        backgroundColor: '#021300dd',
-        color: '#ecf0f1',
+        backgroundColor: '#064e3b',
+        color: '#ffffff',
         textAlign: 'center',
         padding: '40px 20px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
       }}>
         <h1 style={{
           fontSize: '2.8rem',
           fontWeight: '600',
           margin: '0 0 10px 0',
+          background: 'linear-gradient(to right, #34d399, #6ee7b7)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
         }}>
           🐍 Sri Lankan Wildlife Explorer
         </h1>
         <p style={{
           fontSize: '1.2rem',
-          opacity: 0.9,
+          color: '#a7f3d0',
           maxWidth: '800px',
           margin: '0 auto',
         }}>
@@ -79,11 +75,11 @@ const AnimalDetailPage = () => {
 
       {/* Navigation - Full Width Dropdown */}
       <div style={{
-        backgroundColor: '#34495e',
-        color: '#fff',
+        backgroundColor: '#065f46',
+        color: '#ffffff',
         padding: '15px 20px',
         textAlign: 'center',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
       }}>
         <label htmlFor="animal-select" style={{
           fontWeight: '600',
