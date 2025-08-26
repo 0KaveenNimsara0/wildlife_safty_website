@@ -89,17 +89,18 @@ const CommunityFeedPage = () => {
         text: commentText
       });
 
-      const updatedPosts = posts.map(post => {
-        if (post._id === postId) {
-          return {
-            ...post,
-            comments: [...(post.comments || []), response.data]
-          };
-        }
-        return post;
-      });
+      const newPost = {
+        _id: response.data._id,
+        animalName: response.data.animalName,
+        experience: response.data.experience,
+        authorId: currentUser.uid,
+        authorName: currentUser.displayName || currentUser.email,
+        photoUrl: response.data.photoUrl,
+        createdAt: new Date(),
+        comments: []
+      };
 
-      setPosts(updatedPosts);
+      setPosts(prevPosts => [newPost, ...prevPosts]);
       setCommentTexts(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
       setError('Failed to add comment');
@@ -179,7 +180,7 @@ const CommunityFeedPage = () => {
       if (comment._id === commentId) {
         return updatedComment;
       }
-      if (comment.replies) {
+      if (comment.replies && comment.replies.length > 0) {
         return {
           ...comment,
           replies: updateCommentInTree(comment.replies, commentId, updatedComment)

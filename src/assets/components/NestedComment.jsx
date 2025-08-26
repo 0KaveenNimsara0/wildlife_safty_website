@@ -30,6 +30,7 @@ const NestedComment = ({
   // Format timestamp to match CommunityFeedPage
   const formatTime = (dateString) => {
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date'; // Handle invalid date
     const now = new Date();
     const diff = (now - date) / 1000; // difference in seconds
 
@@ -39,63 +40,26 @@ const NestedComment = ({
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const handleReaction = async (postId, commentId, reactionType) => {
-  if (!currentUser) return;
-  
-  try {
-    setLoading(true);
-    const endpoint = commentId 
-      ? `${API_URL}/posts/${postId}/comments/${commentId}/react`
-      : `${API_URL}/posts/${postId}/react`;
-
-    const response = await axios.post(endpoint, {
-      userId: currentUser.uid,
-      userName: currentUser.displayName || currentUser.email,
-      type: reactionType
-    });
+  const handleReaction = async (reactionType) => {
+    if (!currentUser) return;
     
-    // Update state based on whether it's a post or comment reaction
-    if (commentId) {
-      setPosts(prevPosts => prevPosts.map(post => {
-        if (post._id === postId) {
-          return {
-            ...post,
-            comments: post.comments.map(comment => {
-              if (comment._id === commentId) {
-                return response.data;
-              }
-              // Handle nested replies
-              if (comment.replies) {
-                return {
-                  ...comment,
-                  replies: comment.replies.map(reply => {
-                    if (reply._id === commentId) {
-                      return response.data;
-                    }
-                    return reply;
-                  })
-                };
-              }
-              return comment;
-            })
-          };
-        }
-        return post;
-      }));
-    } else {
-      setPosts(prevPosts => prevPosts.map(post => {
-        if (post._id === postId) {
-          return response.data;
-        }
-        return post;
-      }));
+    try {
+      setLoading(true);
+      const response = await axios.post(`${API_URL}/posts/${postId}/comments/${comment._id}/react`, {
+        userId: currentUser.uid,
+        userName: currentUser.displayName || currentUser.email,
+        type: reactionType
+      });
+      
+      // Update the comment with new reaction data
+      onUpdate(comment._id, response.data);
+      setActiveReaction(null);
+    } catch (err) {
+      console.error('Failed to add reaction:', err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Failed to add reaction:', err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   // Handle reply submission
   const handleReplySubmit = async () => {
