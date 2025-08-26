@@ -30,77 +30,65 @@ const CommunityFeedPage = () => {
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${API_URL}/posts`);
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/posts`);
 
-        const postsWithNestedComments = response.data.map(post => {
-          if (!post.comments) return post;
+      const postsWithNestedComments = response.data.map(post => {
+        if (!post.comments) return post;
 
-          const commentMap = {};
-          post.comments.forEach(comment => {
-            comment.replies = [];
-            commentMap[comment._id] = comment;
-          });
+        const commentMap = {};
+        post.comments.forEach(comment => {
+          comment.replies = [];
+          commentMap[comment._id] = comment;
+        });
 
-          const nestedComments = [];
-          post.comments.forEach(comment => {
-            if (comment.parentId) {
-              const parent = commentMap[comment.parentId];
-              if (parent) {
-                parent.replies.push(comment);
-              } else {
-                nestedComments.push(comment);
-              }
+        const nestedComments = [];
+        post.comments.forEach(comment => {
+          if (comment.parentId) {
+            const parent = commentMap[comment.parentId];
+            if (parent) {
+              parent.replies.push(comment);
             } else {
               nestedComments.push(comment);
             }
-          });
-
-          return {
-            ...post,
-            comments: nestedComments
-          };
+          } else {
+            nestedComments.push(comment);
+          }
         });
 
-        setPosts(postsWithNestedComments);
-      } catch (err) {
-        setError('Failed to fetch posts');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+        return {
+          ...post,
+          comments: nestedComments
+        };
+      });
 
+      setPosts(postsWithNestedComments);
+    } catch (err) {
+      setError('Failed to fetch posts');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPosts();
   }, []);
-
   const handleCommentSubmit = async (postId) => {
     const commentText = commentTexts[postId] || '';
     if (!currentUser || !commentText.trim()) return;
     
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/posts/${postId}/comments`, {
+      await axios.post(`${API_URL}/posts/${postId}/comments`, {
         authorId: currentUser.uid,
         authorName: currentUser.displayName || currentUser.email,
         text: commentText
       });
 
-      const newPost = {
-        _id: response.data._id,
-        animalName: response.data.animalName,
-        experience: response.data.experience,
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || currentUser.email,
-        photoUrl: response.data.photoUrl,
-        createdAt: new Date(),
-        comments: []
-      };
-
-      setPosts(prevPosts => [newPost, ...prevPosts]);
+      // Clear the comment input field only - no automatic refresh
       setCommentTexts(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
       setError('Failed to add comment');
@@ -253,7 +241,7 @@ const CommunityFeedPage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header - positioned under the main header */}
       <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-20 z-40 w-full border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="w-full px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             {currentUser && (
               <button
@@ -271,31 +259,44 @@ const CommunityFeedPage = () => {
               
             </div>
           </div>
-          {currentUser && (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
-                {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={fetchPosts}
+              className="flex items-center space-x-1 text-green-700 hover:text-green-800 bg-green-100 hover:bg-green-200 px-3 py-2 rounded-full transition"
+              disabled={loading}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="text-sm font-medium">Refresh</span>
+            </button>
+            
+            {currentUser && (
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
+                  {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+                    {currentUser.displayName || currentUser.email.split('@')[0]}
+                  </span>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {currentTime.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })} • {currentTime.toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: true
+                    })}
+                  </p>
+                </div>
               </div>
-              <div>
-                <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                  {currentUser.displayName || currentUser.email.split('@')[0]}
-                </span>
-                <p className="text-xs text-gray-500 mt-1">
-                  {currentTime.toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })} • {currentTime.toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: true
-                  })}
-                </p>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </header>
 
