@@ -14,7 +14,7 @@ import { FaBars, FaArrowLeft } from 'react-icons/fa';
 const CommunityFeedPage = () => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
-  const [commentText, setCommentText] = useState('');
+  const [commentTexts, setCommentTexts] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showMyPosts, setShowMyPosts] = useState(false);
@@ -76,6 +76,7 @@ const CommunityFeedPage = () => {
   }, []);
 
   const handleCommentSubmit = async (postId) => {
+    const commentText = commentTexts[postId] || '';
     if (!currentUser || !commentText.trim()) return;
     
     try {
@@ -97,7 +98,7 @@ const CommunityFeedPage = () => {
       });
 
       setPosts(updatedPosts);
-      setCommentText('');
+      setCommentTexts(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
       setError('Failed to add comment');
       console.error(err);
@@ -430,15 +431,15 @@ const CommunityFeedPage = () => {
                         <input
                           type="text"
                           placeholder="Write a comment..."
-                          value={commentText}
-                          onChange={(e) => setCommentText(e.target.value)}
+                          value={commentTexts[post._id] || ''}
+                          onChange={(e) => setCommentTexts(prev => ({ ...prev, [post._id]: e.target.value }))}
                           onKeyPress={(e) => e.key === 'Enter' && handleCommentSubmit(post._id)}
                           className="flex-1 px-3 py-2 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
                         />
                         <button
                           onClick={() => handleCommentSubmit(post._id)}
                           className="ml-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-full transition disabled:opacity-50"
-                          disabled={loading || !commentText.trim()}
+                          disabled={loading || !(commentTexts[post._id] || '').trim()}
                         >
                           Post
                         </button>
