@@ -83,7 +83,7 @@ export default function Header({ page, setPage, setAuthPage }) {
 
     return (
         <header className="bg-gradient-to-r from-emerald-900 via-green-800 to-teal-900 text-white shadow-2xl sticky top-0 z-50 backdrop-blur-sm border-b border-green-700/30">
-            <nav className="container mx-auto px-6 py-4">
+<nav className="w-full px-4 py-2">
                 <div className="flex justify-between items-center">
                     {/* Logo Section */}
                     <div className="flex items-center space-x-4">
@@ -96,17 +96,17 @@ export default function Header({ page, setPage, setAuthPage }) {
                             </div>
                         </div>
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
+<h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
                                 WildLife Safty
                             </h1>
-                            <p className="text-green-300 text-sm hidden sm:block font-medium">
+<p className="text-green-300 text-xs hidden sm:block font-medium" style={{ fontSize: '0.65rem' }}>
                                 Smart Wildlife Protection
                             </p>
                         </div>
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-6">
+<div className="hidden md:flex items-center space-x-4">
                         <div className="flex space-x-1">
                             {navigation.map((item) => {
                                 const IconComponent = item.icon;
@@ -114,7 +114,7 @@ export default function Header({ page, setPage, setAuthPage }) {
                                     <button
                                         key={item.id}
                                         onClick={() => handleNavigation(item.path)}
-                                        className={`group flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                                        className={`group flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                                             page === item.id 
                                                 ? 'bg-white/20 text-white shadow-lg backdrop-blur-sm border border-white/20' 
                                                 : 'text-green-200 hover:bg-white/10 hover:text-white hover:shadow-md'
@@ -135,7 +135,7 @@ export default function Header({ page, setPage, setAuthPage }) {
                                 <div className="flex items-center space-x-4">
                                     <button 
                                         onClick={() => navigate('/dashboard')}
-                                        className="flex items-center space-x-2 hover:bg-white/10 p-1.5 rounded-full transition-colors"
+                                        className="flex items-center space-x-2 hover:bg-white/10 p-1 rounded-full transition-colors"
                                     >
                                         {getUserAvatar()}
                                         <span className="text-sm text-green-200 hidden lg:inline">

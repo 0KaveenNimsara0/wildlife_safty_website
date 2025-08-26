@@ -238,7 +238,7 @@ const CommunityFeedPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 w-full">
       {/* Header - positioned under the main header */}
       <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-20 z-40 w-full border-b border-gray-200">
         <div className="w-full px-6 py-4 flex justify-between items-center">
