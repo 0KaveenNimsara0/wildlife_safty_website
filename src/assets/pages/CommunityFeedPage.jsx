@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 const API_URL = 'http://localhost:5000/api';
 
 import UserPostsPage from './UserPostsPage';
-import { FaBars, FaArrowLeft } from 'react-icons/fa';
+import { FaBars, FaArrowLeft, FaTimes } from 'react-icons/fa';
 
 const CommunityFeedPage = () => {
   const { currentUser } = useAuth();
@@ -18,6 +18,8 @@ const CommunityFeedPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showMyPosts, setShowMyPosts] = useState(false);
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -346,7 +348,7 @@ const CommunityFeedPage = () => {
             </div>
           ) : (
             posts.map((post) => (
-              <div key={post._id} className="bg-white rounded-xl shadow-md overflow-hidden">
+              <div key={post._id} className="bg-white rounded-xl shadow-md overflow-hidden ">
                 {/* Post Header */}
                 <div className="p-4 border-b border-gray-100 flex items-start space-x-3">
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
@@ -409,7 +411,13 @@ const CommunityFeedPage = () => {
                     <span className="text-sm">{post.likes || 0}</span>
                   </button>
                   <div className="flex space-x-4">
-                    <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100">
+                    <button 
+                      onClick={() => {
+                        setSelectedPost(post);
+                        setShowCommentsModal(true);
+                      }}
+                      className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100"
+                    >
                       <FaComment />
                       <span className="text-sm">Comment</span>
                     </button>
@@ -447,7 +455,7 @@ const CommunityFeedPage = () => {
                     </div>
                   )}
 
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-h-[300px] overflow-y-auto">
                     {(post.comments || []).map((comment) => (
                       <NestedComment
                         key={comment._id}
@@ -469,6 +477,114 @@ const CommunityFeedPage = () => {
           )}
         </div>
       </main>
+
+      {/* Comments Modal */}
+      {showCommentsModal && selectedPost && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowCommentsModal(false)} />
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl h-4/5 flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800">Comments</h2>
+                <button
+                  onClick={() => setShowCommentsModal(false)}
+                  className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  aria-label="Close comments"
+                >
+                  <FaTimes size={20} className="text-gray-600" />
+                </button>
+              </div>
+              
+              <div className="flex flex-1 overflow-hidden">
+                {/* Left Side - Post Content */}
+                <div className="w-1/2 border-r border-gray-200 p-4 overflow-y-auto">
+                  <div className="bg-white rounded-lg p-4">
+                    {/* Post Header */}
+                    <div className="flex items-start space-x-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
+                        {selectedPost.authorName?.charAt(0) || 'U'}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">{selectedPost.animalName}</h4>
+                        <p className="text-sm text-gray-600">{selectedPost.authorName}</p>
+                        <p className="text-xs text-gray-500">
+                          {formatDistanceToNow(new Date(selectedPost.createdAt), { addSuffix: true })}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Post Content */}
+                    <p className="text-gray-800 leading-relaxed whitespace-pre-line mb-4">
+                      {selectedPost.experience}
+                    </p>
+                    
+                    {selectedPost.photoUrl && (
+                      <div className="rounded-lg overflow-hidden border border-gray-200 mb-4">
+                        <img
+                          src={`${API_URL.replace('/api', '')}${selectedPost.photoUrl}`}
+                          alt="Sighting"
+                          className="w-full h-auto max-h-64 object-cover"
+                        />
+                      </div>
+                    )}
+
+                    {/* Post Stats */}
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <span>{selectedPost.likes || 0} likes</span>
+                      <span>{selectedPost.comments?.length || 0} comments</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side - Comments */}
+                <div className="w-1/2 p-4 overflow-y-auto">
+                  {currentUser && (
+                    <div className="flex items-start space-x-3 mb-4">
+                      <div className="w-8 h-8 rounded-full bg-green-100 flex-shrink-0 flex items-center justify-center text-green-700 font-medium text-sm">
+                        {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 flex">
+                        <input
+                          type="text"
+                          placeholder="Write a comment..."
+                          value={commentTexts[selectedPost._id] || ''}
+                          onChange={(e) => setCommentTexts(prev => ({ ...prev, [selectedPost._id]: e.target.value }))}
+                          onKeyPress={(e) => e.key === 'Enter' && handleCommentSubmit(selectedPost._id)}
+                          className="flex-1 px-3 py-2 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                        />
+                        <button
+                          onClick={() => handleCommentSubmit(selectedPost._id)}
+                          className="ml-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-full transition disabled:opacity-50"
+                          disabled={loading || !(commentTexts[selectedPost._id] || '').trim()}
+                        >
+                          Post
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    {(selectedPost.comments || []).map((comment) => (
+                      <NestedComment
+                        key={comment._id}
+                        comment={comment}
+                        postId={selectedPost._id}
+                        onReply={handleReply}
+                        onUpdate={handleUpdateComment}
+                        onDelete={handleDeleteComment}
+                        depth={0}
+                        maxDepth={3}
+                        postAuthorId={selectedPost.authorId}
+                        currentUser={currentUser}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
