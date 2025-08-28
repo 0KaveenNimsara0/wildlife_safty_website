@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet';
-import { Icon } from 'leaflet';
-import { MapPin, Building, Leaf, Search, LocateFixed, Filter } from 'lucide-react';
-
-// IMPORTANT: Make sure you have added the Leaflet CSS to your main index.html file in the <head> section:
-// <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+import { MapPin, Search, LocateFixed, Filter } from 'lucide-react';
 
 // Define the locations for snake parks and hotspots
 const locations = [
@@ -66,30 +61,12 @@ const locations = [
   },
 ];
 
-// Create custom icons for the map markers
-const parkIcon = new Icon({
-  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
-const hotspotIcon = new Icon({
-  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
-
 export default function MapPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [mapCenter, setMapCenter] = useState([7.8731, 80.7718]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   // Filter locations based on search and type
   const filteredLocations = locations.filter(location => {
@@ -116,120 +93,145 @@ export default function MapPage() {
     }
   };
 
+  // Generate Google Maps iframe URL
+  const getGoogleMapsUrl = () => {
+    if (selectedLocation) {
+      // Show specific location
+      const [lat, lng] = selectedLocation.coordinate;
+      return `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed`;
+    } else {
+      // Show overview of all filtered locations
+      const [centerLat, centerLng] = mapCenter;
+      return `https://maps.google.com/maps?q=${centerLat},${centerLng}&z=8&output=embed`;
+    }
+  };
+
   useEffect(() => {
     // Simulate loading for better UX
     const timer = setTimeout(() => setIsLoading(false), 1000);
     return () => clearTimeout(timer);
   }, []);
 
-    return (
-      <>
-        <main className="max-w-7xl mx-auto space-y-8 p-4">
-          {/* Header Section */}
-          <header className="text-center mb-8">
-            <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">Wildlife Hotspots Map</h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Explore snake parks and habitats across Sri Lanka with our interactive map
-            </p>
-          </header>
+  return (
+    <>
+      <main className="max-w-7xl mx-auto space-y-8 p-4">
+        {/* Header Section */}
+        <header className="text-center mb-8">
+          <MapPin className="w-16 h-16 text-blue-600 mx-auto mb-4" />
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">Wildlife Hotspots Map</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Explore snake parks and habitats across Sri Lanka with our interactive map
+          </p>
+        </header>
 
-      {/* Search and Filter Section */}
-      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search locations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        {/* Search and Filter Section */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search locations..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Locations</option>
+                <option value="park">Tourist Parks</option>
+                <option value="hotspot">Snake Hotspots</option>
+              </select>
+            </div>
+            <button
+              onClick={handleCurrentLocation}
+              className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              <option value="all">All Locations</option>
-              <option value="park">Tourist Parks</option>
-              <option value="hotspot">Snake Hotspots</option>
-            </select>
+              <LocateFixed className="w-4 h-4" />
+              <span>My Location</span>
+            </button>
           </div>
-          <button
-            onClick={handleCurrentLocation}
-            className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <LocateFixed className="w-4 h-4" />
-            <span>My Location</span>
-          </button>
         </div>
-      </div>
 
-      {/* Map Container */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        {isLoading && (
-          <div className="flex items-center justify-center h-96">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        {/* Locations List */}
+        {filteredLocations.length > 0 && (
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-4">Filtered Locations</h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {filteredLocations.map((location, index) => (
+                <div
+                  key={index}
+                  className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+                    selectedLocation === location
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-blue-300'
+                  }`}
+                  onClick={() => setSelectedLocation(location)}
+                >
+                  <h4 className="font-semibold text-blue-600">{location.title}</h4>
+                  <p className="text-sm text-gray-600 mt-1">{location.description}</p>
+                  {location.type === 'park' ? (
+                    <div className="text-xs text-gray-500 mt-2">
+                      <p>Contact: {location.contact}</p>
+                      <p>Hours: {location.hours}</p>
+                    </div>
+                  ) : (
+                    <div className="text-xs text-gray-500 mt-2">
+                      <p>Best Time: {location.bestTime}</p>
+                      {location.guideRequired && <p className="text-orange-600">Guide Required</p>}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
-        
-        <div className="h-96 md:h-[500px] rounded-b-xl overflow-hidden">
-          <MapContainer
-            center={mapCenter}
-            zoom={8}
-            scrollWheelZoom={true}
-            style={{ height: '100%', width: '100%' }}
-            zoomControl={true}
-            className="rounded-b-xl"
 
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            
-            {filteredLocations.map((loc, index) => (
-              <Marker 
-                key={index} 
-                position={loc.coordinate} 
-                icon={loc.type === 'park' ? parkIcon : hotspotIcon}
-              >
-                <Popup>
-                  <div className="max-w-xs">
-                    <h3 className="font-bold text-lg mb-2">{loc.title}</h3>
-                    <p className="text-sm text-gray-700 mb-2">{loc.description}</p>
-                    
-                    {loc.type === 'park' ? (
-                      <div className="text-sm space-y-1">
-                        <p><strong>Contact:</strong> {loc.contact}</p>
-                        <p><strong>Hours:</strong> {loc.hours}</p>
-                      </div>
-                    ) : (
-                      <div className="text-sm space-y-1">
-                        <p><strong>Best Time:</strong> {loc.bestTime}</p>
-                        {loc.guideRequired && <p className="text-orange-600 font-medium">Guide Required</p>}
-                      </div>
-                    )}
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+        {/* Map Container */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+          {isLoading && (
+            <div className="flex items-center justify-center h-96">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+          
+          <div className="h-96 md:h-[500px] rounded-b-xl overflow-hidden">
+            <iframe
+              src={getGoogleMapsUrl()}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Google Maps"
+            ></iframe>
+          </div>
         </div>
-      </div>
 
-      {/* Results Summary */}
-      <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-200">
-        <p className="text-center text-gray-600">
-          Showing {filteredLocations.length} location{filteredLocations.length !== 1 ? 's' : ''}
-          {searchTerm && ` for "${searchTerm}"`}
-        </p>
-      </div>
-    </main>
-      </>
+        {/* Results Summary */}
+        <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-200">
+          <p className="text-center text-gray-600">
+            Showing {filteredLocations.length} location{filteredLocations.length !== 1 ? 's' : ''}
+            {searchTerm && ` for "${searchTerm}"`}
+            {selectedLocation && ` | Viewing: ${selectedLocation.title}`}
+          </p>
+          {selectedLocation && (
+            <button
+              onClick={() => setSelectedLocation(null)}
+              className="mt-2 text-blue-600 hover:text-blue-800 text-sm"
+            >
+              Show all locations
+            </button>
+          )}
+        </div>
+      </main>
+    </>
   );
 }
