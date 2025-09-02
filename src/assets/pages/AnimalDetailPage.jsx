@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Import your animal data
-import animalsData from '../data/animals_with_images.json';
+import animalsData from '../data/sri_lanka_snakes_data.json';
 
 // 🔑 Replace with your Unsplash Access Key
 const UNSPLASH_ACCESS_KEY = 'UrY7BUpS9xMkyfu9YmsUetjp5N1YLtcbnRtQ8Wy71xo'; // ← Replace!
@@ -20,7 +20,7 @@ const AnimalDetailPage = () => {
       try {
         const response = await axios.get(UNSPLASH_API_URL, {
           params: {
-            query: `${selectedAnimal['Common Name']} Sri Lanka wildlife`,
+            query: `${selectedAnimal['Common English Name(s)']} Sri Lanka wildlife`,
             orientation: 'landscape',
             per_page: 1,
             client_id: UNSPLASH_ACCESS_KEY,
@@ -92,7 +92,7 @@ const AnimalDetailPage = () => {
           id="animal-select"
           onChange={(e) =>
             setSelectedAnimal(
-              animalsData.find((a) => a['Common Name'] === e.target.value)
+              animalsData.find((a) => a['Common English Name(s)'] === e.target.value)
             )
           }
           style={{
@@ -109,11 +109,11 @@ const AnimalDetailPage = () => {
         >
           {animalsData.map((animal) => (
             <option
-              key={animal['Common Name']}
-              value={animal['Common Name']}
+              key={animal['Common English Name(s)']}
+              value={animal['Common English Name(s)']}
               style={{ padding: '10px' }}
             >
-              {animal['Common Name']} ({animal['Scientific Name']})
+              {animal['Common English Name(s)']} ({animal['Scientific Name & Authority']})
             </option>
           ))}
         </select>
@@ -148,7 +148,7 @@ const AnimalDetailPage = () => {
           ) : image ? (
             <img
               src={image}
-              alt={selectedAnimal['Common Name']}
+              alt={selectedAnimal['Common English Name(s)']}
               style={{
                 width: '100%',
                 height: '100%',
@@ -180,7 +180,7 @@ const AnimalDetailPage = () => {
             fontSize: '0.9rem',
             textAlign: 'center',
           }}>
-            Photo of {selectedAnimal['Common Name']} | Source: Unsplash
+            Photo of {selectedAnimal['Common English Name(s)']} | Source: Unsplash
           </div>
         </div>
 
@@ -199,32 +199,31 @@ const AnimalDetailPage = () => {
             paddingBottom: '10px',
             marginBottom: '20px',
           }}>
-            {selectedAnimal['Common Name']}
+            {selectedAnimal['Common English Name(s)']}
           </h2>
 
-          <p><strong>Scientific Name:</strong> <em>{selectedAnimal['Scientific Name']}</em></p>
+          <p><strong>Scientific Name:</strong> <em>{selectedAnimal['Scientific Name & Authority']}</em></p>
 
           <p>
             <strong>Venom Level:</strong>{' '}
             <span style={{
-              color: selectedAnimal['Poison Level'] === 'Highly Venomous' ? '#c0392b' :
-                     selectedAnimal['Poison Level'] === 'Mildly Venomous' ? '#f39c12' : '#27ae60',
+              color: selectedAnimal['Venom & Medical Significance'].includes('Venomous') ? '#c0392b' : '#27ae60',
               fontWeight: 'bold',
               fontSize: '1.1rem',
             }}>
-              {selectedAnimal['Poison Level']}
+              {selectedAnimal['Venom & Medical Significance']}
             </span>
           </p>
 
-          <p><strong>Danger Level:</strong> {selectedAnimal['Danger Level']}</p>
-          <p><strong>Type:</strong> {selectedAnimal['Category']}</p>
-          <p><strong>Endemic:</strong> {selectedAnimal['Endemic'] === 'Yes' ? '✅ Yes' : '❌ No'}</p>
-          <p><strong>Habitat:</strong> {selectedAnimal['Region']}</p>
-          <p><strong>Venom Type:</strong> {selectedAnimal['Venom Type'] || 'N/A'}</p>
+          <p><strong>IUCN Status:</strong> {selectedAnimal['Global IUCN Red List Status']}</p>
+          <p><strong>Family:</strong> {selectedAnimal['Family']}</p>
+          <p><strong>Endemic:</strong> {selectedAnimal['Endemic Status'] === 'Endemic to Sri Lanka' ? '✅ Yes' : '❌ No'}</p>
+          <p><strong>Habitat:</strong> {selectedAnimal['Areas spread across Sri Lanka']}</p>
+          <p><strong>Local Names:</strong> {selectedAnimal['Local Name(s) (Sinhala/Tamil)']}</p>
 
           <div style={{ marginTop: '25px' }}>
-            <h3 style={{ color: '#2c3e50' }}>Behavior When Threatened</h3>
-            <p>{selectedAnimal['Behavior (Agitated)']}</p>
+            <h3 style={{ color: '#2c3e50' }}>How to Recognize</h3>
+            <p>{selectedAnimal['how to find(recognize)']}</p>
           </div>
 
           <div style={{
@@ -234,13 +233,18 @@ const AnimalDetailPage = () => {
             borderRadius: '8px',
             borderLeft: '5px solid #2196f3'
           }}>
-            <h3>🩹 First Aid</h3>
-            <p>{selectedAnimal['If Attacked']}</p>
+            <h3>🍽️ Diet</h3>
+            <p>{selectedAnimal['foods they eat']}</p>
           </div>
 
           <div style={{ marginTop: '25px', fontSize: '1rem', lineHeight: '1.7' }}>
             <h3>Description</h3>
-            <p>{selectedAnimal['Description']}</p>
+            <p>{selectedAnimal['A detailed description']}</p>
+          </div>
+
+          <div style={{ marginTop: '25px', fontSize: '1rem', lineHeight: '1.7' }}>
+            <h3>Reproduction</h3>
+            <p>{selectedAnimal['Contagion (Reproduction)']}</p>
           </div>
         </div>
       </main>
