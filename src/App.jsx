@@ -16,6 +16,7 @@ import ResetPasswordPage from './assets/pages/auth/ResetPasswordPage';
 import Dashboard from './assets/pages/Dashboard';
 import PrivateRoute from './assets/components/PrivateRoute';
 import UserPostsPage from './assets/pages/UserPostsPage';
+import UserChatPage from './assets/pages/UserChatPage';
 
 // Admin pages
 import AdminLoginPage from './assets/pages/admin/AdminLoginPage';
@@ -30,6 +31,7 @@ import AdminArticleManagement from './assets/pages/admin/AdminArticleManagement'
 import MedicalOfficerLoginPage from './assets/pages/medicalOfficer/MedicalOfficerLoginPage';
 import MedicalOfficerRegisterPage from './assets/pages/medicalOfficer/MedicalOfficerRegisterPage';
 import MedicalOfficerDashboard from './assets/pages/medicalOfficer/MedicalOfficerDashboard';
+import MedicalOfficerChatPage from './assets/pages/medicalOfficer/MedicalOfficerChatPage';
 
 // Components
 import Header from './assets/components/Header';
@@ -61,6 +63,7 @@ export default function App() {
                                 <Route path="/animalDetail" element={<AnimalDetailPage />} />
                                 <Route path="/communityFeed" element={<CommunityFeedPage />} />
                                 <Route path="/my-posts" element={<UserPostsPage />} />
+                                <Route path="/chat" element={<UserChatPage />} />
 
                                 {/* Admin routes */}
                                 <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -75,6 +78,7 @@ export default function App() {
                                 <Route path="/medical-officer/login" element={<MedicalOfficerLoginPage />} />
                                 <Route path="/medical-officer/register" element={<MedicalOfficerRegisterPage />} />
                                 <Route path="/medical-officer/dashboard" element={<MedicalOfficerDashboard />} />
+                                <Route path="/medical-officer/chat" element={<MedicalOfficerChatPage />} />
 
                                 <Route element={<PrivateRoute />}>
                                 <Route path="/dashboard" element={<Dashboard />} />

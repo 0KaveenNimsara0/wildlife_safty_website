@@ -9,15 +9,25 @@ import {
   AlertCircle,
   Send,
   User,
-  Shield
+  Shield,
+  Loader2
 } from 'lucide-react';
+import ChatInterface from '../../components/ChatInterface';  // Added missing import
 
-// Chat Interface Component
-const ChatInterface = ({ title, messages, onSendMessage, currentUser, placeholder }) => {
+// User Chat Interface Component
+const UserChatInterface = ({
+  conversations,
+  currentConversation,
+  messages,
+  onConversationSelect,
+  onSendMessage,
+  loading,
+  error
+}) => {
   const [newMessage, setNewMessage] = useState('');
 
   const handleSend = () => {
-    if (newMessage.trim()) {
+    if (newMessage.trim() && currentConversation) {
       onSendMessage(newMessage.trim());
       setNewMessage('');
     }
@@ -30,65 +40,191 @@ const ChatInterface = ({ title, messages, onSendMessage, currentUser, placeholde
     }
   };
 
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow">
       <div className="p-4 border-b bg-gray-50 rounded-t-lg">
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Chat with Users</h3>
       </div>
 
-      <div className="flex-1 p-4 overflow-y-auto">
-        {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-8">
-            <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No messages yet</p>
+      <div className="flex-1 flex">
+        {/* Conversations Sidebar */}
+        <div className="w-1/3 border-r border-gray-200 flex flex-col">
+          <div className="p-3 border-b border-gray-200 bg-gray-50">
+            <h4 className="text-sm font-medium text-gray-700">Conversations</h4>
           </div>
-        ) : (
-          <div className="space-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${message.senderId === currentUser.id ? 'justify-end' : 'justify-start'}`}
-              >
+          <div className="flex-1 overflow-y-auto">
+            <div className="divide-y divide-gray-100">
+              {conversations.map((conversation) => (
                 <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    message.senderId === currentUser.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-900'
+                  key={conversation._id}
+                  onClick={() => onConversationSelect(conversation)}
+                  className={`p-3 cursor-pointer hover:bg-gray-50 transition ${
+                    currentConversation?._id === conversation._id
+                      ? 'bg-blue-50 border-r-4 border-blue-500'
+                      : ''
                   }`}
                 >
-                  <p className="text-sm">{message.message}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.senderId === currentUser.id ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {new Date(message.createdAt).toLocaleTimeString()}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">
+                        {conversation.user?.displayName || conversation.user?.email || 'User'}
+                      </p>
+                      <p className="text-xs text-gray-600 truncate">
+                        {conversation.lastMessage?.message || 'No messages yet'}
+                      </p>
+                    </div>
+                    {conversation.unreadCount > 0 && (
+                      <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-1">
+                        {conversation.unreadCount}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {conversations.length === 0 && (
+                <div className="p-4 text-center text-gray-500">
+                  <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-xs">No conversations yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col">
+          {currentConversation ? (
+            <>
+              {/* Chat Header */}
+              <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-semibold text-xs">
+                        {currentConversation.user?.displayName?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="ml-3">
+                    <h4 className="text-sm font-semibold text-gray-900">
+                      {currentConversation.user?.displayName || currentConversation.user?.email || 'User'}
+                    </h4>
+                    <p className="text-xs text-gray-500">User Inquiry</p>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
 
-      <div className="p-4 border-t">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={placeholder}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleSend}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+              {/* Messages Area */}
+              <div className="flex-1 p-4 overflow-y-auto">
+                {loading ? (
+                  <div className="flex items-center justify-center h-full">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="text-center text-gray-500 mt-8">
+                    <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No messages yet. Start the conversation!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {messages.map((message, index) => {
+                      const isMedicalOfficer = message.senderType === 'medical_officer';
+                      const showDate = index === 0 || formatDate(message.createdAt) !== formatDate(messages[index - 1].createdAt);
+
+                      return (
+                        <div key={message._id}>
+                          {showDate && (
+                            <div className="text-center my-4">
+                              <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                                {formatDate(message.createdAt)}
+                              </span>
+                            </div>
+                          )}
+
+                          <div className={`flex ${isMedicalOfficer ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                              isMedicalOfficer
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-200 text-gray-900'
+                            }`}>
+                              <p className="text-sm">{message.message}</p>
+                              <p className={`text-xs mt-1 ${isMedicalOfficer ? 'text-blue-100' : 'text-gray-500'}`}>
+                                {formatTime(message.createdAt)}
+                                {message.isRead && isMedicalOfficer && (
+                                  <span className="ml-2">✓✓</span>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Message Input */}
+              <div className="p-4 border-t border-gray-200">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your medical advice here..."
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={loading}
+                  />
+                  <button
+                    onClick={handleSend}
+                    disabled={!newMessage.trim() || loading}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {loading ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <MessageSquare className="h-12 w-12 text-gray-300 mb-4" />
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">Select a Conversation</h3>
+                <p className="text-gray-500 text-sm">
+                  Choose a user from the list to view and respond to their messages.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
+};
+
+// Helper function for date formatting
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return 'Today';
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return 'Yesterday';
+  } else {
+    return date.toLocaleDateString();
+  }
 };
 
 // Article Management Component
@@ -152,10 +288,13 @@ const ArticleManagement = ({ articles, onCreateArticle, onEditArticle }) => {
 
 export default function MedicalOfficerDashboard() {
   const [medicalOfficerData, setMedicalOfficerData] = useState(null);
-  const [userMessages, setUserMessages] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [currentConversation, setCurrentConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [adminMessages, setAdminMessages] = useState([]);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [chatLoading, setChatLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -187,8 +326,8 @@ export default function MedicalOfficerDashboard() {
         setArticles(articlesData.articles);
       }
 
-      // Fetch conversations (this would be implemented with real-time updates)
-      // For now, we'll show empty states
+      // Fetch conversations
+      await fetchConversations();
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -198,10 +337,74 @@ export default function MedicalOfficerDashboard() {
     }
   };
 
+  const fetchConversations = async () => {
+    try {
+      const token = localStorage.getItem('medicalOfficerToken');
+      const response = await fetch('http://localhost:5000/api/medical-officer/chat/conversations', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setConversations(data.conversations || []);
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+    }
+  };
+
+  const handleConversationSelect = async (conversation) => {
+    setCurrentConversation(conversation);
+    setChatLoading(true);
+
+    try {
+      const token = localStorage.getItem('medicalOfficerToken');
+      const response = await fetch(`http://localhost:5000/api/medical-officer/chat/messages/${conversation._id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.messages || []);
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+      setError('Failed to load messages');
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
   const handleSendMessageToUser = async (message) => {
-    // Implementation for sending message to user
-    console.log('Sending message to user:', message);
-    // This would integrate with the chat API
+    if (!currentConversation || !currentConversation.user?.uid) return;
+
+    try {
+      setChatLoading(true);
+      const token = localStorage.getItem('medicalOfficerToken');
+      const response = await fetch(`http://localhost:5000/api/medical-officer/chat/send/${currentConversation.user.uid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Add the new message to the messages list
+        setMessages(prev => [...prev, data.message]);
+        // Refresh conversations to update last message
+        await fetchConversations();
+      } else {
+        setError('Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error sending message to user:', error);
+      setError('Failed to send message');
+    } finally {
+      setChatLoading(false);
+    }
   };
 
   const handleSendMessageToAdmin = async (message) => {
@@ -286,12 +489,14 @@ export default function MedicalOfficerDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - Chat with Users */}
           <div className="lg:col-span-1">
-            <ChatInterface
-              title="Chat with Users"
-              messages={userMessages}
+            <UserChatInterface
+              conversations={conversations}
+              currentConversation={currentConversation}
+              messages={messages}
+              onConversationSelect={handleConversationSelect}
               onSendMessage={handleSendMessageToUser}
-              currentUser={medicalOfficerData}
-              placeholder="Type your message to user..."
+              loading={chatLoading}
+              error={error}
             />
           </div>
 
@@ -306,13 +511,13 @@ export default function MedicalOfficerDashboard() {
 
           {/* Right Column - Chat with Admin */}
           <div className="lg:col-span-1">
-            <ChatInterface
-              title="Chat with Admin"
-              messages={adminMessages}
-              onSendMessage={handleSendMessageToAdmin}
-              currentUser={medicalOfficerData}
-              placeholder="Type your message to admin..."
-            />
+          <ChatInterface
+            title="Chat with Admin"
+            messages={adminMessages}
+            onSendMessage={handleSendMessageToAdmin}
+            medicalOfficer={medicalOfficerData}
+            placeholder="Type your message to admin..."
+          />
           </div>
         </div>
       </main>

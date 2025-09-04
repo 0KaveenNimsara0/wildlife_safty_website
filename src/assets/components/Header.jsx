@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin} from 'lucide-react';
+import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle} from 'lucide-react';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,8 @@ export default function Header({ page, setPage, setAuthPage }) {
         { id: 'learning', name: 'Learn', icon: BookOpen, path: '/learning' },
         { id: 'map', name: 'Map', icon: MapPin, path: '/map' },
         { id: 'animalDetail', name: 'Animal Details', icon: Search, path: '/animalDetail' },
-        { id: 'communityFeed', name: 'Community Feed', icon: User, path: '/communityFeed' }
+        { id: 'communityFeed', name: 'Community Feed', icon: User, path: '/communityFeed' },
+        { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' }
     ];
 
     const handleAuth = () => {
