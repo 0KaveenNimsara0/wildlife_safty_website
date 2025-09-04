@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, User } from 'lucide-react';
+import { UserPlus, Mail, Lock, AlertCircle, User, CheckCircle } from 'lucide-react';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 export default function RegisterPage({ setPage }) {
@@ -42,8 +42,15 @@ export default function RegisterPage({ setPage }) {
     await new Promise(resolve => setTimeout(resolve, 500)); // Small delay
     await sendEmailVerification(user); // Make sure to pass the user object
     
-    // 4. Navigate only after everything completes
-    navigate('/');
+    // 4. Reset loading before navigation to avoid UI stuck
+    setLoading(false);
+
+    // 5. Navigate only after everything completes
+    // Add a small delay before navigation to allow user to see success message
+    setTimeout(() => {
+      // Force full page reload after navigation to ensure fresh state
+      window.location.href = '/';
+    }, 1500);
   } catch (err) {
     console.error("Registration error:", err);
     setError(err.message || 'Registration failed. Please try again.');
@@ -64,6 +71,13 @@ export default function RegisterPage({ setPage }) {
           <span>{error}</span>
         </div>
       )}
+
+      {/* {!error && !loading && (
+        <div className="flex items-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+          <CheckCircle className="w-5 h-5 mr-2" />
+          <span>Registration successful! Redirecting...</span>
+        </div>
+      )} */}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

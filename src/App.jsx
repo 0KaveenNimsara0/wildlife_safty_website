@@ -17,6 +17,12 @@ import Dashboard from './assets/pages/Dashboard';
 import PrivateRoute from './assets/components/PrivateRoute';
 import UserPostsPage from './assets/pages/UserPostsPage';
 
+// Admin pages
+import AdminLoginPage from './assets/pages/admin/AdminLoginPage';
+import AdminRegisterPage from './assets/pages/admin/AdminRegisterPage';
+import AdminDashboard from './assets/pages/admin/AdminDashboard';
+import UserManagement from './assets/pages/admin/UserManagement';
+
 // Components
 import Header from './assets/components/Header';
 import Footer from './assets/components/Footer';
@@ -48,6 +54,11 @@ export default function App() {
                                 <Route path="/communityFeed" element={<CommunityFeedPage />} />
                                 <Route path="/my-posts" element={<UserPostsPage />} />
 
+                                {/* Admin routes */}
+                                <Route path="/admin/login" element={<AdminLoginPage />} />
+                                <Route path="/admin/register" element={<AdminRegisterPage />} />
+                                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                                <Route path="/admin/users" element={<UserManagement />} />
 
                                 <Route element={<PrivateRoute />}>
                                 <Route path="/dashboard" element={<Dashboard />} />
