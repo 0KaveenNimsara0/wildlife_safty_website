@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error, onClearError }) => {
   const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   const handleSendMessage = async (e) => {
@@ -92,7 +94,7 @@ const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error
       )}
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4" ref={messagesContainerRef}>
         {messages.length === 0 && !loading && (
           <div className="text-center py-12">
             <div className="text-6xl text-gray-300 mb-4">💬</div>
@@ -139,8 +141,6 @@ const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
           </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
