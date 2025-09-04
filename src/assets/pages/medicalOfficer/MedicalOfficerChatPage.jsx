@@ -17,11 +17,34 @@ const MedicalOfficerChatPage = () => {
     const token = localStorage.getItem('medicalOfficerToken');
     if (token) {
       setMedicalOfficerId(token);
-      fetchConversations(token);
     } else {
       setError('Medical officer not logged in');
     }
   }, []);
+
+  useEffect(() => {
+    let messagesInterval = null;
+    let conversationsInterval = null;
+
+    if (medicalOfficerId && currentConversation) {
+      fetchConversations(medicalOfficerId);
+
+      // Poll conversations every 5 seconds
+      conversationsInterval = setInterval(() => {
+        fetchConversations(medicalOfficerId);
+      }, 5000);
+
+      // Poll messages for current conversation every 3 seconds
+      messagesInterval = setInterval(() => {
+        fetchMessages(currentConversation._id);
+      }, 3000);
+    }
+
+    return () => {
+      if (messagesInterval) clearInterval(messagesInterval);
+      if (conversationsInterval) clearInterval(conversationsInterval);
+    };
+  }, [medicalOfficerId, currentConversation]);
 
   // Fetch conversations
   const fetchConversations = async (id) => {

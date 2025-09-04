@@ -108,10 +108,30 @@ const UserChatPage = () => {
   };
 
   useEffect(() => {
+    let messagesInterval = null;
+    let conversationsInterval = null;
+
     if (currentUser) {
       fetchConversations();
+
+      // Poll conversations every 5 seconds
+      conversationsInterval = setInterval(() => {
+        fetchConversations();
+      }, 5000);
+
+      // Poll messages for current conversation every 3 seconds
+      messagesInterval = setInterval(() => {
+        if (currentConversation) {
+          fetchMessages(currentConversation._id);
+        }
+      }, 3000);
     }
-  }, [currentUser]);
+
+    return () => {
+      if (messagesInterval) clearInterval(messagesInterval);
+      if (conversationsInterval) clearInterval(conversationsInterval);
+    };
+  }, [currentUser, currentConversation]);
 
   if (!currentUser) {
     return (
