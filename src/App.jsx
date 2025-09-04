@@ -22,6 +22,14 @@ import AdminLoginPage from './assets/pages/admin/AdminLoginPage';
 import AdminRegisterPage from './assets/pages/admin/AdminRegisterPage';
 import AdminDashboard from './assets/pages/admin/AdminDashboard';
 import UserManagement from './assets/pages/admin/UserManagement';
+import MedicalOfficerManagement from './assets/pages/admin/MedicalOfficerManagement';
+import AdminChatManagement from './assets/pages/admin/AdminChatManagement';
+import AdminArticleManagement from './assets/pages/admin/AdminArticleManagement';
+
+// Medical Officer pages
+import MedicalOfficerLoginPage from './assets/pages/medicalOfficer/MedicalOfficerLoginPage';
+import MedicalOfficerRegisterPage from './assets/pages/medicalOfficer/MedicalOfficerRegisterPage';
+import MedicalOfficerDashboard from './assets/pages/medicalOfficer/MedicalOfficerDashboard';
 
 // Components
 import Header from './assets/components/Header';
@@ -59,6 +67,14 @@ export default function App() {
                                 <Route path="/admin/register" element={<AdminRegisterPage />} />
                                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                                 <Route path="/admin/users" element={<UserManagement />} />
+                                <Route path="/admin/medical-officers" element={<MedicalOfficerManagement />} />
+                                <Route path="/admin/chat" element={<AdminChatManagement />} />
+                                <Route path="/admin/articles" element={<AdminArticleManagement />} />
+
+                                {/* Medical Officer routes */}
+                                <Route path="/medical-officer/login" element={<MedicalOfficerLoginPage />} />
+                                <Route path="/medical-officer/register" element={<MedicalOfficerRegisterPage />} />
+                                <Route path="/medical-officer/dashboard" element={<MedicalOfficerDashboard />} />
 
                                 <Route element={<PrivateRoute />}>
                                 <Route path="/dashboard" element={<Dashboard />} />

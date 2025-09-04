@@ -7,13 +7,17 @@ import {
   BarChart3,
   LogOut,
   Shield,
-  AlertCircle
+  AlertCircle,
+  MessageSquare,
+  FileText
 } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalUsers: 0,
-    recentUsers: 0
+    recentUsers: 0,
+    totalMedicalOfficers: 0,
+    recentMedicalOfficers: 0
   });
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,6 +40,19 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('adminToken');
+      // Fetch Firebase users count separately
+      // Removed fetching Firebase users count to avoid 404 error
+      // const firebaseResponse = await fetch('http://localhost:5000/firebase-count', {
+      //   headers: {
+      //     'Authorization': `Bearer ${token}`
+      //   }
+      // });
+      // if (!firebaseResponse.ok) {
+      //   throw new Error('Failed to fetch Firebase users count');
+      // }
+      // const firebaseData = await firebaseResponse.json();
+
+      // Fetch MongoDB stats including medical officers count
       const response = await fetch('http://localhost:5000/api/admin/users/stats/overview', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -47,7 +64,14 @@ export default function AdminDashboard() {
       }
 
       const data = await response.json();
-      setStats(data.stats);
+
+      // Use MongoDB stats for all counts
+      setStats({
+        totalUsers: data.stats.totalUsers,
+        recentUsers: data.stats.recentUsers,
+        totalMedicalOfficers: data.stats.totalMedicalOfficers,
+        recentMedicalOfficers: data.stats.recentMedicalOfficers
+      });
     } catch (error) {
       console.error('Error fetching stats:', error);
       setError('Failed to load dashboard statistics');
@@ -106,7 +130,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
               <div className="flex items-center">
@@ -151,7 +175,27 @@ export default function AdminDashboard() {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <BarChart3 className="h-6 w-6 text-blue-400" />
+                  <Shield className="h-6 w-6 text-blue-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">
+                      Medical Officers
+                    </dt>
+                    <dd className="text-lg font-medium text-gray-900">
+                      {stats.totalMedicalOfficers}
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <BarChart3 className="h-6 w-6 text-purple-400" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
@@ -174,13 +218,34 @@ export default function AdminDashboard() {
             <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
               Quick Actions
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               <button
                 onClick={() => navigate('/admin/users')}
                 className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
               >
                 <Users className="h-5 w-5 mr-2" />
                 Manage Users
+              </button>
+              <button
+                onClick={() => navigate('/admin/medical-officers')}
+                className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <UserCheck className="h-5 w-5 mr-2" />
+                Medical Officers
+              </button>
+              <button
+                onClick={() => navigate('/admin/chat')}
+                className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <MessageSquare className="h-5 w-5 mr-2" />
+                Chat Management
+              </button>
+              <button
+                onClick={() => navigate('/admin/articles')}
+                className="flex items-center justify-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+              >
+                <FileText className="h-5 w-5 mr-2" />
+                Article Management
               </button>
               <button
                 onClick={() => navigate('/admin/profile')}

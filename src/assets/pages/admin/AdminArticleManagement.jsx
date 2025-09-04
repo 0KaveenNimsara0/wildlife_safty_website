@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users,
+  FileText,
   Search,
-  Edit,
-  Trash2,
   ArrowLeft,
   AlertCircle,
   CheckCircle,
-  XCircle
+  XCircle,
+  Eye,
+  EyeOff,
+  Trash2
 } from 'lucide-react';
 
-export default function UserManagement() {
-  const [users, setUsers] = useState([]);
+export default function AdminArticleManagement() {
+  const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [editingUser, setEditingUser] = useState(null);
-  const [editForm, setEditForm] = useState({ email: '', displayName: '' });
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'approved', 'rejected'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,118 +28,98 @@ export default function UserManagement() {
       navigate('/admin/login');
       return;
     }
-    fetchUsers();
-  }, [currentPage, navigate]);
+    fetchArticles();
+  }, [currentPage, navigate, statusFilter]);
 
-  const fetchUsers = async () => {
+  const fetchArticles = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/users/firebase-users?limit=10&pageToken=`, {
+      const endpoint = statusFilter === 'all'
+        ? `http://localhost:5000/api/admin/articles?page=${currentPage}&limit=20`
+        : `http://localhost:5000/api/admin/articles/status/${statusFilter}?page=${currentPage}&limit=20`;
+
+      const response = await fetch(endpoint, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch users');
+        throw new Error('Failed to fetch articles');
       }
 
       const data = await response.json();
-      setUsers(data.users);
-      setTotalPages(1); // Adjust if pagination is implemented
+      setArticles(data.articles);
+      setTotalPages(data.pagination.totalPages);
       setError('');
     } catch (error) {
-      console.error('Error fetching users:', error);
-      setError('Failed to load users');
+      console.error('Error fetching articles:', error);
+      setError('Failed to load articles');
     } finally {
       setLoading(false);
     }
   };
 
-
-
-  const handleSearch = async (term) => {
-    if (!term.trim()) {
-      fetchUsers();
-      return;
-    }
-
+  const handleApproveArticle = async (articleId) => {
     try {
-      setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/users/search/${encodeURIComponent(term)}`, {
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/approve`, {
+        method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
 
       if (!response.ok) {
-        throw new Error('Search failed');
+        throw new Error('Failed to approve article');
       }
 
       const data = await response.json();
-      setUsers(data.users);
-      setTotalPages(1);
-      setError('');
+      alert('Article approved successfully!');
+      fetchArticles(); // Refresh articles
     } catch (error) {
-      console.error('Search error:', error);
-      setError('Search failed');
-    } finally {
-      setLoading(false);
+      console.error('Error approving article:', error);
+      alert('Failed to approve article');
     }
   };
 
-  const handleEdit = (user) => {
-    setEditingUser(user.uid);
-    setEditForm({
-      email: user.email,
-      displayName: user.displayName || ''
-    });
-  };
+  const handleRejectArticle = async (articleId) => {
+    const rejectionReason = prompt('Please provide a reason for rejection:');
+    if (!rejectionReason) return;
 
-  const handleUpdate = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      console.log('Update user token:', token);
-      const updateUrl = `http://localhost:5000/api/admin/users/${editingUser}`;
-      console.log('Update user URL:', updateUrl);
-      const response = await fetch(updateUrl, {
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/reject`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(editForm)
+        body: JSON.stringify({ rejectionReason })
       });
 
       if (!response.ok) {
-        throw new Error('Update failed');
+        throw new Error('Failed to reject article');
       }
 
       const data = await response.json();
-      setUsers(users.map(user =>
-        user.uid === editingUser ? { ...user, ...editForm } : user
-      ));
-      setEditingUser(null);
-      setError('');
+      alert('Article rejected successfully!');
+      fetchArticles(); // Refresh articles
     } catch (error) {
-      console.error('Update error:', error);
-      setError('Failed to update user');
+      console.error('Error rejecting article:', error);
+      alert('Failed to reject article');
     }
   };
 
-  const handleDelete = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
+  const handleDeleteArticle = async (articleId) => {
+    if (!window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
       return;
     }
 
     try {
       const token = localStorage.getItem('adminToken');
-      console.log('Delete user token:', token);
-      const deleteUrl = `http://localhost:5000/api/admin/users/${userId}`;
-      console.log('Delete user URL:', deleteUrl);
-      const response = await fetch(deleteUrl, {
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -147,15 +127,26 @@ export default function UserManagement() {
       });
 
       if (!response.ok) {
-        throw new Error('Delete failed');
+        throw new Error('Failed to delete article');
       }
 
-      // Re-fetch users after successful delete to update UI
-      await fetchUsers();
-      setError('');
+      alert('Article deleted successfully!');
+      fetchArticles(); // Refresh articles
     } catch (error) {
-      console.error('Delete error:', error);
-      setError('Failed to delete user');
+      console.error('Error deleting article:', error);
+      alert('Failed to delete article');
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'approved':
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Approved</span>;
+      case 'rejected':
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>;
+      case 'pending':
+      default:
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>;
     }
   };
 
@@ -163,7 +154,9 @@ export default function UserManagement() {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -180,10 +173,10 @@ export default function UserManagement() {
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
-              <Users className="h-8 w-8 text-emerald-600 mr-3" />
+              <FileText className="h-8 w-8 text-emerald-600 mr-3" />
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-                <p className="text-sm text-gray-600">Manage all registered users</p>
+                <h1 className="text-2xl font-bold text-gray-900">Article Management</h1>
+                <p className="text-sm text-gray-600">Review and manage submitted articles</p>
               </div>
             </div>
           </div>
@@ -198,31 +191,34 @@ export default function UserManagement() {
           </div>
         )}
 
-        {/* Search */}
+        {/* Filters */}
         <div className="mb-6">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-4 sm:mb-0">
+              <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-1">
+                Filter by Status
+              </label>
+              <select
+                id="status-filter"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md"
+              >
+                <option value="all">All Articles</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
             </div>
-            <input
-              type="text"
-              placeholder="Search users by email or name..."
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                handleSearch(e.target.value);
-              }}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-            />
           </div>
         </div>
 
-        {/* Users Table */}
+        {/* Articles Table */}
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading users...</p>
+              <p className="mt-4 text-gray-600">Loading articles...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -230,13 +226,16 @@ export default function UserManagement() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
+                      Article
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
+                      Author
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Joined
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Submitted
                     </th>
                     <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
@@ -244,79 +243,70 @@ export default function UserManagement() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {users && users.map((user) => (
-                    <tr key={user.uid}>
+                  {articles.map((article) => (
+                    <tr key={article._id}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
                             <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                               <span className="text-sm font-medium text-gray-700">
-                                {((user.displayName || user.email) ? (user.displayName || user.email).charAt(0).toUpperCase() : '')}
+                                {article.title ? article.title.charAt(0).toUpperCase() : 'A'}
                               </span>
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {user.displayName || user.email || 'No name'}
+                            <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
+                              {article.title}
+                            </div>
+                            <div className="text-sm text-gray-500 max-w-xs truncate">
+                              {article.content?.substring(0, 50)}...
                             </div>
                           </div>
                         </div>
                       </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                        {editingUser === user.uid ? (
-                          <input
-                            type="email"
-                            value={editForm.email}
-                            onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        ) : (
-                          <div className="text-sm text-gray-900">{user.email || 'No email'}</div>
-                        )}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {article.author?.name || 'Unknown'}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {article.author?.email || ''}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(article.status)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        }) : 'N/A'}
+                        {formatDate(article.createdAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {editingUser === user.uid ? (
-                          <div className="flex justify-end space-x-2">
+                        {article.status === 'pending' && (
+                          <>
                             <button
-                              onClick={handleUpdate}
-                              className="text-green-600 hover:text-green-900"
+                              onClick={() => handleApproveArticle(article._id)}
+                              className="text-green-600 hover:text-green-900 mr-2"
+                              title="Approve Article"
                             >
                               <CheckCircle className="h-5 w-5" />
                             </button>
                             <button
-                              onClick={() => setEditingUser(null)}
-                              className="text-gray-600 hover:text-gray-900"
+                              onClick={() => handleRejectArticle(article._id)}
+                              className="text-red-600 hover:text-red-900 mr-2"
+                              title="Reject Article"
                             >
                               <XCircle className="h-5 w-5" />
                             </button>
-                          </div>
-                        ) : (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => handleEdit(user)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              <Edit className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(user.uid)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </button>
-                          </div>
+                          </>
                         )}
+                        <button
+                          onClick={() => handleDeleteArticle(article._id)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete Article"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
                       </td>
                     </tr>
                   ))}
-
                 </tbody>
               </table>
             </div>
