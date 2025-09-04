@@ -279,7 +279,7 @@ const MedicalOfficerChatPage = () => {
                     )}
 
                     {/* Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4 max-h-[500px]">
                       {messages.length === 0 && (
                         <div className="text-center py-12">
                           <div className="text-6xl text-gray-300 mb-4">💬</div>

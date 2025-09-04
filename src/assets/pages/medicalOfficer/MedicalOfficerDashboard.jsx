@@ -120,7 +120,7 @@ const UserChatInterface = ({
               </div>
 
               {/* Messages Area */}
-              <div className="flex-1 p-4 overflow-y-auto">
+              <div className="flex-1 p-4 overflow-y-auto max-h-[400px]">
                 {loading ? (
                   <div className="flex items-center justify-center h-full">
                     <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
