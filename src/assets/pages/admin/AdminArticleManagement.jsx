@@ -116,6 +116,7 @@ export default function AdminArticleManagement() {
   const handleCancelPending = async (articleId) => {
     try {
       const token = localStorage.getItem('adminToken');
+      // Correct URL to match backend route for cancel pending
       const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/cancel-pending`, {
         method: 'PUT',
         headers: {
@@ -162,8 +163,82 @@ export default function AdminArticleManagement() {
     }
   };
 
+  const handleUnpublishArticle = async (articleId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      // Correct URL to match backend route for unpublish
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/unpublish`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to unpublish article');
+      }
+
+      const data = await response.json();
+      alert('Article unpublished successfully!');
+      fetchArticles(); // Refresh articles
+    } catch (error) {
+      console.error('Error unpublishing article:', error);
+      alert('Failed to unpublish article');
+    }
+  };
+
+  const handlePublishArticle = async (articleId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      // Correct URL to match backend route for publish
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/publish`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to publish article');
+      }
+
+      const data = await response.json();
+      alert('Article published successfully!');
+      fetchArticles(); // Refresh articles
+    } catch (error) {
+      console.error('Error publishing article:', error);
+      alert('Failed to publish article');
+    }
+  };
+
+  const handleReReviewArticle = async (articleId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      // Correct URL to match backend route for re-review
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/re-review`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send article for re-review');
+      }
+
+      const data = await response.json();
+      alert('Article sent for re-review successfully!');
+      fetchArticles(); // Refresh articles
+    } catch (error) {
+      console.error('Error sending article for re-review:', error);
+      alert('Failed to send article for re-review');
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status) {
+      case 'published':
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Published</span>;
       case 'approved':
         return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Approved</span>;
       case 'rejected':
@@ -235,6 +310,7 @@ export default function AdminArticleManagement() {
                 <option value="all">All Articles</option>
                 <option value="pending">Pending</option>
                 <option value="approved">Approved</option>
+                <option value="published">Published</option>
                 <option value="rejected">Rejected</option>
               </select>
             </div>
@@ -307,12 +383,13 @@ export default function AdminArticleManagement() {
                         {formatDate(article.createdAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {(article.status === 'pending' || article.status === 'pending_review' || article.status === 'draft') && (
+                        {/* Action buttons based on current status */}
+                        {article.status === 'pending' || article.status === 'pending_review' || article.status === 'draft' ? (
                           <>
                             <button
                               onClick={() => handleApproveArticle(article._id)}
                               className="text-green-600 hover:text-green-900 mr-2"
-                              title="Approve Article"
+                              title="Approve & Publish Article"
                             >
                               <CheckCircle className="h-5 w-5" />
                             </button>
@@ -333,7 +410,51 @@ export default function AdminArticleManagement() {
                               </button>
                             )}
                           </>
-                        )}
+                        ) : article.status === 'published' ? (
+                          <>
+                            <button
+                              onClick={() => handleUnpublishArticle(article._id)}
+                              className="text-orange-600 hover:text-orange-900 mr-2"
+                              title="Unpublish Article"
+                            >
+                              <EyeOff className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => handleRejectArticle(article._id)}
+                              className="text-red-600 hover:text-red-900 mr-2"
+                              title="Reject Article"
+                            >
+                              <XCircle className="h-5 w-5" />
+                            </button>
+                          </>
+                        ) : article.status === 'approved' ? (
+                          <>
+                            <button
+                              onClick={() => handlePublishArticle(article._id)}
+                              className="text-blue-600 hover:text-blue-900 mr-2"
+                              title="Publish Article"
+                            >
+                              <Eye className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => handleRejectArticle(article._id)}
+                              className="text-red-600 hover:text-red-900 mr-2"
+                              title="Reject Article"
+                            >
+                              <XCircle className="h-5 w-5" />
+                            </button>
+                          </>
+                        ) : article.status === 'rejected' ? (
+                          <>
+                            <button
+                              onClick={() => handleReReviewArticle(article._id)}
+                              className="text-yellow-600 hover:text-yellow-900 mr-2"
+                              title="Send for Re-review"
+                            >
+                              <CheckCircle className="h-5 w-5" />
+                            </button>
+                          </>
+                        ) : null}
                         <button
                           onClick={() => handleDeleteArticle(article._id)}
                           className="text-red-600 hover:text-red-900"
