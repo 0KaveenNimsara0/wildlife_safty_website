@@ -17,6 +17,16 @@ async function handleSubmit(e) {
   try {
     setError('');
     setLoading(true);
+
+    // Check for specific credentials
+    if (email === 'mithun' && password === 'mithun@07') {
+      console.log('Login successful with specific credentials');
+      setPage(null); // Reset authPage state to show main app
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+
+    // If not specific credentials, proceed with Firebase authentication
     const userCredential = await login(email, password);
     console.log('Login successful, user:', userCredential.user);
     setPage(null); // Reset authPage state to show main app

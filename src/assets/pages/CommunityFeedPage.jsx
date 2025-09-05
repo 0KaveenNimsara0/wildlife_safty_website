@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaRegHeart, FaComment, FaShare, FaUser } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaComment, FaShare, FaUser, FaBars, FaArrowLeft, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../components/AuthContext';
 import NestedComment from '../components/NestedComment';
 import axios from 'axios';
@@ -9,7 +9,14 @@ import { Link } from 'react-router-dom';
 const API_URL = 'http://localhost:5000/api';
 
 import UserPostsPage from './UserPostsPage';
-import { FaBars, FaArrowLeft, FaTimes } from 'react-icons/fa';
+
+const fixedCategories = [
+  'wildlife_safety',
+  'medical_advice',
+  'emergency_response',
+  'prevention',
+  'treatment'
+];
 
 const CommunityFeedPage = () => {
   const { currentUser } = useAuth();
@@ -21,6 +28,14 @@ const CommunityFeedPage = () => {
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // New states for articles sidebar
+  const [selectedCategory, setSelectedCategory] = useState(fixedCategories[0]);
+  const [articles, setArticles] = useState([]);
+  const [articlesLoading, setArticlesLoading] = useState(false);
+  const [articlesError, setArticlesError] = useState('');
+  const [popupArticle, setPopupArticle] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -76,6 +91,26 @@ const CommunityFeedPage = () => {
   useEffect(() => {
     fetchPosts();
   }, []);
+
+  // Fetch articles for selected category
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        setArticlesLoading(true);
+        const response = await axios.get(`${API_URL}/articles/category/${selectedCategory}`);
+        setArticles(response.data.articles || []);
+        setArticlesError('');
+      } catch (err) {
+        setArticlesError('Failed to fetch articles');
+        console.error(err);
+      } finally {
+        setArticlesLoading(false);
+      }
+    };
+
+    fetchArticles();
+  }, [selectedCategory]);
+
   const handleCommentSubmit = async (postId) => {
     const commentText = commentTexts[postId] || '';
     if (!currentUser || !commentText.trim()) return;
@@ -226,6 +261,17 @@ const CommunityFeedPage = () => {
     );
   };
 
+  // Article popup handlers
+  const openArticlePopup = (article) => {
+    setPopupArticle(article);
+    setShowPopup(true);
+  };
+
+  const closeArticlePopup = () => {
+    setShowPopup(false);
+    setPopupArticle(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -239,9 +285,9 @@ const CommunityFeedPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 w-full">
-      {/* Header - positioned under the main header */}
-      <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-20 z-40 w-full border-b border-gray-200">
-        <div className="w-full px-6 py-4 flex justify-between items-center">
+      {/* Full-width Header */}
+      <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-20 z-40 w-full border-b border-gray-200 mb-4">
+        <div className="w-full max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-4">
             {currentUser && (
               <button
@@ -256,7 +302,6 @@ const CommunityFeedPage = () => {
               <h1 className="text-2xl font-bold text-green-700 flex items-center">
                 <span className="mr-2">🌿</span> Wildlife Community Center
               </h1>
-              
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -270,7 +315,6 @@ const CommunityFeedPage = () => {
               </svg>
               <span className="text-sm font-medium">Refresh</span>
             </button>
-            
             {currentUser && (
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
@@ -300,185 +344,224 @@ const CommunityFeedPage = () => {
         </div>
       </header>
 
-      {/* My Posts Sidebar */}
-      {showMyPosts && (
-        <div className="fixed inset-0 z-50 overflow-hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowMyPosts(false)} />
-          <div className="absolute left-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-lg font-semibold text-gray-800">My Posts</h2>
-              <button
-                onClick={() => setShowMyPosts(false)}
-                className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
-                aria-label="Close My Posts"
-              >
-                <FaArrowLeft size={20} className="text-gray-600" />
-              </button>
+      {/* Main Layout with Articles on Right */}
+      <div className="w-full max-w-6xl mx-auto px-6 flex gap-6">
+        {/* Main content area - Left side */}
+        <div className="flex-1 max-w-2xl">
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
+              <p>{error}</p>
             </div>
-            <div className="h-full overflow-y-auto">
-              <UserPostsPage />
-            </div>
+          )}
+
+          {/* Posts Feed */}
+          <div className="space-y-5">
+            {posts.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-md overflow-hidden p-8 text-center">
+                <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <span className="text-3xl">🦉</span>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">No sightings yet</h3>
+                <p className="text-gray-600 mb-4">Be the first to share your wildlife encounter!</p>
+                {currentUser && (
+                  <Link
+                    to="/my-posts"
+                    className="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition"
+                  >
+                    Create Your First Post
+                  </Link>
+                )}
+              </div>
+            ) : (
+              posts.map((post) => (
+                <div key={post._id} className="bg-white rounded-xl shadow-md overflow-hidden ">
+                  {/* Post Header */}
+                  <div className="p-4 border-b border-gray-100 flex items-start space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
+                      {post.authorName?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800">{post.animalName}</h4>
+                      <p className="text-sm text-gray-600">{post.authorName}</p>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <p className="text-xs text-gray-500">
+                          {new Date(post.createdAt).toLocaleDateString('en-US', {
+                            weekday: 'short',
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </p>
+                        <span className="text-gray-300">•</span>
+                        <p className="text-xs text-gray-500">
+                          {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Post Content */}
+                  <div className="p-4">
+                    <p className="text-gray-800 leading-relaxed whitespace-pre-line">{post.experience}</p>
+                    {post.photoUrl && (
+                      <div className="mt-4 rounded-lg overflow-hidden border border-gray-200">
+                        <img
+                          src={`${API_URL.replace('/api', '')}${post.photoUrl}`}
+                          alt="Sighting"
+                          className="w-full h-auto max-h-96 object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Post Actions */}
+                  <div className="px-4 py-2 border-t border-gray-100 flex justify-between">
+                    <button
+                      onClick={() => handleLike(post._id)}
+                      className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
+                        hasUserLikedPost(post)
+                          ? 'text-red-500 bg-red-50'
+                          : 'text-gray-500 hover:bg-gray-100'
+                      } ${!currentUser ? 'cursor-not-allowed opacity-50' : ''}`}
+                      disabled={!currentUser || loading}
+                    >
+                      {hasUserLikedPost(post) ? <FaHeart /> : <FaRegHeart />}
+                      <span className="text-sm">{post.likes || 0}</span>
+                    </button>
+                    <div className="flex space-x-4">
+                      <button
+                        onClick={() => {
+                          setSelectedPost(post);
+                          setShowCommentsModal(true);
+                        }}
+                        className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100"
+                      >
+                        <FaComment />
+                        <span className="text-sm">Comment</span>
+                      </button>
+                      <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100">
+                        <FaShare />
+                        <span className="text-sm">Share</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Comments Section */}
+                  <div className="bg-gray-50 p-4 border-t border-gray-100">
+                    {currentUser && (
+                      <div className="flex items-start space-x-3 mb-4">
+                        <div className="w-8 h-8 rounded-full bg-green-100 flex-shrink-0 flex items-center justify-center text-green-700 font-medium text-sm">
+                          {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 flex">
+                          <input
+                            type="text"
+                            placeholder="Write a comment..."
+                            value={commentTexts[post._id] || ''}
+                            onChange={(e) => setCommentTexts(prev => ({ ...prev, [post._id]: e.target.value }))}
+                            onKeyPress={(e) => e.key === 'Enter' && handleCommentSubmit(post._id)}
+                            className="flex-1 px-3 py-2 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                          />
+                          <button
+                            onClick={() => handleCommentSubmit(post._id)}
+                            className="ml-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-full transition disabled:opacity-50"
+                            disabled={loading || !(commentTexts[post._id] || '').trim()}
+                          >
+                            Post
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="space-y-4 max-h-[300px] overflow-y-auto">
+                      {(post.comments || []).map((comment) => (
+                        <NestedComment
+                          key={comment._id}
+                          comment={comment}
+                          postId={post._id}
+                          onReply={handleReply}
+                          onUpdate={handleUpdateComment}
+                          onDelete={handleDeleteComment}
+                          depth={0}
+                          maxDepth={3}
+                          postAuthorId={post.authorId}
+                          currentUser={currentUser}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
-      )}
 
-      <main className="max-w-2xl mx-auto px-4 py-6">
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg">
-            <p>{error}</p>
-          </div>
-        )}
+        {/* Articles Section - Right side */}
+        <div className="w-80 flex-shrink-0">
+          <div className="bg-white rounded-xl shadow-md p-4 sticky top-24">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Articles</h2>
 
-        {/* Posts Feed */}
-        <div className="space-y-5">
-          {posts.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-md overflow-hidden p-8 text-center">
-              <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <span className="text-3xl">🦉</span>
+            {/* Categories */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Categories</h3>
+              <div className="flex flex-wrap gap-2">
+                {fixedCategories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+                      selectedCategory === category
+                        ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border-2 border-gray-200'
+                    }`}
+                  >
+                    {category.replace(/_/g, ' ')}
+                  </button>
+                ))}
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No sightings yet</h3>
-              <p className="text-gray-600 mb-4">Be the first to share your wildlife encounter!</p>
-              {currentUser && (
-                <Link 
-                  to="/my-posts"
-                  className="inline-block bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition"
-                >
-                  Create Your First Post
-                </Link>
+            </div>
+
+            {/* Articles List */}
+            <div>
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Articles in {selectedCategory.replace(/_/g, ' ')}</h3>
+              {articlesLoading ? (
+                <div className="flex items-center justify-center py-4">
+                  <div className="w-6 h-6 border-4 border-dashed rounded-full animate-spin border-green-600"></div>
+                  <p className="ml-2 text-xs text-gray-600">Loading...</p>
+                </div>
+              ) : articlesError ? (
+                <p className="text-red-600 bg-red-50 p-3 rounded-lg text-xs">{articlesError}</p>
+              ) : articles.length === 0 ? (
+                <div className="text-center py-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span className="text-lg">📄</span>
+                  </div>
+                  <p className="text-xs text-gray-500">No articles found.</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {articles.map((article) => (
+                    <div
+                      key={article._id}
+                      className="p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 hover:border-green-300 transition-all duration-200"
+                      onClick={() => openArticlePopup(article)}
+                    >
+                      <h4 className="font-semibold text-gray-800 text-sm mb-1 line-clamp-2">{article.title}</h4>
+                      <p className="text-xs text-gray-600 line-clamp-2">{article.excerpt}</p>
+                      <div className="mt-2 text-xs text-green-600 font-medium">
+                        Read more →
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
-          ) : (
-            posts.map((post) => (
-              <div key={post._id} className="bg-white rounded-xl shadow-md overflow-hidden ">
-                {/* Post Header */}
-                <div className="p-4 border-b border-gray-100 flex items-start space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-medium">
-                    {post.authorName?.charAt(0) || 'U'}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-800">{post.animalName}</h4>
-                    <p className="text-sm text-gray-600">{post.authorName}</p>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <p className="text-xs text-gray-500">
-                        {new Date(post.createdAt).toLocaleDateString('en-US', {
-                          weekday: 'short',
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </p>
-                      {/* <span className="text-gray-300">•</span>
-                      <p className="text-xs text-gray-500">
-                        {new Date(post.createdAt).toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          hour12: true
-                        })}
-                      </p> */}
-                      <span className="text-gray-300">•</span>
-                      <p className="text-xs text-gray-500">
-                        {formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Post Content */}
-                <div className="p-4">
-                  <p className="text-gray-800 leading-relaxed whitespace-pre-line">{post.experience}</p>
-                  {post.photoUrl && (
-                    <div className="mt-4 rounded-lg overflow-hidden border border-gray-200">
-                      <img
-                        src={`${API_URL.replace('/api', '')}${post.photoUrl}`}
-                        alt="Sighting"
-                        className="w-full h-auto max-h-96 object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Post Actions */}
-                <div className="px-4 py-2 border-t border-gray-100 flex justify-between">
-                  <button
-                    onClick={() => handleLike(post._id)}
-                    className={`flex items-center space-x-1 px-3 py-1 rounded-full ${
-                      hasUserLikedPost(post) 
-                        ? 'text-red-500 bg-red-50' 
-                        : 'text-gray-500 hover:bg-gray-100'
-                    } ${!currentUser ? 'cursor-not-allowed opacity-50' : ''}`}
-                    disabled={!currentUser || loading}
-                  >
-                    {hasUserLikedPost(post) ? <FaHeart /> : <FaRegHeart />}
-                    <span className="text-sm">{post.likes || 0}</span>
-                  </button>
-                  <div className="flex space-x-4">
-                    <button 
-                      onClick={() => {
-                        setSelectedPost(post);
-                        setShowCommentsModal(true);
-                      }}
-                      className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100"
-                    >
-                      <FaComment />
-                      <span className="text-sm">Comment</span>
-                    </button>
-                    <button className="flex items-center space-x-1 text-gray-500 hover:text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100">
-                      <FaShare />
-                      <span className="text-sm">Share</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Comments Section */}
-                <div className="bg-gray-50 p-4 border-t border-gray-100">
-                  {currentUser && (
-                    <div className="flex items-start space-x-3 mb-4">
-                      <div className="w-8 h-8 rounded-full bg-green-100 flex-shrink-0 flex items-center justify-center text-green-700 font-medium text-sm">
-                        {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1 flex">
-                        <input
-                          type="text"
-                          placeholder="Write a comment..."
-                          value={commentTexts[post._id] || ''}
-                          onChange={(e) => setCommentTexts(prev => ({ ...prev, [post._id]: e.target.value }))}
-                          onKeyPress={(e) => e.key === 'Enter' && handleCommentSubmit(post._id)}
-                          className="flex-1 px-3 py-2 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
-                        />
-                        <button
-                          onClick={() => handleCommentSubmit(post._id)}
-                          className="ml-2 bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-full transition disabled:opacity-50"
-                          disabled={loading || !(commentTexts[post._id] || '').trim()}
-                        >
-                          Post
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="space-y-4 max-h-[300px] overflow-y-auto">
-                    {(post.comments || []).map((comment) => (
-                      <NestedComment
-                        key={comment._id}
-                        comment={comment}
-                        postId={post._id}
-                        onReply={handleReply}
-                        onUpdate={handleUpdateComment}
-                        onDelete={handleDeleteComment}
-                        depth={0}
-                        maxDepth={3}
-                        postAuthorId={post.authorId}
-                        currentUser={currentUser}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
+          </div>
         </div>
-      </main>
+      </div>
+
+
 
       {/* Comments Modal */}
       {showCommentsModal && selectedPost && (
@@ -496,7 +579,7 @@ const CommunityFeedPage = () => {
                   <FaTimes size={20} className="text-gray-600" />
                 </button>
               </div>
-              
+
               <div className="flex flex-1 overflow-hidden">
                 {/* Left Side - Post Content */}
                 <div className="w-1/2 border-r border-gray-200 p-4 overflow-y-auto">
@@ -519,7 +602,7 @@ const CommunityFeedPage = () => {
                     <p className="text-gray-800 leading-relaxed whitespace-pre-line mb-4">
                       {selectedPost.experience}
                     </p>
-                    
+
                     {selectedPost.photoUrl && (
                       <div className="rounded-lg overflow-hidden border border-gray-200 mb-4">
                         <img
@@ -584,6 +667,37 @@ const CommunityFeedPage = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Article Popup Modal */}
+      {showPopup && popupArticle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto p-6 relative">
+            <button
+              onClick={closeArticlePopup}
+              className="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
+              aria-label="Close article popup"
+            >
+              ✕
+            </button>
+            <h2 className="text-2xl font-bold mb-4">{popupArticle.title}</h2>
+            <div className="prose max-w-none whitespace-pre-wrap">
+              {popupArticle.content}
+            </div>
+            {popupArticle.images && popupArticle.images.length > 0 && (
+              <div className="mt-4 space-y-2">
+                {popupArticle.images.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img.url}
+                    alt={`Article image ${idx + 1}`}
+                    className="w-full rounded-md"
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

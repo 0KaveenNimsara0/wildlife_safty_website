@@ -112,6 +112,30 @@ export default function AdminArticleManagement() {
     }
   };
 
+  // New handler to cancel pending review
+  const handleCancelPending = async (articleId) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/cancel-pending`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel pending review');
+      }
+
+      const data = await response.json();
+      alert('Pending review cancelled, article reverted to draft');
+      fetchArticles(); // Refresh articles
+    } catch (error) {
+      console.error('Error cancelling pending review:', error);
+      alert('Failed to cancel pending review');
+    }
+  };
+
   const handleDeleteArticle = async (articleId) => {
     if (!window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
       return;
@@ -144,9 +168,13 @@ export default function AdminArticleManagement() {
         return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Approved</span>;
       case 'rejected':
         return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>;
+      case 'pending_review':
       case 'pending':
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending Review</span>;
+      case 'draft':
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Draft</span>;
       default:
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>;
+        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Unknown</span>;
     }
   };
 
@@ -279,7 +307,7 @@ export default function AdminArticleManagement() {
                         {formatDate(article.createdAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {article.status === 'pending' && (
+                      {(article.status === 'pending' || article.status === 'pending_review' || article.status === 'draft') && (
                           <>
                             <button
                               onClick={() => handleApproveArticle(article._id)}
@@ -295,6 +323,15 @@ export default function AdminArticleManagement() {
                             >
                               <XCircle className="h-5 w-5" />
                             </button>
+                            {article.status === 'pending_review' && (
+                              <button
+                                onClick={() => handleCancelPending(article._id)}
+                                className="text-yellow-600 hover:text-yellow-900 mr-2"
+                                title="Cancel Pending Review"
+                              >
+                                <XCircle className="h-5 w-5" />
+                              </button>
+                            )}
                           </>
                         )}
                         <button
