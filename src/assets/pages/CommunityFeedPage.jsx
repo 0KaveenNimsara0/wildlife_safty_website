@@ -114,16 +114,79 @@ const CommunityFeedPage = () => {
   const handleCommentSubmit = async (postId) => {
     const commentText = commentTexts[postId] || '';
     if (!currentUser || !commentText.trim()) return;
-    
+
     try {
       setLoading(true);
-      await axios.post(`${API_URL}/posts/${postId}/comments`, {
+      const response = await axios.post(`${API_URL}/posts/${postId}/comments`, {
         authorId: currentUser.uid,
         authorName: currentUser.displayName || currentUser.email,
         text: commentText
       });
 
-      // Clear the comment input field only - no automatic refresh
+      const newComment = response.data;
+
+      // Update posts state
+      setPosts(prevPosts => prevPosts.map(post => {
+        if (post._id === postId) {
+          const updatedComments = [...(post.comments || []), newComment];
+
+          // Rebuild nested comments
+          const commentMap = {};
+          updatedComments.forEach(comment => {
+            comment.replies = [];
+            commentMap[comment._id] = comment;
+          });
+
+          const nestedComments = [];
+          updatedComments.forEach(comment => {
+            if (comment.parentId) {
+              const parent = commentMap[comment.parentId];
+              if (parent) {
+                parent.replies.push(comment);
+              } else {
+                nestedComments.push(comment);
+              }
+            } else {
+              nestedComments.push(comment);
+            }
+          });
+
+          return { ...post, comments: nestedComments };
+        }
+        return post;
+      }));
+
+      // Update selectedPost if modal is open for this post
+      if (selectedPost && selectedPost._id === postId) {
+        setSelectedPost(prev => {
+          const updatedComments = [...(prev.comments || []), newComment];
+
+          // Rebuild nested comments
+          const commentMap = {};
+          updatedComments.forEach(comment => {
+            comment.replies = [];
+            commentMap[comment._id] = comment;
+          });
+
+          const nestedComments = [];
+          updatedComments.forEach(comment => {
+            if (comment.parentId) {
+              const parent = commentMap[comment.parentId];
+              if (parent) {
+                parent.replies.push(comment);
+              } else {
+                nestedComments.push(comment);
+              }
+            } else {
+              nestedComments.push(comment);
+            }
+          });
+
+          return { ...prev, comments: nestedComments };
+        });
+      }
+
+      // Clear the comment input field
       setCommentTexts(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
       setError('Failed to add comment');
@@ -230,7 +293,7 @@ const CommunityFeedPage = () => {
 
   // Handle comment updates (reply, edit, delete)
   const handleReply = (parentId, newReply) => {
-    setPosts(prevPosts => 
+    setPosts(prevPosts =>
       prevPosts.map(post => {
         if (post.comments?.some(c => c._id === parentId || findCommentById(c, parentId))) {
           return {
@@ -241,24 +304,48 @@ const CommunityFeedPage = () => {
         return post;
       })
     );
+
+    // Update selectedPost if modal is open
+    if (selectedPost && selectedPost.comments?.some(c => c._id === parentId || findCommentById(c, parentId))) {
+      setSelectedPost(prev => ({
+        ...prev,
+        comments: addReplyToComment(prev.comments, parentId, newReply)
+      }));
+    }
   };
 
   const handleUpdateComment = (commentId, updatedComment) => {
-    setPosts(prevPosts => 
+    setPosts(prevPosts =>
       prevPosts.map(post => ({
         ...post,
         comments: updateCommentInTree(post.comments, commentId, updatedComment)
       }))
     );
+
+    // Update selectedPost if modal is open
+    if (selectedPost) {
+      setSelectedPost(prev => ({
+        ...prev,
+        comments: updateCommentInTree(prev.comments, commentId, updatedComment)
+      }));
+    }
   };
 
   const handleDeleteComment = (commentId) => {
-    setPosts(prevPosts => 
+    setPosts(prevPosts =>
       prevPosts.map(post => ({
         ...post,
         comments: removeCommentFromTree(post.comments, commentId)
       }))
     );
+
+    // Update selectedPost if modal is open
+    if (selectedPost) {
+      setSelectedPost(prev => ({
+        ...prev,
+        comments: removeCommentFromTree(prev.comments, commentId)
+      }));
+    }
   };
 
   // Article popup handlers
