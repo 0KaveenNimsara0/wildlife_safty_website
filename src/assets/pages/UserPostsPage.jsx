@@ -289,11 +289,11 @@ const UserPostsPage = () => {
                   )}
                   {post.photoUrl && (
                     <div className="mt-4 rounded-lg overflow-hidden border border-gray-200">
-                      <img
-                        src={`${API_URL.replace('/api', '')}${post.photoUrl}`}
-                        alt="Sighting"
-                        className="w-full h-auto max-h-96 object-cover"
-                      />
+<img
+  src={`http://localhost:5000${post.photoUrl}`}
+  alt="Sighting"
+  className="w-full h-auto max-h-96 object-cover"
+/>
                     </div>
                   )}
                 </div>

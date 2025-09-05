@@ -406,11 +406,11 @@ const CommunityFeedPage = () => {
                     <p className="text-gray-800 leading-relaxed whitespace-pre-line">{post.experience}</p>
                     {post.photoUrl && (
                       <div className="mt-4 rounded-lg overflow-hidden border border-gray-200">
-                        <img
-                          src={`${API_URL.replace('/api', '')}${post.photoUrl}`}
-                          alt="Sighting"
-                          className="w-full h-auto max-h-96 object-cover"
-                        />
+<img
+  src={`http://localhost:5000${post.photoUrl}`}
+  alt="Sighting"
+  className="w-full h-auto max-h-96 object-cover"
+/>
                       </div>
                     )}
                   </div>
@@ -561,7 +561,27 @@ const CommunityFeedPage = () => {
         </div>
       </div>
 
-
+      {/* My Posts Sidebar */}
+      {showMyPosts && (
+        <div className="fixed inset-0 z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowMyPosts(false)} />
+          <div className="absolute left-0 top-0 h-full w-full max-w-md bg-white shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold text-gray-800">My Posts</h2>
+              <button
+                onClick={() => setShowMyPosts(false)}
+                className="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+                aria-label="Close My Posts"
+              >
+                <FaArrowLeft size={20} className="text-gray-600" />
+              </button>
+            </div>
+            <div className="h-full overflow-y-auto">
+              <UserPostsPage />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Comments Modal */}
       {showCommentsModal && selectedPost && (
@@ -605,11 +625,11 @@ const CommunityFeedPage = () => {
 
                     {selectedPost.photoUrl && (
                       <div className="rounded-lg overflow-hidden border border-gray-200 mb-4">
-                        <img
-                          src={`${API_URL.replace('/api', '')}${selectedPost.photoUrl}`}
-                          alt="Sighting"
-                          className="w-full h-auto max-h-64 object-cover"
-                        />
+<img
+  src={`http://localhost:5000${selectedPost.photoUrl}`}
+  alt="Sighting"
+  className="w-full h-auto max-h-64 object-cover"
+/>
                       </div>
                     )}
 
