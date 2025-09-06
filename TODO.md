@@ -12,3 +12,8 @@
 - [ ] Test conversation loading in dashboard
 - [ ] Test sending messages from dashboard
 - [ ] Test receiving messages
+
+## Project Setup & Documentation
+- [x] Create requirements.txt with all project dependencies
+- [x] Update README.md with comprehensive project information and installation instructions
+- [x] Add setup instructions for new developers
