@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Header({ page, setPage, setAuthPage }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { currentUser, logout, googleSignIn } = useAuth();
+    const { currentUser, logout, googleSignIn, adminLogout, medicalOfficerLogout } = useAuth();
     const navigate = useNavigate();
 
     const navigation = [
@@ -18,9 +18,56 @@ export default function Header({ page, setPage, setAuthPage }) {
         { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' }
     ];
 
+    // Helper functions to check login state
+    const isAdminLoggedIn = () => !!localStorage.getItem('adminToken');
+    const isMedicalOfficerLoggedIn = () => !!localStorage.getItem('medicalOfficerToken');
+    const isAnyUserLoggedIn = () => currentUser || isAdminLoggedIn() || isMedicalOfficerLoggedIn();
+
+    // Get admin or medical officer data
+    const getAdminData = () => {
+        const data = localStorage.getItem('adminData');
+        return data ? JSON.parse(data) : null;
+    };
+    const getMedicalOfficerData = () => {
+        const data = localStorage.getItem('medicalOfficerData');
+        return data ? JSON.parse(data) : null;
+    };
+
+    // Get user display info and dashboard path
+    const getUserInfo = () => {
+        if (currentUser) {
+            return {
+                name: currentUser.displayName || currentUser.email.split('@')[0],
+                dashboardPath: '/dashboard',
+                avatar: getUserAvatar()
+            };
+        } else if (isAdminLoggedIn()) {
+            const adminData = getAdminData();
+            return {
+                name: adminData?.name || 'Admin',
+                dashboardPath: '/admin/dashboard',
+                avatar: <Shield className="w-4 h-4 text-white" />
+            };
+        } else if (isMedicalOfficerLoggedIn()) {
+            const moData = getMedicalOfficerData();
+            return {
+                name: moData?.name || 'Medical Officer',
+                dashboardPath: '/medical-officer/dashboard',
+                avatar: <User className="w-4 h-4 text-white" />
+            };
+        }
+        return null;
+    };
+
     const handleAuth = () => {
         if (currentUser) {
             logout();
+            navigate('/');
+        } else if (isAdminLoggedIn()) {
+            adminLogout();
+            navigate('/');
+        } else if (isMedicalOfficerLoggedIn()) {
+            medicalOfficerLogout();
             navigate('/');
         } else {
             setAuthPage('login');
@@ -132,15 +179,17 @@ export default function Header({ page, setPage, setAuthPage }) {
 
                         {/* Login Button */}
                         <div className="flex items-center space-x-3 border-l border-green-700/50 pl-6">
-                            {currentUser ? (
+                            {isAnyUserLoggedIn() ? (
                                 <div className="flex items-center space-x-4">
-                                    <button 
-                                        onClick={() => navigate('/dashboard')}
+                                    <button
+                                        onClick={() => navigate(getUserInfo()?.dashboardPath)}
                                         className="flex items-center space-x-2 hover:bg-white/10 p-1 rounded-full transition-colors"
                                     >
-                                        {getUserAvatar()}
+                                        <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold border-2 border-white">
+                                            {getUserInfo()?.avatar}
+                                        </div>
                                         <span className="text-sm text-green-200 hidden lg:inline">
-                                            {currentUser.displayName || currentUser.email.split('@')[0]}
+                                            {getUserInfo()?.name}
                                         </span>
                                     </button>
                                     <button
@@ -197,16 +246,18 @@ export default function Header({ page, setPage, setAuthPage }) {
                             
                             {/* Mobile Login */}
                             <div className="border-t border-green-700/50 pt-4 mt-4">
-                                {currentUser ? (
+                                {isAnyUserLoggedIn() ? (
                                     <div className="flex items-center justify-between px-4 py-3">
                                         <div className="flex items-center space-x-3">
-                                            <button 
-                                                onClick={() => navigate('/dashboard')}
+                                            <button
+                                                onClick={() => navigate(getUserInfo()?.dashboardPath)}
                                                 className="flex items-center space-x-2"
                                             >
-                                                {getUserAvatar()}
+                                                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold border-2 border-white">
+                                                    {getUserInfo()?.avatar}
+                                                </div>
                                                 <span className="text-white font-medium">
-                                                    {currentUser.displayName || currentUser.email.split('@')[0]}
+                                                    {getUserInfo()?.name}
                                                 </span>
                                             </button>
                                         </div>
@@ -223,9 +274,9 @@ export default function Header({ page, setPage, setAuthPage }) {
                                             onClick={handleGoogleSignIn}
                                             className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-white border border-gray-300 rounded-xl text-sm font-medium transition-all duration-200 shadow-lg"
                                         >
-                                            <img 
-                                                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" 
-                                                alt="Google" 
+                                            <img
+                                                src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                                                alt="Google"
                                                 className="w-4 h-4"
                                             />
                                             <span>Sign in with Google</span>

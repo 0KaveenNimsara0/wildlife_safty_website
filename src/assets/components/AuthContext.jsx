@@ -274,6 +274,66 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Medical Officer authentication functions
+  async function medicalOfficerLogin(email, password) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/medical-officer/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Medical officer login failed');
+      }
+
+      // Store medical officer token and data
+      localStorage.setItem('medicalOfficerToken', data.token);
+      localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
+
+      return data;
+    } catch (error) {
+      console.error('Medical officer login error:', error);
+      throw error;
+    }
+  }
+
+  async function medicalOfficerRegister(formData) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/medical-officer/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Medical officer registration failed');
+      }
+
+      // Store medical officer token and data
+      localStorage.setItem('medicalOfficerToken', data.token);
+      localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
+
+      return data;
+    } catch (error) {
+      console.error('Medical officer registration error:', error);
+      throw error;
+    }
+  }
+
+  async function medicalOfficerLogout() {
+    localStorage.removeItem('medicalOfficerToken');
+    localStorage.removeItem('medicalOfficerData');
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -304,7 +364,11 @@ export function AuthProvider({ children }) {
     getAllUsers,
     updateUser,
     deleteUser,
-    searchUsers
+    searchUsers,
+    // Medical Officer functions
+    medicalOfficerLogin,
+    medicalOfficerRegister,
+    medicalOfficerLogout
   };
 
   return (
