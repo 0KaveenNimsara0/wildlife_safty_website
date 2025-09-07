@@ -23,6 +23,7 @@ import UserChatPage from './assets/pages/UserChatPage';
 import AdminLoginPage from './assets/pages/admin/AdminLoginPage';
 import AdminRegisterPage from './assets/pages/admin/AdminRegisterPage';
 import AdminDashboard from './assets/pages/admin/AdminDashboard';
+import AdminProfilePage from './assets/pages/admin/AdminProfilePage';
 import UserManagement from './assets/pages/admin/UserManagement';
 import MedicalOfficerManagement from './assets/pages/admin/MedicalOfficerManagement';
 import AdminChatManagement from './assets/pages/admin/AdminChatManagement';
@@ -73,6 +74,7 @@ export default function App() {
                                 <Route path="/admin/login" element={<AdminLoginPage />} />
                                 <Route path="/admin/register" element={<AdminRegisterPage />} />
                                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                                <Route path="/admin/profile" element={<AdminProfilePage />} />
                                 <Route path="/admin/users" element={<UserManagement />} />
                                 <Route path="/admin/medical-officers" element={<MedicalOfficerManagement />} />
                                 <Route path="/admin/chat" element={<AdminChatManagement />} />
