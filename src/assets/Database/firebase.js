@@ -33,8 +33,9 @@ const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Export the services you'll need
-export { 
+export {
   auth,
+  db,
   googleProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,

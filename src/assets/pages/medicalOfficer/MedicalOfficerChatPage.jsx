@@ -29,15 +29,15 @@ const MedicalOfficerChatPage = () => {
     if (medicalOfficerId && currentConversation) {
       fetchConversations(medicalOfficerId);
 
-      // Poll conversations every 5 seconds
+      // Poll conversations every 1 second for instant notification updates
       conversationsInterval = setInterval(() => {
         fetchConversations(medicalOfficerId);
-      }, 5000);
+      }, 1000);
 
-      // Poll messages for current conversation every 3 seconds
+      // Poll messages for current conversation every 1 second for instant feel
       messagesInterval = setInterval(() => {
         fetchMessages(currentConversation._id);
-      }, 3000);
+      }, 1000);
     }
 
     return () => {
@@ -178,7 +178,18 @@ const MedicalOfficerChatPage = () => {
             {/* Sidebar */}
             <div className="w-1/3 border-r border-green-100 flex flex-col bg-green-50/30">
               <div className="p-4 border-b border-green-100 bg-green-100/30">
-                <h3 className="text-lg font-semibold text-green-800">Active Conversations</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-green-800">Active Conversations</h3>
+                  <button
+                    onClick={() => fetchConversations(medicalOfficerId)}
+                    className="text-green-600 hover:text-green-800 p-2 rounded-full hover:bg-green-50 transition-colors"
+                    title="Refresh conversations"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div className="flex-1 overflow-y-auto">
                 <div className="divide-y divide-green-100">
@@ -243,7 +254,16 @@ const MedicalOfficerChatPage = () => {
                           </h3>
                           <p className="text-sm text-gray-500">User Inquiry</p>
                         </div>
-                        <div className="ml-auto">
+                        <div className="ml-auto flex items-center space-x-3">
+                          <button
+                            onClick={() => fetchMessages(currentConversation._id)}
+                            className="text-green-600 hover:text-green-800 p-2 rounded-full hover:bg-green-50 transition-colors"
+                            title="Refresh messages"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                          </button>
                           <div className="flex items-center">
                             <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                             <span className="text-sm text-gray-600">Online</span>
