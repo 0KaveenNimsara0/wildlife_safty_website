@@ -142,12 +142,20 @@ const PredictionResults = ({ prediction, imageURL, onReset }) => {
         treatment: { border: 'border-blue-500', header: 'text-blue-800', icon: 'text-blue-600', bg: 'bg-blue-100' }
     };
 
+    const isNotSnake = prediction.ClassName === 'Not_Snake';
+
     return (
         <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg border border-slate-200 w-full animate-fade-in">
             <div className="text-center mb-6">
-                <CheckCircle className="mx-auto h-12 w-12 mb-2 text-emerald-600" />
+                {isNotSnake ? (
+                    <AlertTriangle className="mx-auto h-12 w-12 mb-2 text-red-600" />
+                ) : (
+                    <CheckCircle className="mx-auto h-12 w-12 mb-2 text-emerald-600" />
+                )}
                 <h2 className="text-3xl font-bold text-slate-800">Identification Result</h2>
-                <p className="text-slate-600 mt-1">Identified as <strong className="text-emerald-700">{prediction.ClassName}</strong> with {prediction.Confidence} confidence.</p>
+                <p className={`text-slate-600 mt-1 ${isNotSnake ? 'text-red-700' : ''}`}>
+                    Identified as <strong className={isNotSnake ? 'text-red-700' : 'text-emerald-700'}>{prediction.ClassName}</strong> with {prediction.Confidence} confidence.
+                </p>
             </div>
 
             <div className="mb-6">
@@ -181,9 +189,12 @@ const PredictionResults = ({ prediction, imageURL, onReset }) => {
                 </div>
             </div>
 
-            <div>
-                <PredictionCard title="First-Aid & Treatment" content={prediction.Treatment} icon={HeartPulse} colorTheme={themes.treatment} />
-            </div>
+            {!isNotSnake && (
+    <div>
+        <PredictionCard title="First-Aid & Treatment" content={prediction.Treatment} icon={HeartPulse} colorTheme={themes.treatment} />
+    </div>
+)}
+
 
             <div className="text-center pt-8 mt-8 border-t border-slate-200">
                 <button onClick={onReset} className="font-bold py-3 px-10 rounded-full text-white transition-all transform hover:scale-105 shadow-lg bg-emerald-600 hover:bg-emerald-700">

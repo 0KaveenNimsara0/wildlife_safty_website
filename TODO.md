@@ -1,19 +1,37 @@
-# TODO: Fix Medical Officer Dashboard Chat Issues
+# Implementation Plan: Admin-Medical Officer Chat and Published Message Management
 
-## Backend Fixes
-- [x] Update medicalOfficerChat.js to include 'uid' in user select query
-- [x] Verify send route parameter consistency
+## Phase 1: Admin-Medical Officer Chat System
+- [x] Create AdminMedicalOfficerChatPage component
+- [ ] Add backend API routes for admin-medical officer chat
+- [ ] Update ChatInterface component to support admin-medical officer conversations
+- [ ] Add chat functionality to admin dashboard navigation
 
-## Frontend Fixes
-- [x] Update MedicalOfficerDashboard.jsx send API to use user.uid instead of conversation._id
-- [x] Update MedicalOfficerChatPage.jsx authentication to use proper token
+## Phase 2: Display Published Messages on Learn Page
+- [x] Create PublishedMessagesSection component
+- [x] Update LearnPage to fetch and display published messages
+- [x] Add filtering and search functionality for published messages
+- [x] Implement category-based organization
 
-## Testing
-- [ ] Test conversation loading in dashboard
-- [ ] Test sending messages from dashboard
-- [ ] Test receiving messages
+## Phase 3: Medical Officer Published Message Management
+- [x] Create MedicalOfficerPublishedMessagesPage component
+- [ ] Add API endpoints for medical officers to update published messages
+- [ ] Implement deletion request system for medical officers
+- [ ] Add notification system for admin approval of changes
 
-## Project Setup & Documentation
-- [x] Create requirements.txt with all project dependencies
-- [x] Update README.md with comprehensive project information and installation instructions
-- [x] Add setup instructions for new developers
+## Phase 4: Enhanced Admin Management
+- [ ] Update AdminChatManagement to handle published message updates
+- [ ] Add approval/rejection system for medical officer requests
+- [ ] Implement bulk operations for published messages
+- [ ] Add analytics and reporting features
+
+## Phase 5: Backend Enhancements
+- [ ] Add new fields to PublishedMessage model (update requests, status tracking)
+- [ ] Create API routes for published message management
+- [ ] Implement proper authorization and validation
+- [ ] Add logging and audit trails
+
+## Phase 6: Testing and Refinement
+- [ ] Test all chat functionalities
+- [ ] Verify published message display and management
+- [ ] Test user permissions and security
+- [ ] Performance optimization and error handling
