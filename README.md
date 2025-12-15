@@ -1,44 +1,90 @@
 # Wildlife Safety Web Site
 
-A web application dedicated to promoting wildlife safety and awareness. This platform provides resources and tools to help users stay safe in areas with significant wildlife activity.
+A comprehensive web application for wildlife safety and identification, built with React and Vite. This project helps users identify dangerous wildlife, access emergency resources, and connect with medical officers through an integrated chat system.
 
-## ✨ Features
+## Features
 
-- **Interactive Map:** View real-time reports of wildlife sightings.
-- **Safety Guides:** Access comprehensive guides on how to act around different types of wildlife.
-- **Report a Sighting:** Users can submit their own wildlife sightings to help others.
-- **Emergency Contacts:** Quick access to local wildlife rescue and emergency services.
+- **Animal Identification**: AI-powered wildlife identification using TensorFlow.js
+- **Emergency Resources**: Quick access to emergency contacts and medical officers
+- **Community Feed**: User-generated content and discussions about wildlife safety
+- **Interactive Maps**: Location-based wildlife tracking and safety zones
+- **Real-time Chat**: Communication with medical officers and community members
+- **Admin Dashboard**: Management tools for administrators and medical officers
 
-## 🚀 Tech Stack
+## Tech Stack
 
-Please fill in the technologies you are using:
+- **Frontend**: React 19, Vite, Tailwind CSS
+- **Backend**: Firebase (Authentication, Database, Storage)
+- **Maps**: Google Maps API, Leaflet
+- **AI/ML**: TensorFlow.js for animal identification
+- **State Management**: React Context API
+- **Routing**: React Router DOM
 
-- **Frontend:** (e.g., React, Vue, Svelte)
-- **Backend:** (e.g., Node.js, Express.js)
-- **Database:** (e.g., MongoDB, PostgreSQL)
-- **Mapping API:** (e.g., Mapbox, Google Maps)
+## Prerequisites
 
-## 📦 Getting Started
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
-Follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+## Installation
 
-### Prerequisites
-
-You will need to have Node.js and a package manager (like npm, yarn, or pnpm) installed on your machine.
-
-- [Node.js](https://nodejs.org/en/)
-
-### Installation
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-username/Wildlife_Safty_Web_Site.git
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd wildlife-safty-web-site
    ```
-2. Navigate to the project directory and install dependencies:
-   ```sh
+
+2. **Install dependencies**
+   ```bash
    npm install
    ```
-3. Start the development server:
-   ```sh
+
+3. **Environment Setup**
+   - Copy `.env.example` to `.env` (if available)
+   - Configure Firebase credentials
+   - Set up Google Maps API key
+
+4. **Start the development server**
+   ```bash
    npm run dev
    ```
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+
+## Dependencies
+
+All project dependencies are listed in `requirements.txt` for reference. This project uses npm for dependency management, not pip.
+
+## Project Structure
+
+```
+src/
+├── assets/
+│   ├── components/     # Reusable UI components
+│   ├── pages/         # Page components
+│   ├── data/          # Static data files
+│   └── Database/      # Firebase configuration
+├── App.jsx           # Main app component
+└── main.jsx          # App entry point
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
