@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Database apis
+src/assets/Database/firebase.js
+firebase.js
