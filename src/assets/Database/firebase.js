@@ -14,13 +14,13 @@ import {
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyC2BQuk-GQ5WV9CnT2q6Muio4cyVQm-mN8",
-  authDomain: "wildlifesafty.firebaseapp.com",
-  projectId: "wildlifesafty",
-  storageBucket: "wildlifesafty.firebasestorage.app",
-  messagingSenderId: "443242013612",
-  appId: "1:443242013612:web:9f4a7150aee218201b1009",
-  measurementId: "G-KQG9RD54QN"
+  apiKey: env.FIREBASE_API_KEY,
+  authDomain: env.FIREBASE_AUTH_DOMAIN,
+  projectId: env.FIREBASE_PROJECT_ID,
+  storageBucket: env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.FIREBASE_APP_ID,
+  measurementId: env.FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
