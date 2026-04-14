@@ -122,24 +122,30 @@ const CommunityFeedPage = () => {
 
       const newComment = response.data;
 
-      // Update posts state
+      // Optimistic update for posts list
       setPosts(prevPosts => prevPosts.map(post => {
         if (post._id === postId) {
-          fetchPosts(); // Trigger full refresh for simplicity to maintain state sync
-          return post;
+          return {
+            ...post,
+            comments: [...(post.comments || []), newComment]
+          };
         }
         return post;
       }));
 
-      // Update selectedPost if modal is open for this post
+      // Optimistic update for active modal if open
       if (selectedPost && selectedPost._id === postId) {
-         fetchPosts(); // Ensure everything stays in sync
+        setSelectedPost(prev => ({
+          ...prev,
+          comments: [...(prev.comments || []), newComment]
+        }));
       }
 
       setCommentTexts(prev => ({ ...prev, [postId]: '' }));
     } catch (err) {
       setError('Failed to add comment');
       console.error(err);
+      fetchPosts(); // Revert/Sync on error
     } finally {
       setLoading(false);
     }
@@ -147,16 +153,26 @@ const CommunityFeedPage = () => {
 
   const handleLike = async (postId) => {
     if (!currentUser) return;
+    
+    // Optimistic update for "real-time" feel
+    setPosts(prevPosts => prevPosts.map(post => {
+      if (post._id === postId) {
+        const isLiked = post.likedBy?.includes(currentUser.uid);
+        const newLikes = isLiked ? Math.max(0, (post.likes || 1) - 1) : (post.likes || 0) + 1;
+        const newLikedBy = isLiked 
+          ? post.likedBy.filter(id => id !== currentUser.uid)
+          : [...(post.likedBy || []), currentUser.uid];
+          
+        return { ...post, likes: newLikes, likedBy: newLikedBy };
+      }
+      return post;
+    }));
+
     try {
-      setLoading(true);
-      const response = await axios.post(`${API_URL}/posts/${postId}/like`, {
-        userId: currentUser.uid
-      });
-      fetchPosts();
+      await axios.post(`${API_URL}/posts/${postId}/like`, { userId: currentUser.uid });
     } catch (err) {
-      setError('Failed to update like');
-    } finally {
-      setLoading(false);
+      console.error(err);
+      fetchPosts(); // Revert to server state on error
     }
   };
 
@@ -218,9 +234,53 @@ const CommunityFeedPage = () => {
       });
   };
 
-  const handleReply = (parentId, newReply) => { fetchPosts(); };
-  const handleUpdateComment = (commentId, updatedComment) => { fetchPosts(); };
-  const handleDeleteComment = (commentId) => { fetchPosts(); };
+  const handleReply = (commentId, newReply) => {
+    // Update main posts list
+    setPosts(prevPosts => prevPosts.map(post => ({
+      ...post,
+      comments: addReplyToComment(post.comments || [], commentId, newReply)
+    })));
+    
+    // Update active drawer if open
+    if (selectedPost) {
+      setSelectedPost(prev => ({
+        ...prev,
+        comments: addReplyToComment(prev.comments || [], commentId, newReply)
+      }));
+    }
+  };
+
+  const handleUpdateComment = (commentId, updatedComment) => {
+    // Update main posts list
+    setPosts(prevPosts => prevPosts.map(post => ({
+      ...post,
+      comments: updateCommentInTree(post.comments || [], commentId, updatedComment)
+    })));
+
+    // Update active drawer if open
+    if (selectedPost) {
+      setSelectedPost(prev => ({
+        ...prev,
+        comments: updateCommentInTree(prev.comments || [], commentId, updatedComment)
+      }));
+    }
+  };
+
+  const handleDeleteComment = (commentId) => {
+    // Update main posts list
+    setPosts(prevPosts => prevPosts.map(post => ({
+      ...post,
+      comments: removeCommentFromTree(post.comments || [], commentId)
+    })));
+
+    // Update active drawer if open
+    if (selectedPost) {
+      setSelectedPost(prev => ({
+        ...prev,
+        comments: removeCommentFromTree(prev.comments || [], commentId)
+      }));
+    }
+  };
 
   const openArticlePopup = (article) => {
     setPopupArticle(article);
@@ -233,19 +293,19 @@ const CommunityFeedPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in text-slate-900">
-      {/* Premium Header */}
-      {/* Premium Header - Restored with My Posts trigger and Clock */}
-      <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-40 w-full border-b border-slate-200 mb-8 py-4 px-6">
+    <>
+      <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in text-slate-900">
+        {/* Premium Header - Restored with My Posts trigger and Clock */}
+        <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-40 w-full border-b border-slate-200 mb-8 py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
             {currentUser && (
               <button
                 onClick={() => setShowMyPosts(true)}
-                className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-emerald-600 shadow-xl transition-all active:scale-95 flex items-center gap-2 group"
+                className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-emerald-600 shadow-xl transition-all active:scale-95 flex items-center gap-2 group hover:shadow-emerald-500/20"
                 aria-label="Open Field Records"
               >
-                <Activity size={18} className="group-hover:rotate-12 transition-transform" />
+                <Activity size={18} className="group-hover:scale-110 transition-transform" />
                 <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Field Records</span>
               </button>
             )}
@@ -350,13 +410,13 @@ const CommunityFeedPage = () => {
                     <div className="p-2.5 rounded-xl group-hover/btn:bg-rose-50 transition-all">
                       {currentUser && post.likedBy?.includes(currentUser.uid) ? <Heart size={20} className="fill-rose-500 text-rose-500" /> : <Heart size={20} className="text-slate-400 group-hover/btn:text-rose-500" />}
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover/btn:text-rose-600">{post.likes || 0} Verifications</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover/btn:text-rose-600">{post.likes || 0} Likes</span>
                   </button>
                   <button onClick={() => { setSelectedPost(post); setShowCommentsModal(true); }} className="flex items-center gap-2 group/btn">
-                    <div className="p-2.5 rounded-xl group-hover/btn:bg-sky-50 transition-all">
+                    <div className="p-2.5 rounded-xl group-hover/btn:bg-sky-50 transition-all duration-300 group-active/btn:scale-90">
                       <MessageSquare size={20} className="text-slate-400 group-hover/btn:text-sky-500" />
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover/btn:text-sky-600">{post.comments?.length || 0} Reports</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover/btn:text-sky-600">{post.comments?.length || 0} Comments</span>
                   </button>
                 </div>
                 <div className="flex gap-4">
@@ -456,11 +516,13 @@ const CommunityFeedPage = () => {
         </aside>
       </div>
 
+      </div>
+
       {/* Floating My Posts Drawer - Restored */}
       {showMyPosts && (
-        <div className="fixed inset-0 z-[100] overflow-hidden flex justify-start">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowMyPosts(false)} />
-          <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-500">
+        <div className="fixed inset-0 z-[1000] flex justify-start">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowMyPosts(false)} />
+          <div className="relative w-full max-w-xl h-full bg-slate-50 shadow-2xl flex flex-col animate-slide-in-left">
             <header className="p-8 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-emerald-600 rounded-2xl text-white shadow-lg">
@@ -487,7 +549,7 @@ const CommunityFeedPage = () => {
 
       {/* Full Content Popup Overlay - Restored */}
       {showPopup && popupArticle && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[150] p-4 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[1000] p-4 animate-in fade-in duration-300">
           <div className="bg-white rounded-[3.5rem] max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-4 border-white flex flex-col relative group">
             {/* Header Area */}
             <div className="p-10 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
@@ -545,99 +607,108 @@ const CommunityFeedPage = () => {
         </div>
       )}
 
-      {/* Interaction Modal (Comments) - Restored with Dual Layout */}
       {showCommentsModal && selectedPost && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowCommentsModal(false)} />
-          <div className="relative w-full max-w-5xl h-[85vh] overflow-hidden bg-white rounded-[3.5rem] shadow-2xl flex flex-col scale-in-center">
-            <header className="p-10 border-b border-slate-50 flex justify-between items-center bg-slate-50/20">
-              <div className="flex items-center gap-6">
-                 <div className="w-16 h-16 rounded-[2rem] bg-slate-900 flex items-center justify-center text-white font-black text-2xl shadow-xl">
+        <div className="fixed inset-0 z-[1000] flex justify-end">
+          <div 
+            className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" 
+            onClick={() => setShowCommentsModal(false)} 
+          />
+          <div className="relative w-full md:w-[750px] h-full bg-white shadow-2xl flex flex-col animate-slide-in-right">
+            <header className="p-8 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0 z-10">
+              <div className="flex items-center gap-4">
+                 <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg">
                     {selectedPost.authorName?.charAt(0) || 'A'}
                   </div>
                   <div>
-                    <h3 className="text-3xl font-black text-slate-900 tracking-tight uppercase">{selectedPost.animalName}</h3>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 mt-1 flex items-center gap-2">
-                       <Award size={14} /> Observer: {selectedPost.authorName}
+                    <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">{selectedPost.animalName}</h3>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-emerald-600 mt-0.5">
+                       {selectedPost.authorName}
                     </p>
                   </div>
               </div>
-              <button onClick={() => setShowCommentsModal(false)} className="p-5 bg-white rounded-[2rem] shadow-sm border border-slate-100 text-slate-400 hover:text-rose-500 hover:border-rose-100 transition-all active:scale-95">
-                <X size={28} />
+              <button onClick={() => setShowCommentsModal(false)} className="p-3 text-slate-400 hover:text-rose-500 transition-all active:scale-95">
+                <X size={24} />
               </button>
             </header>
 
-            <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-               {/* Left Segment: Field Log Detail */}
-               <div className="w-full md:w-1/2 p-12 overflow-y-auto border-r border-slate-50 space-y-10 custom-scrollbar">
-                  <div className="space-y-6">
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-4 py-2 rounded-lg w-fit">Observation Narrative</h4>
-                    <p className="text-xl text-slate-700 font-medium leading-relaxed italic">"{selectedPost.experience}"</p>
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
+               {/* Observation Narrative Segment */}
+               <div className="p-8 space-y-8">
+                  <div className="space-y-4">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg w-fit flex items-center gap-2">
+                       <BookOpen size={12} /> Narrative
+                    </span>
+                    <p className="text-lg text-slate-700 font-medium leading-relaxed italic">"{selectedPost.experience}"</p>
                   </div>
+                  
                   {selectedPost.photoUrl && (
-                    <div className="rounded-[2.5rem] overflow-hidden border-4 border-slate-50 shadow-xl">
+                    <div className="rounded-3xl overflow-hidden border-2 border-slate-50 shadow-inner">
                        <img src={`http://localhost:5000${selectedPost.photoUrl}`} alt="Observation Detail" className="w-full h-auto object-cover" />
                     </div>
                   )}
-                  <div className="flex items-center gap-12 pt-4">
-                    <div className="space-y-1">
-                       <span className="text-[9px] font-black uppercase tracking-widest text-slate-300">Verifications</span>
-                       <p className="text-2xl font-black text-slate-900">{selectedPost.likes || 0}</p>
+
+                  <div className="flex gap-8 border-y border-slate-50 py-6">
+                    <div className="space-y-0.5">
+                       <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Likes</span>
+                       <p className="text-xl font-black text-slate-900">{selectedPost.likes || 0}</p>
                     </div>
-                    <div className="space-y-1">
-                       <span className="text-[9px] font-black uppercase tracking-widest text-slate-300">Reports</span>
-                       <p className="text-2xl font-black text-slate-900">{selectedPost.comments?.length || 0}</p>
+                    <div className="space-y-0.5">
+                       <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">Comments</span>
+                       <p className="text-xl font-black text-slate-900">{selectedPost.comments?.length || 0}</p>
                     </div>
                   </div>
-               </div>
 
-               {/* Right Segment: Collaborative Analysis (Comments) */}
-               <div className="w-full md:w-1/2 p-12 flex flex-col space-y-10 overflow-hidden">
-                  <div className="flex items-center gap-3">
-                    <MessageSquare size={20} className="text-emerald-500" />
-                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Expert Consensus</h4>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto custom-scrollbar space-y-8 pb-10">
-                    {(selectedPost.comments || []).map((comment) => (
-                      <NestedComment 
-                        key={comment._id} 
-                        comment={comment} 
-                        postId={selectedPost._id} 
-                        depth={0} 
-                        maxDepth={4} 
-                        currentUser={currentUser} 
-                        onReply={handleReply} 
-                        onUpdate={handleUpdateComment} 
-                        onDelete={handleDeleteComment} 
-                      />
-                    ))}
-                    {(!selectedPost.comments || selectedPost.comments.length === 0) && (
-                      <div className="py-20 text-center space-y-4">
-                         <MessageSquare size={48} className="mx-auto text-slate-100" />
-                         <p className="text-xs font-black uppercase tracking-widest text-slate-300 italic">No expert analysis recorded</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {currentUser && (
-                    <div className="flex gap-4 p-2 bg-slate-50 rounded-[2.5rem] border-2 border-slate-100 ring-8 ring-white shadow-2xl">
-                      <input
-                        type="text"
-                        placeholder="Add professional insight..."
-                        value={commentTexts[selectedPost._id] || ''}
-                        onChange={(e) => setCommentTexts(prev => ({ ...prev, [selectedPost._id]: e.target.value }))}
-                        className="flex-1 bg-transparent px-8 py-5 focus:outline-none font-bold text-slate-800 text-sm"
-                      />
-                      <button onClick={() => handleCommentSubmit(selectedPost._id)} className="bg-slate-900 text-white px-10 rounded-[2rem] font-black text-xs uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-xl active:scale-95">Analyze</button>
+                  {/* Comments Segment */}
+                  <div className="space-y-8 pb-10">
+                    <div className="flex items-center gap-2 border-b border-slate-50 pb-4">
+                      <MessageSquare size={16} className="text-emerald-500" />
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 font-bold">Expert Consensus</h4>
                     </div>
-                  )}
+
+                    <div className="space-y-6">
+                      {(selectedPost.comments || []).map((comment) => (
+                        <NestedComment 
+                          key={comment._id} 
+                          comment={comment} 
+                          postId={selectedPost._id} 
+                          depth={0} 
+                          maxDepth={4} 
+                          currentUser={currentUser} 
+                          onReply={handleReply} 
+                          onUpdate={handleUpdateComment} 
+                          onDelete={handleDeleteComment} 
+                          postAuthorId={selectedPost.authorId}
+                        />
+                      ))}
+                      {(!selectedPost.comments || selectedPost.comments.length === 0) && (
+                        <div className="py-12 text-center space-y-3">
+                           <MessageSquare size={32} className="mx-auto text-slate-100" />
+                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 italic">Analysis Pending</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                </div>
             </div>
+
+            {currentUser && (
+              <div className="p-6 bg-white border-t border-slate-50 sticky bottom-0">
+                <div className="flex gap-3 p-1.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm">
+                  <input
+                    type="text"
+                    placeholder="Add professional insight..."
+                    value={commentTexts[selectedPost._id] || ''}
+                    onChange={(e) => setCommentTexts(prev => ({ ...prev, [selectedPost._id]: e.target.value }))}
+                    className="flex-1 bg-transparent px-5 py-3 focus:outline-none font-bold text-slate-800 text-xs"
+                  />
+                  <button onClick={() => handleCommentSubmit(selectedPost._id)} className="bg-slate-900 text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-md active:scale-95">Post</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

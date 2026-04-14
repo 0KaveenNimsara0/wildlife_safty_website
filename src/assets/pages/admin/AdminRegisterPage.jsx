@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, Shield, User } from 'lucide-react';
+import { UserPlus, Mail, Lock, AlertCircle, Shield, User, ArrowRight, Fingerprint } from 'lucide-react';
 
 export default function AdminRegisterPage() {
   const [formData, setFormData] = useState({
@@ -24,11 +24,11 @@ export default function AdminRegisterPage() {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      return setError('Passwords do not match');
+      return setError('Sync Error: Passwords do not match');
     }
 
     if (formData.password.length < 6) {
-      return setError('Password must be at least 6 characters long');
+      return setError('Security Breach: Password too short (Min 6)');
     }
 
     try {
@@ -50,159 +50,154 @@ export default function AdminRegisterPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(data.message || 'System Enrollment Failed');
       }
 
-      // Store admin token and data
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('adminData', JSON.stringify(data.admin));
 
-      // Reset loading before navigation to avoid UI stuck
       setLoading(false);
-
       navigate('/admin/dashboard');
     } catch (error) {
-      setError(error.message || 'Failed to register');
+      setError(error.message || 'Enrollment Protocol Failure');
       console.error('Admin registration error:', error);
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-emerald-600 rounded-full flex items-center justify-center">
-            <Shield className="h-6 w-6 text-white" />
+    <div className="min-h-screen bg-[#080c14] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+      {/* Immersive Background Elements */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] -ml-64 -mt-64 animate-pulse" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[120px] -mr-64 -mb-64" />
+      
+      <div className="max-w-md w-full relative z-10">
+        <div className="text-center mb-10 space-y-4 animate-fade-in">
+          <div className="inline-flex p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 shadow-2xl shadow-emerald-500/10 mb-2">
+            <UserPlus className="h-10 w-10 text-emerald-500" />
           </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Admin Registration
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Create an admin account to manage the system
-          </p>
+          <h1 className="text-4xl font-black text-white tracking-tight uppercase italic text-center">
+            Enroll <span className="text-emerald-500 not-italic">Officer</span>
+          </h1>
+          <div className="flex items-center justify-center gap-2">
+             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Command Registration Protocol</p>
+          </div>
         </div>
 
-        <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl shadow-black/50 overflow-hidden relative group">
+          {/* Scanline Effect */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent h-24 -translate-y-full group-hover:translate-y-[500%] transition-transform duration-[3.s] ease-linear pointer-events-none opacity-20" />
+          
           {error && (
-            <div className="flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              <AlertCircle className="w-5 h-5 mr-2" />
-              <span>{error}</span>
+            <div className="flex items-center gap-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-6 py-4 rounded-2xl mb-8 animate-shake">
+              <AlertCircle size={18} />
+              <span className="text-[10px] font-black uppercase tracking-widest">{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Name</label>
+              <div className="relative group/field">
+                <div className="absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
+                  <User size={18} />
                 </div>
                 <input
-                  id="name"
                   name="name"
                   type="text"
-                  autoComplete="name"
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                  placeholder="John Doe"
+                  className="w-full pl-14 pr-6 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-wide"
+                  placeholder="OFFICER FULL NAME"
                 />
               </div>
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Network Email</label>
+              <div className="relative group/field">
+                <div className="absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
+                  <Mail size={18} />
                 </div>
                 <input
-                  id="email"
                   name="email"
                   type="email"
-                  autoComplete="email"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                  placeholder="admin@example.com"
+                  className="w-full pl-14 pr-6 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-wide"
+                  placeholder="UPLINK@WS.ACCESS"
                 />
               </div>
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Cipher</label>
+                <div className="relative group/field">
+                  <div className="absolute inset-y-0 left-4 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
+                    <Lock size={16} />
+                  </div>
+                  <input
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-[0.2em]"
+                    placeholder="••••"
+                  />
                 </div>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                  placeholder="••••••••"
-                />
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                Password must be at least 6 characters
-              </p>
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm</label>
+                <div className="relative group/field">
+                  <div className="absolute inset-y-0 left-4 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
+                    <Lock size={16} />
+                  </div>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full pl-12 pr-4 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-[0.2em]"
+                    placeholder="••••"
+                  />
                 </div>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                  placeholder="••••••••"
-                />
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                {loading ? 'Creating account...' : 'Create Admin Account'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center items-center py-5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/20 active:scale-[0.98] transition-all disabled:opacity-50 group/btn overflow-hidden relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+              {loading ? (
+                 <div className="flex items-center gap-3">
+                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <span>Enrolling...</span>
+                 </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Fingerprint size={16} />
+                  <span>Execute Registry Entry</span>
+                </div>
+              )}
+            </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an admin account?{' '}
+          <div className="mt-8 pt-6 border-t border-white/5 text-center">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+              Already Operational?{' '}
               <button
                 onClick={() => navigate('/admin/login')}
-                className="font-medium text-emerald-600 hover:text-emerald-500"
+                className="text-emerald-500 hover:text-emerald-400 transition-colors ml-2"
               >
-                Sign in here
+                Access Terminal
               </button>
             </p>
           </div>

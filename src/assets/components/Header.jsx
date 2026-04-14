@@ -147,8 +147,8 @@ export default function Header({ page, setPage, setAuthPage }) {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-700 to-emerald-500 bg-clip-text text-transparent">
-                                WildSafe
+                            <h1 className="text-l font-extrabold tracking-tight bg-gradient-to-r from-emerald-700 to-emerald-500 bg-clip-text text-transparent">
+                                WildLife Safety
                             </h1>
                             <span className="text-[10px] uppercase tracking-tighter text-slate-500 font-bold -mt-1">
                                 Smart Protection

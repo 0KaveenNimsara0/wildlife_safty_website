@@ -19,7 +19,7 @@ import PrivateRoute from './assets/components/PrivateRoute';
 import UserPostsPage from './assets/pages/UserPostsPage';
 import UserChatPage from './assets/pages/UserChatPage';
 
-// Admin pages
+// Admin pages & Components
 import AdminLoginPage from './assets/pages/admin/AdminLoginPage';
 import AdminRegisterPage from './assets/pages/admin/AdminRegisterPage';
 import AdminDashboard from './assets/pages/admin/AdminDashboard';
@@ -28,6 +28,7 @@ import UserManagement from './assets/pages/admin/UserManagement';
 import MedicalOfficerManagement from './assets/pages/admin/MedicalOfficerManagement';
 import AdminChatManagement from './assets/pages/admin/AdminChatManagement';
 import AdminArticleManagement from './assets/pages/admin/AdminArticleManagement';
+import AdminLayout from './assets/components/admin/AdminLayout';
 
 // Medical Officer pages
 import MedicalOfficerLoginPage from './assets/pages/medicalOfficer/MedicalOfficerLoginPage';
@@ -56,9 +57,20 @@ export default function App() {
                             {authPage === 'resetPassword' && <ResetPasswordPage setPage={setAuthPage} />}
                         </div>
                     </div>
+                ) : window.location.pathname.startsWith('/admin') && !['/admin/login', '/admin/register'].includes(window.location.pathname) ? (
+                    <AdminLayout>
+                        <Routes>
+                            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                            <Route path="/admin/profile" element={<AdminProfilePage />} />
+                            <Route path="/admin/users" element={<UserManagement />} />
+                            <Route path="/admin/medical-officers" element={<MedicalOfficerManagement />} />
+                            <Route path="/admin/chat" element={<AdminChatManagement />} />
+                            <Route path="/admin/articles" element={<AdminArticleManagement />} />
+                        </Routes>
+                    </AdminLayout>
                 ) : (
                     <>
-                        <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />
+                        {!window.location.pathname.startsWith('/admin') && <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />}
                         
                         {/* Main Interaction Area */}
                         <main className="flex-grow pt-24 pb-16">
@@ -101,7 +113,7 @@ export default function App() {
                             </div>
                         </main>
 
-                        <Footer setPage={setPage} />
+                        {!window.location.pathname.startsWith('/admin') && <Footer setPage={setPage} />}
                     </>
                 )}
             </div>

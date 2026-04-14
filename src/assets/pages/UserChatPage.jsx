@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../components/AuthContext';
 import MedicalOfficerSelector from '../components/MedicalOfficerSelector';
 import ChatInterface from '../components/ChatInterface';
+import { Shield, MessageCircle, Users, Activity, ChevronRight, XCircle, Search } from 'lucide-react';
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -68,10 +70,25 @@ const UserChatPage = () => {
     }
   };
 
-  const sendMessage = async (message) => {
+  const sendMessage = async (messageText) => {
+    if (!selectedMedicalOfficer || !messageText.trim()) return;
+
+    // Create optimistic message
+    const optimisticMessage = {
+      _id: `temp-${Date.now()}`,
+      message: messageText,
+      senderId: currentUser.uid,
+      senderType: 'user',
+      createdAt: new Date().toISOString(),
+      isRead: false
+    };
+
+    // Optimistically update chat window
+    setMessages(prev => [...prev, optimisticMessage]);
+
     try {
       const token = await getIdToken();
-      if (!token || !selectedMedicalOfficer) return;
+      if (!token) throw new Error('Authentication required');
 
       const response = await fetch(`${API_BASE_URL}/user/chat/send/${selectedMedicalOfficer._id}`, {
         method: 'POST',
@@ -79,19 +96,24 @@ const UserChatPage = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message: messageText })
       });
 
       const data = await response.json();
       if (data.success) {
-        setMessages(prev => [...prev, data.message]);
+        // Replace temp message with real one from server
+        setMessages(prev => prev.map(msg => 
+          msg._id === optimisticMessage._id ? data.message : msg
+        ));
         fetchConversations();
       } else {
-        setError(data.message || 'Failed to send message.');
+        throw new Error(data.message || 'Transmission failed');
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      setError('Failed to send message.');
+      setError('Communication interrupted. Retrying...');
+      // Revert optimistic update
+      setMessages(prev => prev.filter(msg => msg._id !== optimisticMessage._id));
     }
   };
 
@@ -145,55 +167,89 @@ const UserChatPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <header className="bg-green-700 px-6 py-6 text-white text-center sm:text-left">
-            <h1 className="text-3xl font-bold tracking-tight">Medical Officer Chat</h1>
-            <p className="text-green-200 mt-1">Connect with medical professionals for expert advice on wildlife safety and care.</p>
+    <div className="min-h-screen bg-slate-50/50 py-8 animate-fade-in">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="card-premium overflow-hidden bg-white/70 backdrop-blur-md border-slate-100 flex flex-col h-[85vh] shadow-2xl">
+          {/* Communications Command Header */}
+          <header className="bg-slate-900 px-8 py-6 text-white flex justify-between items-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full -mr-32 -mt-32 blur-3xl" />
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="p-3 bg-emerald-600 rounded-2xl shadow-lg">
+                <MessageCircle size={24} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black tracking-tight uppercase">Comms <span className="text-emerald-400">Command</span></h1>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500/80">
+                  <Shield size={12} />
+                  <span>Secure Medical Uplink</span>
+                </div>
+              </div>
+            </div>
+            <div className="hidden md:flex items-center gap-6 relative z-10">
+               <div className="text-right">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Terminal Status</p>
+                  <p className="text-xs font-bold text-emerald-400">ACTIVE CONNECTION</p>
+               </div>
+               <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
+                  <Activity size={18} className="text-emerald-500 animate-pulse" />
+               </div>
+            </div>
           </header>
 
-          <div className="flex flex-col sm:flex-row h-[70vh]">
-            <aside className="w-full sm:w-1/3 border-b sm:border-r border-gray-200 flex flex-col bg-gray-50">
-              <MedicalOfficerSelector
-                onSelect={handleMedicalOfficerSelect}
-                selectedMedicalOfficer={selectedMedicalOfficer}
-              />
+          <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+            <aside className="w-full md:w-[400px] border-r border-slate-100 flex flex-col bg-slate-50/30">
+              <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+                <MedicalOfficerSelector
+                  onSelect={handleMedicalOfficerSelect}
+                  selectedMedicalOfficer={selectedMedicalOfficer}
+                />
 
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-4 border-b border-gray-200 bg-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-800">Your Conversations</h3>
+                <div className="p-6 border-b border-slate-100 bg-white/50 backdrop-blur-sm">
+                  <div className="flex items-center gap-2">
+                    <Users size={16} className="text-slate-400" />
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Active Channels</h3>
+                  </div>
                 </div>
-                <div className="divide-y divide-gray-200">
+                
+                <div className="divide-y divide-slate-50">
                   {conversations.length > 0 ? (
                     conversations.map((conversation) => (
                       <div
                         key={conversation._id}
                         onClick={() => handleConversationSelect(conversation)}
-                        className={`p-4 cursor-pointer transition-all duration-200 hover:bg-green-50 ${
-                          currentConversation?._id === conversation._id ? 'bg-green-100 border-l-4 border-green-600' : ''
+                        className={`p-6 cursor-pointer transition-all duration-300 group ${
+                          currentConversation?._id === conversation._id 
+                            ? 'bg-white border-l-4 border-emerald-500 shadow-inner' 
+                            : 'hover:bg-white/80'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
+                            {conversation.medicalOfficer?.name?.charAt(0) || 'M'}
+                          </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-gray-900 truncate">
+                            <p className="font-black text-slate-900 truncate tracking-tight">
                               {conversation.medicalOfficer?.name || 'Medical Officer'}
                             </p>
-                            <p className="text-sm text-gray-500 truncate mt-1">
-                              {conversation.lastMessage?.message || 'Start a new conversation.'}
+                            <p className="text-xs text-slate-400 font-medium truncate mt-0.5">
+                              {conversation.lastMessage?.message || 'Initiate connection...'}
                             </p>
                           </div>
-                          {conversation.unreadCount > 0 && (
-                            <span className="bg-green-600 text-white text-xs font-bold rounded-full px-2 py-1 ml-3 flex-shrink-0">
-                              {conversation.unreadCount}
-                            </span>
-                          )}
+                          <div className="flex flex-col items-end gap-2">
+                            {conversation.unreadCount > 0 && (
+                              <span className="w-5 h-5 bg-emerald-600 text-white text-[10px] font-black rounded-lg flex items-center justify-center shadow-lg shadow-emerald-200">
+                                {conversation.unreadCount}
+                              </span>
+                            )}
+                            <ChevronRight size={14} className="text-slate-300 group-hover:text-emerald-400 transition-colors" />
+                          </div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="p-6 text-center text-gray-500">
-                      No conversations found. Select a medical officer to begin.
+                    <div className="p-12 text-center space-y-4 opacity-50">
+                      <Search size={32} className="mx-auto text-slate-200" />
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No active channels</p>
                     </div>
                   )}
                 </div>

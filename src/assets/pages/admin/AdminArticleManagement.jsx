@@ -9,7 +9,13 @@ import {
   XCircle,
   Eye,
   EyeOff,
-  Trash2
+  Trash2,
+  Filter,
+  FileCheck,
+  Zap,
+  Clock,
+  ExternalLink,
+  MoreVertical
 } from 'lucide-react';
 
 export default function AdminArticleManagement() {
@@ -112,11 +118,9 @@ export default function AdminArticleManagement() {
     }
   };
 
-  // New handler to cancel pending review
   const handleCancelPending = async (articleId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      // Correct URL to match backend route for cancel pending
       const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/cancel-pending`, {
         method: 'PUT',
         headers: {
@@ -130,7 +134,7 @@ export default function AdminArticleManagement() {
 
       const data = await response.json();
       alert('Pending review cancelled, article reverted to draft');
-      fetchArticles(); // Refresh articles
+      fetchArticles();
     } catch (error) {
       console.error('Error cancelling pending review:', error);
       alert('Failed to cancel pending review');
@@ -156,7 +160,7 @@ export default function AdminArticleManagement() {
       }
 
       alert('Article deleted successfully!');
-      fetchArticles(); // Refresh articles
+      fetchArticles();
     } catch (error) {
       console.error('Error deleting article:', error);
       alert('Failed to delete article');
@@ -166,7 +170,6 @@ export default function AdminArticleManagement() {
   const handleUnpublishArticle = async (articleId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      // Correct URL to match backend route for unpublish
       const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/unpublish`, {
         method: 'PUT',
         headers: {
@@ -180,7 +183,7 @@ export default function AdminArticleManagement() {
 
       const data = await response.json();
       alert('Article unpublished successfully!');
-      fetchArticles(); // Refresh articles
+      fetchArticles();
     } catch (error) {
       console.error('Error unpublishing article:', error);
       alert('Failed to unpublish article');
@@ -190,7 +193,6 @@ export default function AdminArticleManagement() {
   const handlePublishArticle = async (articleId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      // Correct URL to match backend route for publish
       const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/publish`, {
         method: 'PUT',
         headers: {
@@ -204,7 +206,7 @@ export default function AdminArticleManagement() {
 
       const data = await response.json();
       alert('Article published successfully!');
-      fetchArticles(); // Refresh articles
+      fetchArticles();
     } catch (error) {
       console.error('Error publishing article:', error);
       alert('Failed to publish article');
@@ -214,7 +216,6 @@ export default function AdminArticleManagement() {
   const handleReReviewArticle = async (articleId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      // Correct URL to match backend route for re-review
       const response = await fetch(`http://localhost:5000/api/admin/articles/${articleId}/re-review`, {
         method: 'PUT',
         headers: {
@@ -228,28 +229,10 @@ export default function AdminArticleManagement() {
 
       const data = await response.json();
       alert('Article sent for re-review successfully!');
-      fetchArticles(); // Refresh articles
+      fetchArticles();
     } catch (error) {
       console.error('Error sending article for re-review:', error);
       alert('Failed to send article for re-review');
-    }
-  };
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'published':
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Published</span>;
-      case 'approved':
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Approved</span>;
-      case 'rejected':
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>;
-      case 'pending_review':
-      case 'pending':
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending Review</span>;
-      case 'draft':
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Draft</span>;
-      default:
-        return <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Unknown</span>;
     }
   };
 
@@ -264,248 +247,164 @@ export default function AdminArticleManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <button
-                onClick={() => navigate('/admin/dashboard')}
-                className="mr-4 p-2 text-gray-400 hover:text-gray-600"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-              <FileText className="h-8 w-8 text-emerald-600 mr-3" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Article Management</h1>
-                <p className="text-sm text-gray-600">Review and manage submitted articles</p>
+    <div className="space-y-10 animate-fade-in text-slate-900">
+      {/* Intel Hub Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div>
+           <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-black tracking-tight uppercase">Intel <span className="text-emerald-400">Hub</span></h1>
+              <div className="px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-500/30 flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Knowledge Network</span>
               </div>
-            </div>
-          </div>
+           </div>
+           <p className="text-slate-400 font-medium text-sm">Reviewing and curating strategic wildlife protection research.</p>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Filters */}
-        <div className="mb-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="mb-4 sm:mb-0">
-              <label htmlFor="status-filter" className="block text-sm font-medium text-gray-700 mb-1">
-                Filter by Status
-              </label>
-              <select
-                id="status-filter"
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          <div className="relative flex-1 lg:w-64">
+             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+             <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm rounded-md"
+                className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-900 focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 appearance-none shadow-sm transition-all"
               >
-                <option value="all">All Articles</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="published">Published</option>
-                <option value="rejected">Rejected</option>
+                <option value="all">ALL INTEL</option>
+                <option value="pending">PENDING REVIEW</option>
+                <option value="approved">APPROVED ONLY</option>
+                <option value="published">LIVE BROADCASTS</option>
+                <option value="rejected">REJECTED FILES</option>
               </select>
-            </div>
           </div>
         </div>
-
-        {/* Articles Table */}
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading articles...</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Article
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Author
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Submitted
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {articles.map((article) => (
-                    <tr key={article._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <span className="text-sm font-medium text-gray-700">
-                                {article.title ? article.title.charAt(0).toUpperCase() : 'A'}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
-                              {article.title}
-                            </div>
-                            <div className="text-sm text-gray-500 max-w-xs truncate">
-                              {article.content?.substring(0, 50)}...
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {article.author?.name || 'Unknown'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {article.author?.email || ''}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusBadge(article.status)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(article.createdAt)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        {/* Action buttons based on current status */}
-                        {article.status === 'pending' || article.status === 'pending_review' || article.status === 'draft' ? (
-                          <>
-                            <button
-                              onClick={() => handleApproveArticle(article._id)}
-                              className="text-green-600 hover:text-green-900 mr-2"
-                              title="Approve & Publish Article"
-                            >
-                              <CheckCircle className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleRejectArticle(article._id)}
-                              className="text-red-600 hover:text-red-900 mr-2"
-                              title="Reject Article"
-                            >
-                              <XCircle className="h-5 w-5" />
-                            </button>
-                            {article.status === 'pending_review' && (
-                              <button
-                                onClick={() => handleCancelPending(article._id)}
-                                className="text-yellow-600 hover:text-yellow-900 mr-2"
-                                title="Cancel Pending Review"
-                              >
-                                <XCircle className="h-5 w-5" />
-                              </button>
-                            )}
-                          </>
-                        ) : article.status === 'published' ? (
-                          <>
-                            <button
-                              onClick={() => handleUnpublishArticle(article._id)}
-                              className="text-orange-600 hover:text-orange-900 mr-2"
-                              title="Unpublish Article"
-                            >
-                              <EyeOff className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleRejectArticle(article._id)}
-                              className="text-red-600 hover:text-red-900 mr-2"
-                              title="Reject Article"
-                            >
-                              <XCircle className="h-5 w-5" />
-                            </button>
-                          </>
-                        ) : article.status === 'approved' ? (
-                          <>
-                            <button
-                              onClick={() => handlePublishArticle(article._id)}
-                              className="text-blue-600 hover:text-blue-900 mr-2"
-                              title="Publish Article"
-                            >
-                              <Eye className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleRejectArticle(article._id)}
-                              className="text-red-600 hover:text-red-900 mr-2"
-                              title="Reject Article"
-                            >
-                              <XCircle className="h-5 w-5" />
-                            </button>
-                          </>
-                        ) : article.status === 'rejected' ? (
-                          <>
-                            <button
-                              onClick={() => handleReReviewArticle(article._id)}
-                              className="text-yellow-600 hover:text-yellow-900 mr-2"
-                              title="Send for Re-review"
-                            >
-                              <CheckCircle className="h-5 w-5" />
-                            </button>
-                          </>
-                        ) : null}
-                        <button
-                          onClick={() => handleDeleteArticle(article._id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete Article"
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+      </div>
+      {error && (
+        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-6 py-4 rounded-2xl shadow-sm">
+          <AlertCircle className="w-5 h-5 mr-3 text-rose-500" />
+          <span className="text-sm font-black uppercase tracking-widest">{error}</span>
         </div>
+      )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-6 flex justify-center">
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Previous
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                    page === currentPage
-                      ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-              >
-                Next
-              </button>
-            </nav>
+      {/* Intel Table */}
+      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
+             <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
+             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Retrieving Archive Data...</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100">
+              <thead>
+                <tr className="bg-slate-50/50">
+                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Research Profile</th>
+                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Source / Author</th>
+                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status Code</th>
+                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Timestamp</th>
+                  <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tactical Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {articles.map((article) => (
+                  <tr key={article._id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-8 py-6 whitespace-nowrap">
+                       <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform">
+                             {article.title ? article.title.charAt(0).toUpperCase() : 'A'}
+                          </div>
+                          <div className="max-w-[240px]">
+                             <div className="text-sm font-black text-slate-900 tracking-tight truncate">{article.title}</div>
+                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1 truncate">
+                                {article.content?.substring(0, 40)}...
+                             </p>
+                          </div>
+                       </div>
+                    </td>
+                    <td className="px-8 py-6 whitespace-nowrap">
+                       <div className="text-xs font-black text-slate-700 tracking-tight uppercase">{article.author?.name || 'Unknown Author'}</div>
+                       <div className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">{article.author?.email}</div>
+                    </td>
+                    <td className="px-8 py-6 whitespace-nowrap">
+                       <div className={`px-3 py-1.5 rounded-xl border flex items-center gap-2 w-fit
+                          ${article.status === 'published' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' :
+                            article.status === 'rejected' ? 'bg-rose-50 border-rose-100 text-rose-600' :
+                            'bg-amber-50 border-amber-100 text-amber-600'}
+                       `}>
+                          <div className={`w-1.5 h-1.5 rounded-full ${article.status === 'published' ? 'bg-emerald-500 animate-pulse' : article.status === 'rejected' ? 'bg-rose-500' : 'bg-amber-500'}`} />
+                          <span className="text-[9px] font-black uppercase tracking-widest">{article.status.replace('_', ' ')}</span>
+                       </div>
+                    </td>
+                    <td className="px-8 py-6 whitespace-nowrap">
+                       <div className="flex items-center gap-2">
+                          <Clock size={12} className="text-slate-300" />
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{formatDate(article.createdAt)}</span>
+                       </div>
+                    </td>
+                    <td className="px-8 py-6 whitespace-nowrap text-right">
+                       <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          {article.status === 'pending' || article.status === 'pending_review' ? (
+                            <button onClick={() => handleApproveArticle(article._id)} className="p-2.5 bg-white border border-slate-100 text-emerald-500 hover:bg-emerald-600 hover:text-white rounded-xl shadow-sm transition-all active:scale-95">
+                               <CheckCircle size={16} />
+                            </button>
+                          ) : article.status === 'approved' ? (
+                            <button onClick={() => handlePublishArticle(article._id)} className="p-2.5 bg-white border border-slate-100 text-blue-500 hover:bg-blue-600 hover:text-white rounded-xl shadow-sm transition-all active:scale-95">
+                               <Zap size={16} />
+                            </button>
+                          ) : (
+                            <button className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-500 rounded-xl shadow-sm transition-all active:scale-95">
+                               <Eye size={16} />
+                            </button>
+                          )}
+                          <button onClick={() => handleDeleteArticle(article._id)} className="p-2.5 bg-white border border-slate-100 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl shadow-sm transition-all active:scale-95">
+                             <Trash2 size={16} />
+                          </button>
+                          <button className="p-2.5 bg-white border border-slate-100 text-slate-300 rounded-xl hover:text-slate-900 transition-colors">
+                             <MoreVertical size={16} />
+                          </button>
+                       </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
-      </main>
+      </div>
+
+    {/* Pagination */}
+    {totalPages > 1 && (
+      <div className="mt-6 flex justify-center">
+        <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+          >
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                page === currentPage
+                  ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600'
+                  : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+          >
+            Next
+          </button>
+        </nav>
+      </div>
+    )}
     </div>
   );
 }

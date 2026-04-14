@@ -101,7 +101,7 @@ const UserPostsPage = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-10 py-6">
+    <div className="max-w-3xl mx-auto space-y-10 py-6 animate-fade-in">
       {/* Premium Logging Form */}
       <div className="card-premium p-8 relative overflow-hidden bg-white/50 backdrop-blur-sm border-emerald-100">
         <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500" />
@@ -246,13 +246,13 @@ const UserPostsPage = () => {
               </div>
 
               <div className="p-4 bg-slate-50/30 flex gap-6 px-8 border-t border-slate-100">
-                <div className="flex items-center gap-2 text-slate-400">
-                  <FaHeart className="text-rose-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{post.likes || 0} VERIFICATIONS</span>
+                <div className="flex items-center gap-2 text-slate-400 group/label hover:text-rose-500 transition-colors">
+                  <FaHeart className="text-rose-400 group-hover/label:scale-110 transition-transform" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{post.likes || 0} LIKES</span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-400">
-                  <FaComment className="text-sky-400" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{post.comments?.length || 0} ANALYSES</span>
+                <div className="flex items-center gap-2 text-slate-400 group/label hover:text-sky-500 transition-colors">
+                  <FaComment className="text-sky-400 group-hover/label:scale-110 transition-transform" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">{post.comments?.length || 0} COMMENTS</span>
                 </div>
               </div>
             </div>

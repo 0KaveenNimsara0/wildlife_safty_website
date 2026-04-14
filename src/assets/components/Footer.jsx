@@ -67,7 +67,7 @@ export default function Footer({ setPage }) {
                                 <Shield className="w-6 h-6 text-white" />
                             </div>
                             <h3 className="text-2xl font-black tracking-tight bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text text-transparent">
-                                WildSafe
+                                WildLife Safety
                             </h3>
                         </div>
                         <p className="text-slate-400 leading-relaxed text-base font-medium">
@@ -132,7 +132,7 @@ export default function Footer({ setPage }) {
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm font-medium">
-                        © 2025 WildSafe Sri Lanka. Licensed AI Technology.
+                        © 2025 WildLife Safety Sri Lanka. Licensed AI Technology.
                     </p>
                     <div className="flex items-center space-x-6 text-slate-500 text-sm font-medium">
                         <a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a>

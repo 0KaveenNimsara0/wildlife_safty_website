@@ -8,7 +8,10 @@ import {
   ArrowLeft,
   AlertCircle,
   CheckCircle,
-  XCircle
+  XCircle,
+  Filter,
+  MoreVertical,
+  UserCheck
 } from 'lucide-react';
 
 export default function UserManagement() {
@@ -168,155 +171,118 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center">
-              <button
-                onClick={() => navigate('/admin/dashboard')}
-                className="mr-4 p-2 text-gray-400 hover:text-gray-600"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </button>
-              <Users className="h-8 w-8 text-emerald-600 mr-3" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-                <p className="text-sm text-gray-600">Manage all registered users</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {error && (
-          <div className="mb-6 flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <AlertCircle className="w-5 h-5 mr-2" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Search */}
-        <div className="mb-6">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400" />
+    <div className="space-y-8 animate-fade-in">
+      {/* Search & Utility Bar */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div className="flex-1 w-full max-w-2xl">
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-5 flex items-center text-slate-400 group-focus-within:text-emerald-500 transition-colors">
+              <Search size={18} />
             </div>
             <input
               type="text"
-              placeholder="Search users by email or name..."
+              placeholder="Scan database: Identity, Email, or Hash..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 handleSearch(e.target.value);
               }}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full pl-14 pr-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-black uppercase tracking-widest text-slate-800 placeholder:text-slate-300 transition-all"
             />
           </div>
         </div>
 
-        {/* Users Table */}
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+        <div className="flex items-center gap-3">
+          <div className="px-5 py-3.5 bg-slate-900 rounded-2xl flex items-center gap-3 shadow-lg shadow-emerald-900/10">
+            <Users size={16} className="text-emerald-400" />
+            <span className="text-[10px] font-black text-white uppercase tracking-widest">{users.length} Active Nodes</span>
+          </div>
+          <button className="p-3.5 rounded-2xl bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 transition-all hover:shadow-lg active:scale-95">
+             <Filter size={18} />
+          </button>
+        </div>
+      </div>
+
+        {/* User Management Table */}
+        <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
           {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Loading users...</p>
+            <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
+              <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Synchronizing Data...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      User
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Email
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Joined
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
+              <table className="min-w-full divide-y divide-slate-100">
+                <thead>
+                  <tr className="bg-slate-50/50">
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Full Identity</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contact Node</th>
+                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Timestamp</th>
+                    <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="divide-y divide-slate-50">
                   {users && users.map((user) => (
-                    <tr key={user.uid}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                              <span className="text-sm font-medium text-gray-700">
-                                {((user.displayName || user.email) ? (user.displayName || user.email).charAt(0).toUpperCase() : '')}
-                              </span>
-                            </div>
+                    <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
+                      <td className="px-8 py-6 whitespace-nowrap">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform">
+                            {(user.displayName || user.email || '?').charAt(0).toUpperCase()}
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {user.displayName || user.email || 'No name'}
-                            </div>
+                          <div>
+                            <div className="text-sm font-black text-slate-900 tracking-tight">{user.displayName || 'Anonymous User'}</div>
+                            <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">Verified Access</div>
                           </div>
                         </div>
                       </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-8 py-6 whitespace-nowrap">
                         {editingUser === user.uid ? (
                           <input
                             type="email"
                             value={editForm.email}
                             onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
+                            className="bg-white border-2 border-emerald-500 outline-none px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest text-slate-900"
                           />
                         ) : (
-                          <div className="text-sm text-gray-900">{user.email || 'No email'}</div>
+                          <div className="text-xs font-bold text-slate-500 lowercase">{user.email || 'No email registered'}</div>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric'
-                        }) : 'N/A'}
+                      <td className="px-8 py-6 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            {user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                              year: 'numeric', month: 'short', day: 'numeric'
+                            }) : 'UNKNOWN'}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-8 py-6 whitespace-nowrap text-right">
                         {editingUser === user.uid ? (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={handleUpdate}
-                              className="text-green-600 hover:text-green-900"
-                            >
-                              <CheckCircle className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => setEditingUser(null)}
-                              className="text-gray-600 hover:text-gray-900"
-                            >
-                              <XCircle className="h-5 w-5" />
-                            </button>
+                          <div className="flex justify-end gap-2">
+                             <button onClick={handleUpdate} className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 active:scale-95 transition-all">
+                                <CheckCircle size={16} />
+                             </button>
+                             <button onClick={() => setEditingUser(null)} className="p-2.5 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 active:scale-95 transition-all">
+                                <XCircle size={16} />
+                             </button>
                           </div>
                         ) : (
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => handleEdit(user)}
-                              className="text-indigo-600 hover:text-indigo-900"
-                            >
-                              <Edit className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(user.uid)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              <Trash2 className="h-5 w-5" />
-                            </button>
+                          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                             <button onClick={() => handleEdit(user)} className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 hover:border-emerald-100 rounded-xl shadow-sm transition-all active:scale-95">
+                                <Edit size={16} />
+                             </button>
+                             <button onClick={() => handleDelete(user.uid)} className="p-2.5 bg-white border border-slate-100 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl shadow-sm transition-all active:scale-95">
+                                <Trash2 size={16} />
+                             </button>
+                             <button className="p-2.5 bg-white border border-slate-100 text-slate-300 rounded-xl hover:text-slate-900 transition-colors">
+                                <MoreVertical size={16} />
+                             </button>
                           </div>
                         )}
                       </td>
                     </tr>
                   ))}
-
                 </tbody>
               </table>
             </div>
@@ -357,7 +323,6 @@ export default function UserManagement() {
             </nav>
           </div>
         )}
-      </main>
     </div>
   );
 }

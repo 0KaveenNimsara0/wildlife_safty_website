@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapPin, Search, LocateFixed, Filter, Info, Phone, Clock, Navigation, AlertCircle, ChevronRight, Map as MapIcon } from 'lucide-react';
+import { MapPin, Search, LocateFixed, Filter, Info, Phone, Clock, Navigation, AlertCircle, ChevronRight, Map as MapIcon, Shield, Activity } from 'lucide-react';
 
 const locations = [
   {

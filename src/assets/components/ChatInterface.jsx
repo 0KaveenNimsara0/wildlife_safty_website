@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Send, MessageSquare, Shield, Clock, CheckCircle2, AlertCircle, Loader2, XCircle } from 'lucide-react';
 
 const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error, onClearError }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -41,65 +42,64 @@ const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white relative">
       {/* Chat Header */}
-      <div className="px-6 py-4 bg-white border-b border-gray-200">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">
-                {medicalOfficer.name.charAt(0).toUpperCase()}
-              </span>
+      <div className="px-8 py-5 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/90">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl translate-y-[-2px]">
+              {medicalOfficer.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-4 border-white shadow-sm" />
+          </div>
+          <div>
+            <h3 className="text-sm font-black text-slate-900 tracking-tight uppercase">{medicalOfficer.name}</h3>
+            <div className="flex items-center gap-2 mt-0.5">
+               <span className="text-[9px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100 italic">
+                  {medicalOfficer.specialization.replace('_', ' ')}
+               </span>
+               <span className="text-[9px] font-bold text-slate-300 uppercase tracking-tighter">| {medicalOfficer.hospital || 'Medical Professional'}</span>
             </div>
           </div>
-          <div className="ml-4">
-            <h3 className="text-lg font-semibold text-gray-900">{medicalOfficer.name}</h3>
-            <p className="text-sm text-gray-500">
-              {medicalOfficer.specialization.replace('_', ' ')} • {medicalOfficer.hospital || 'Medical Professional'}
-            </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex flex-col items-end mr-2">
+             <p className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Secured Channel</p>
+             <p className="text-[8px] font-bold text-slate-400 uppercase">Latency: <span className="text-emerald-400">Low</span></p>
           </div>
-          <div className="ml-auto">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-              <span className="text-sm text-gray-600">Online</span>
-            </div>
+          <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors cursor-pointer border border-slate-100">
+             <Shield size={18} />
           </div>
         </div>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-400 p-4 mx-6 mt-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
+        <div className="bg-rose-50 border-y border-rose-100 p-4 animate-in slide-in-from-top duration-300">
+          <div className="flex items-center justify-between max-w-2xl mx-auto">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="text-rose-500" size={18} />
+              <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest">{error}</p>
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
-            <div className="ml-auto pl-3">
-              <button
-                onClick={onClearError}
-                className="inline-flex rounded-md p-1.5 text-red-400 hover:bg-red-100 hover:text-red-600"
-              >
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
+            <button
+              onClick={onClearError}
+              className="p-2 text-rose-400 hover:text-rose-600 transition-colors"
+            >
+              <XCircle size={18} />
+            </button>
           </div>
         </div>
       )}
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4" ref={messagesContainerRef}>
+      <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar bg-slate-50/20" ref={messagesContainerRef}>
         {messages.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <div className="text-6xl text-gray-300 mb-4">💬</div>
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">Start a Conversation</h3>
-            <p className="text-gray-500">Send a message to {medicalOfficer.name} to begin your chat.</p>
+          <div className="h-full flex flex-col items-center justify-center opacity-30 space-y-4">
+            <MessageSquare size={64} className="text-slate-200" />
+            <div className="text-center">
+               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Encrypted Channel Established</h3>
+               <p className="text-[8px] font-bold text-slate-300 uppercase mt-2">Waiting for data transmission...</p>
+            </div>
           </div>
         )}
 
@@ -108,28 +108,38 @@ const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error
           const showDate = index === 0 || formatDate(message.createdAt) !== formatDate(messages[index - 1].createdAt);
 
           return (
-            <div key={message._id}>
+            <div key={message._id || index} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
               {showDate && (
-                <div className="text-center my-4">
-                  <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                <div className="flex items-center gap-4 my-12 opacity-40">
+                  <div className="h-[1px] flex-1 bg-slate-200" />
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
                     {formatDate(message.createdAt)}
                   </span>
+                  <div className="h-[1px] flex-1 bg-slate-200" />
                 </div>
               )}
 
-              <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  isUser
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-900'
-                }`}>
-                  <p className="text-sm">{message.message}</p>
-                  <p className={`text-xs mt-1 ${isUser ? 'text-green-100' : 'text-gray-500'}`}>
-                    {formatTime(message.createdAt)}
-                    {message.isRead && !isUser && (
-                      <span className="ml-2">✓✓</span>
+              <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} group mb-2`}>
+                <div className={`max-w-[80%] lg:max-w-md relative ${isUser ? 'order-1' : 'order-1'}`}>
+                  <div className={`px-6 py-4 rounded-3xl shadow-sm text-sm font-medium leading-relaxed ${
+                    isUser
+                      ? 'bg-slate-900 text-white rounded-tr-none'
+                      : 'bg-white text-slate-800 rounded-tl-none border border-slate-100 shadow-xl shadow-slate-200/50'
+                  }`}>
+                    {message.message}
+                  </div>
+                  
+                  <div className={`flex items-center gap-2 mt-2 px-1 ${isUser ? 'justify-end' : 'justify-start'}`}>
+                    <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">
+                       {formatTime(message.createdAt)}
+                    </span>
+                    {isUser && (
+                       <div className="flex items-center gap-0.5">
+                          <CheckCircle2 size={8} className="text-emerald-500" />
+                          {message.isRead && <CheckCircle2 size={8} className="text-emerald-500 -ml-1" />}
+                       </div>
                     )}
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -137,34 +147,42 @@ const ChatInterface = ({ medicalOfficer, messages, onSendMessage, loading, error
         })}
 
         {loading && (
-          <div className="flex justify-center py-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+          <div className="flex justify-center py-8">
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.15s] mx-1" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
           </div>
         )}
       </div>
 
       {/* Message Input */}
-      <div className="px-6 py-4 bg-white border-t border-gray-200">
-        <form onSubmit={handleSendMessage} className="flex space-x-4">
-          <div className="flex-1">
+      <div className="px-8 py-6 bg-white border-t border-slate-50 sticky bottom-0">
+        <form onSubmit={handleSendMessage} className="flex gap-4">
+          <div className="flex-1 relative group">
+            <div className="absolute inset-y-0 left-5 flex items-center text-slate-300 group-focus-within:text-emerald-500 transition-colors">
+               <MessageSquare size={16} />
+            </div>
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={`Message ${medicalOfficer.name}...`}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder={`Transmission: Medical Specialist ${medicalOfficer.name.split(' ')[0]}...`}
+              className="w-full pl-12 pr-6 py-4 bg-slate-50 rounded-2xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-xs font-black uppercase tracking-widest text-slate-800 placeholder:text-slate-300 transition-all"
               disabled={loading}
             />
           </div>
           <button
             type="submit"
             disabled={!newMessage.trim() || loading}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-8 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-slate-200 flex items-center gap-3 active:scale-95"
           >
             {loading ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              'Send'
+              <>
+                <span>Send Intel</span>
+                <Send size={14} />
+              </>
             )}
           </button>
         </form>
