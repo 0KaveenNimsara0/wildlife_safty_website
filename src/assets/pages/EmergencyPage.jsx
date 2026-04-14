@@ -1,207 +1,191 @@
 import React from 'react';
-import { Phone, AlertTriangle, Shield, LifeBuoy, MapPin, Clock, Heart } from 'lucide-react';
+import { Phone, AlertTriangle, Shield, LifeBuoy, MapPin, Clock, Heart, Zap, Activity, Navigation, Info } from 'lucide-react';
 
 export default function EmergencyPage() {
     const emergencyContacts = [
         {
-            name: "Police Emergency",
+            name: "Central Response",
             number: "119",
-            description: "Immediate police assistance",
-            color: "red",
-            icon: Phone
+            description: "Immediate Military & Police Assistance",
+            theme: "rose",
+            icon: Shield
         },
         {
-            name: "Ambulance / Fire",
+            name: "Medical Dispatch",
+            number: "1990",
+            description: "Suwaseriya Fast Response Ambulance",
+            theme: "emerald",
+            icon: Heart
+        },
+        {
+            name: "Fire & Rescue",
             number: "110",
-            description: "Medical emergency & fire services",
-            color: "orange",
-            icon: Phone
+            description: "Search, Rescue & Containment",
+            theme: "amber",
+            icon: Zap
         },
         {
-            name: "National Hospital",
-            number: "0112691111",
-            description: "Colombo National Hospital",
-            color: "blue",
-            icon: Phone
-        },
-        {
-            name: "Government Info Center",
+            name: "Crisis Intel",
             number: "1919",
-            description: "General information & assistance",
-            color: "purple",
-            icon: Phone
+            description: "National Emergency Information Hub",
+            theme: "sky",
+            icon: Info
         }
     ];
 
-    const firstAidSteps = [
+    const protocols = [
         {
-            title: "DO ✅",
-            color: "green",
-            items: [
-                "Keep the person calm and still",
-                "Call for an ambulance immediately",
-                "Position the bite below the heart",
-                "Loosen or remove tight clothing/jewelry",
-                "Remember the snake's appearance if seen"
+            title: "Critical Actions (DO)",
+            type: "positive",
+            steps: [
+                { text: "Immobilize the limb immediately", sub: "Use a splint or padding to prevent movement." },
+                { text: "Keep victim calm and horizontal", sub: "Reduces heart rate and venom spread." },
+                { text: "Remove jewelry and tight clothing", sub: "The area will likely swell rapidly." },
+                { text: "Note identifying marks on snake", sub: "Helps medical staff select the correct antivenom." },
+                { text: "Apply clean pressure bandage", sub: "Broad pressure, not a tourniquet." }
             ]
         },
         {
-            title: "DON'T ❌",
-            color: "red",
-            items: [
-                "DO NOT cut the wound or try to suck venom",
-                "DO NOT apply ice or a tourniquet",
-                "DO NOT attempt to catch the snake",
-                "DO NOT give alcohol or caffeinated drinks",
-                "DO NOT let the person walk around"
-            ]
-        }
-    ];
-
-    const preventionTips = [
-        {
-            title: "Protective Measures",
-            icon: Shield,
-            tips: [
-                "Wear protective footwear and long trousers in vegetated areas",
-                "Always use a flashlight when walking at night",
-                "Stick to clear paths and avoid tall grass"
-            ]
-        },
-        {
-            title: "Property Safety",
-            icon: MapPin,
-            tips: [
-                "Keep your property clean and free of debris",
-                "Be cautious before reaching into dark spaces",
-                "Seal gaps and holes in buildings"
-            ]
-        },
-        {
-            title: "Behavioral Awareness",
-            icon: Clock,
-            tips: [
-                "Most active during dawn and dusk",
-                "Snakes prefer to avoid human contact",
-                "Slowly back away if you see a snake"
+            title: "Strict Prohibitions (DON'T)",
+            type: "negative",
+            steps: [
+                { text: "DO NOT cut the bite area", sub: "Causes tissue damage and infection risk." },
+                { text: "DO NOT attempt to suck venom", sub: "Ineffective and dangerous for the rescuer." },
+                { text: "DO NOT apply ice or chemicals", sub: "Can worsen localized tissue necrosis." },
+                { text: "DO NOT apply a tight tourniquet", sub: "Can lead to amputation if blood flow is cut." },
+                { text: "DO NOT give alcohol or coffee", sub: "Accelerates heart rate and venom absorption." }
             ]
         }
     ];
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
-            <div className="text-center mb-12">
-                <LifeBuoy className="w-16 h-16 text-red-600 mx-auto mb-4" />
-                <h2 className="text-4xl font-bold text-gray-800 mb-4">Snake Bite Emergency</h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Follow these critical steps and use the emergency contacts below. Your immediate action can save a life.
-                </p>
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-16 animate-fade-in">
+            {/* Urgent Header */}
+            <div className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-12 lg:p-20 text-center space-y-6">
+                <div className="absolute inset-0 opacity-20">
+                    <div className="absolute inset-0 bg-gradient-to-br from-rose-600/40 via-transparent to-emerald-600/40" />
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                </div>
+                
+                <div className="relative z-10 space-y-6">
+                    <div className="mx-auto w-fit bg-rose-500 p-4 rounded-3xl shadow-2xl shadow-rose-500/40 animate-pulse">
+                        <LifeBuoy className="w-12 h-12 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                        <h2 className="text-5xl lg:text-7xl font-black tracking-tighter text-white">
+                            EMERGENCY <span className="text-rose-500">PROTOCOL</span>
+                        </h2>
+                        <p className="text-slate-400 text-lg lg:text-xl font-medium max-w-2xl mx-auto">
+                            Immediate medical response is mandatory for all snake bites. Follow these high-stakes guidelines while waiting for help.
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            {/* Emergency Contacts Section */}
+            {/* Tactical Contact Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {emergencyContacts.map((contact, index) => {
-                    const IconComponent = contact.icon;
-                    const colorClasses = {
-                        red: "bg-red-50 border-red-200 text-red-700",
-                        orange: "bg-orange-50 border-orange-200 text-orange-700",
-                        blue: "bg-blue-50 border-blue-200 text-blue-700",
-                        purple: "bg-purple-50 border-purple-200 text-purple-700"
+                {emergencyContacts.map((contact, i) => {
+                    const themes = {
+                        rose: "border-rose-100 bg-rose-50/30 text-rose-600 shadow-rose-500/5",
+                        emerald: "border-emerald-100 bg-emerald-50/30 text-emerald-600 shadow-emerald-500/5",
+                        amber: "border-amber-100 bg-amber-50/30 text-amber-600 shadow-amber-500/5",
+                        sky: "border-sky-100 bg-sky-50/30 text-sky-600 shadow-sky-500/5"
                     };
-                    const iconColors = {
-                        red: "text-red-600",
-                        orange: "text-orange-600",
-                        blue: "text-blue-600",
-                        purple: "text-purple-600"
+                    const btnThemes = {
+                        rose: "bg-rose-600 hover:bg-rose-700 shadow-rose-600/30",
+                        emerald: "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/30",
+                        amber: "bg-amber-600 hover:bg-amber-700 shadow-amber-600/30",
+                        sky: "bg-sky-600 hover:bg-sky-700 shadow-sky-600/30"
                     };
-
                     return (
-                        <div key={index} className={`${colorClasses[contact.color]} p-6 rounded-xl border shadow-sm hover:shadow-md transition-shadow`}>
-                            <div className="text-center">
-                                <IconComponent className={`w-10 h-10 ${iconColors[contact.color]} mx-auto mb-3`} />
-                                <h3 className="font-bold text-lg mb-2">{contact.name}</h3>
-                                <p className="text-sm opacity-80 mb-3">{contact.description}</p>
-                                <a href={`tel:${contact.number}`} className="text-2xl font-bold hover:underline">
-                                    {contact.number}
-                                </a>
+                        <div key={i} className={`card-premium p-8 flex flex-col items-center text-center space-y-4 border-2 ${themes[contact.theme]}`}>
+                            <div className="p-4 rounded-2xl bg-white shadow-sm">
+                                <contact.icon size={32} />
                             </div>
+                            <div>
+                                <h3 className="text-lg font-black text-slate-800 uppercase tracking-tight">{contact.name}</h3>
+                                <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-normal">
+                                    {contact.description}
+                                </p>
+                            </div>
+                            <a 
+                                href={`tel:${contact.number}`}
+                                className={`w-full py-4 rounded-2xl text-white font-black text-2xl flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl ${btnThemes[contact.theme]}`}
+                            >
+                                <Phone size={24} />
+                                {contact.number}
+                            </a>
                         </div>
                     );
                 })}
             </div>
 
-            {/* First Aid Section */}
-            <div className="grid md:grid-cols-2 gap-8">
-                {firstAidSteps.map((section, index) => {
-                    const colorClasses = {
-                        green: "bg-green-50 border-green-200 text-green-700",
-                        red: "bg-red-50 border-red-200 text-red-700"
-                    };
-                    const iconColors = {
-                        green: "text-green-600",
-                        red: "text-red-600"
-                    };
-
-                    return (
-                        <div key={index} className={`${colorClasses[section.color]} p-6 rounded-xl border shadow-sm`}>
-                            <h3 className={`font-bold text-2xl mb-4 flex items-center ${iconColors[section.color]}`}>
-                                <AlertTriangle className="w-6 h-6 mr-2" />
-                                {section.title}
-                            </h3>
-                            <ul className="space-y-3">
-                                {section.items.map((item, itemIndex) => (
-                                    <li key={itemIndex} className="flex items-start">
-                                        <span className={`w-2 h-2 rounded-full mt-2 mr-3 flex-shrink-0 ${section.color === 'green' ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                                        <span className="text-gray-800">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
+            {/* Life-Saving Protocols */}
+            <div className="grid lg:grid-cols-2 gap-10">
+                {protocols.map((protocol, i) => (
+                    <div key={i} className={`card-premium overflow-hidden border-2 ${protocol.type === 'positive' ? 'border-emerald-100' : 'border-rose-100'}`}>
+                        <div className={`p-6 flex items-center gap-4 ${protocol.type === 'positive' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`}>
+                            {protocol.type === 'positive' ? <Activity size={24} /> : <AlertTriangle size={24} />}
+                            <h3 className="text-xl font-black uppercase tracking-tighter">{protocol.title}</h3>
                         </div>
-                    );
-                })}
-            </div>
-
-            {/* Prevention Section */}
-            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-8 rounded-xl border border-green-200">
-                <h3 className="text-2xl font-bold text-green-800 mb-6 text-center">Prevention & Safety Tips</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                    {preventionTips.map((category, index) => {
-                        const IconComponent = category.icon;
-                        return (
-                            <div key={index} className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                                <div className="text-center mb-4">
-                                    <IconComponent className="w-10 h-10 text-green-600 mx-auto mb-2" />
-                                    <h4 className="font-bold text-lg text-gray-800">{category.title}</h4>
+                        <div className="p-8 space-y-6">
+                            {protocol.steps.map((step, si) => (
+                                <div key={si} className="flex gap-4 group">
+                                    <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-black text-xs ${protocol.type === 'positive' ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
+                                        {si + 1}
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h4 className="font-bold text-slate-800 leading-none group-hover:text-emerald-700 transition-colors">{step.text}</h4>
+                                        <p className="text-xs font-medium text-slate-500 leading-relaxed">{step.sub}</p>
+                                    </div>
                                 </div>
-                                <ul className="space-y-2">
-                                    {category.tips.map((tip, tipIndex) => (
-                                        <li key={tipIndex} className="flex items-start text-sm">
-                                            <span className="text-green-600 mr-2 mt-1">•</span>
-                                            <span className="text-gray-700">{tip}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        );
-                    })}
-                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
 
-            {/* Quick Reference Card */}
-            <div className="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
-                <div className="flex items-center mb-4">
-                    <Heart className="w-8 h-8 text-yellow-600 mr-3" />
-                    <h3 className="text-xl font-bold text-yellow-800">Emergency Quick Reference</h3>
-                </div>
-                <div className="grid md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                        <strong className="text-yellow-700">Step 1:</strong> Call emergency services immediately
+            {/* Navigation & Safety Insight */}
+            <div className="card-premium p-10 bg-slate-50 border-slate-200">
+                <div className="flex flex-col lg:flex-row items-center gap-10">
+                    <div className="lg:w-1/3">
+                        <div className="bg-white p-8 rounded-[2rem] shadow-xl border border-slate-100 max-w-sm mx-auto">
+                            <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Live Insights</h4>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                    <span className="text-xs font-bold text-slate-600">Response Priority</span>
+                                    <span className="text-xs font-black text-rose-600 uppercase">Critical</span>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                                    <span className="text-xs font-bold text-slate-600">Identification</span>
+                                    <span className="text-xs font-black text-emerald-600 uppercase">Automated</span>
+                                </div>
+                            </div>
+                            <button className="w-full mt-6 btn-primary flex items-center justify-center gap-2">
+                                <Navigation size={18} />
+                                <span>Find Nearest Clinic</span>
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <strong className="text-yellow-700">Step 2:</strong> Keep victim calm and still
-                    </div>
-                    <div>
-                        <strong className="text-yellow-700">Step 3:</strong> Note snake appearance
+                    <div className="lg:w-2/3 space-y-6">
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tight">Prevention Strategy</h3>
+                        <p className="text-slate-500 font-medium leading-relaxed">
+                            Sri Lanka's agricultural and forest regions present specific challenges. Our preemptive safety measures are designed by herpetology experts to minimize encounter risks during high-activity periods.
+                        </p>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            {[
+                                { title: "Dawn/Dusk Alerts", desc: "Highest snake activity happens during low-light transitions." },
+                                { title: "Tactical Gear", desc: "Boots and thick trousers provide 70%+ bite protection." }
+                            ].map((item, i) => (
+                                <div key={i} className="flex gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                    <Clock className="text-emerald-500 shrink-0" size={20} />
+                                    <div>
+                                        <h5 className="font-bold text-slate-800 text-sm">{item.title}</h5>
+                                        <p className="text-[11px] text-slate-500 font-medium">{item.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

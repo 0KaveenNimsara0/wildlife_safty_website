@@ -1,210 +1,174 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../components/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, User, CheckCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Mail, Lock, User, UserPlus, Shield, ArrowRight, Chrome, Github, Twitter, CheckCircle } from 'lucide-react';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
 export default function RegisterPage({ setPage }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup, sendEmailVerification } = useAuth();
   const navigate = useNavigate();
 
- async function handleSubmit(e) {
-  e.preventDefault();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (password !== passwordConfirm) return setError('Encryption mismatch: Passwords do not align.');
+    try {
+      setError('');
+      setLoading(true);
+      
+      const userCredential = await signup(email, password);
+      const user = userCredential.user;
+      
+      const db = getFirestore();
+      await setDoc(doc(db, "users", user.uid), {
+        name: name,
+        email: email,
+        createdAt: new Date().toISOString(),
+        emailVerified: false
+      });
 
-  if (password !== confirmPassword) {
-    return setError('Passwords do not match');
+      await sendEmailVerification(user);
+      
+      setError('');
+      alert('Verification email transmitted. Please check your inbox.');
+      navigate('/login');
+    } catch (err) {
+      setError(err.message || 'Registration failed. Personnel record could not be established.');
+    } finally {
+      // Small delay before navigation to allow user to see success message
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+      setLoading(false);
+    }
   }
-
-  try {
-    setError('');
-    setLoading(true);
-    
-    // 1. Create user account
-    const userCredential = await signup(email, password);
-    const user = userCredential.user;
-    
-    // 2. First store user data in database
-    const db = getFirestore();
-    await setDoc(doc(db, "users", user.uid), {
-      name: name,
-      email: email,
-      createdAt: new Date().toISOString(),
-      emailVerified: false
-    });
-
-    // 3. Then send verification email (with delay if needed)
-    await new Promise(resolve => setTimeout(resolve, 500)); // Small delay
-    await sendEmailVerification(user); // Make sure to pass the user object
-    
-    // 4. Reset loading before navigation to avoid UI stuck
-    setLoading(false);
-
-    // 5. Navigate only after everything completes
-    // Add a small delay before navigation to allow user to see success message
-    setTimeout(() => {
-      // Force full page reload after navigation to ensure fresh state
-      window.location.href = '/';
-    }, 1500);
-  } catch (err) {
-    console.error("Registration error:", err);
-    setError(err.message || 'Registration failed. Please try again.');
-    setLoading(false);
-  }
-}
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Create an Account</h2>
-        <p className="text-gray-600">Join WildGuard AI today</p>
-      </div>
+    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 animate-fade-in relative overflow-hidden">
+      {/* Decorative Orbs */}
+      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-sky-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
 
-      {error && (
-        <div className="flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <AlertCircle className="w-5 h-5 mr-2" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {/* {!error && !loading && (
-        <div className="flex items-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-          <CheckCircle className="w-5 h-5 mr-2" />
-          <span>Registration successful! Redirecting...</span>
-        </div>
-      )} */}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Full Name
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <User className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-              placeholder="John Doe"
-            />
+      <div className="max-w-md w-full space-y-8 relative">
+        <div className="text-center space-y-2">
+          <div className="mx-auto w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-emerald-200 rotate-3">
+            <UserPlus size={32} />
           </div>
-        </div>
-
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Mail className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-              placeholder="you@example.com"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            Password
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-              placeholder="••••••••"
-            />
-          </div>
-          <p className="mt-1 text-xs text-gray-500">
-            Password must be at least 6 characters
+          <h2 className="mt-6 text-4xl font-black text-slate-900 tracking-tighter">
+            Sector <span className="text-emerald-600">Enlistment</span>
+          </h2>
+          <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
+            Establish your identity record
           </p>
         </div>
 
-        <div>
-          <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
-            Confirm Password
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-gray-400" />
+        <div className="glass p-8 rounded-[2.5rem] shadow-2xl border-white/40 ring-1 ring-slate-900/5">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl text-rose-700 text-xs font-black uppercase tracking-widest text-center animate-shake">
+                {error}
+              </div>
+            )}
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Full Identity Name</label>
+                <div className="relative group">
+                  <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                  <input
+                    type="text"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Authorized Email</label>
+                <div className="relative group">
+                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
+                    placeholder="agent@wildsafe.gov"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Security Key</label>
+                <div className="relative group">
+                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                  <input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
+                    placeholder="Minimum 6 characters"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Verify Key</label>
+                <div className="relative group">
+                  <CheckCircle className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                  <input
+                    type="password"
+                    required
+                    value={passwordConfirm}
+                    onChange={(e) => setPasswordConfirm(e.target.value)}
+                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
+                    placeholder="Repeat key"
+                  />
+                </div>
+              </div>
             </div>
-            <input
-              id="confirm-password"
-              name="confirm-password"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-              placeholder="••••••••"
-            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-600 shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 group active:scale-95"
+            >
+              {loading ? 'Initializing...' : 'Enlist Personnel'}
+              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </form>
+
+          <div className="mt-8 pt-8 border-t border-slate-100 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="flex-1 h-px bg-slate-100" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 whitespace-nowrap">Collaborative Sync</span>
+              <div className="flex-1 h-px bg-slate-100" />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              {[Chrome, Github, Twitter].map((Icon, i) => (
+                <button key={i} className="py-3 flex items-center justify-center bg-white border-2 border-slate-50 rounded-xl text-slate-400 hover:border-emerald-200 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95">
+                  <Icon size={18} />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center">
-          <input
-            id="terms"
-            name="terms"
-            type="checkbox"
-            required
-            className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
-          />
-          <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-            I agree to the <a href="#" className="text-emerald-600 hover:text-emerald-500">Terms</a> and <a href="#" className="text-emerald-600 hover:text-emerald-500">Privacy Policy</a>
-          </label>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            {loading ? 'Creating account...' : 'Create Account'}
-          </button>
-        </div>
-      </form>
-
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-          Already have an account?{' '}
-          <button
-            onClick={() => setPage('login')}
-            className="font-medium text-emerald-600 hover:text-emerald-500"
-          >
-            Sign in
-          </button>
+        <p className="text-center text-slate-500 font-medium text-sm">
+          Already cleared? {' '}
+          <Link to="/login" className="text-emerald-600 font-black uppercase tracking-widest hover:underline text-xs">
+            Access Terminal
+          </Link>
         </p>
       </div>
     </div>

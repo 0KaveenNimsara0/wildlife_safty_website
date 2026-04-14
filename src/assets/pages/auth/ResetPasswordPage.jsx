@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../components/AuthContext';
-import { Mail, AlertCircle, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Mail, RefreshCw, Shield, ArrowLeft, ArrowRight, CheckCircle } from 'lucide-react';
 
-export default function ResetPasswordPage({ setPage }) {
+export default function ResetPasswordPage() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -11,82 +12,98 @@ export default function ResetPasswordPage({ setPage }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     try {
       setMessage('');
       setError('');
       setLoading(true);
       await resetPassword(email);
-      setMessage('Check your inbox for further instructions');
-    } catch {
-      setError('Failed to reset password');
+      setMessage('Recovery instructions transmitted. Check your secure inbox.');
+    } catch (err) {
+      setError('System failure: Recovery protocol could not be initiated.');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8">
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-800">Password Reset</h2>
-        <p className="text-gray-600">Enter your email to reset your password</p>
-      </div>
-
-      {error && (
-        <div className="flex items-center bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          <AlertCircle className="w-5 h-5 mr-2" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {message && (
-        <div className="flex items-center bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-          <CheckCircle className="w-5 h-5 mr-2" />
-          <span>{message}</span>
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Mail className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-              placeholder="you@example.com"
-            />
+    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 animate-fade-in relative overflow-hidden">
+      {/* Decorative Orbs */}
+      <div className="absolute top-1/2 -left-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" />
+      
+      <div className="max-w-md w-full space-y-8 relative">
+        <div className="text-center space-y-2">
+          <div className="mx-auto w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-emerald-200 rotate-3">
+            <RefreshCw size={32} />
           </div>
+          <h2 className="mt-6 text-4xl font-black text-slate-900 tracking-tighter">
+            Access <span className="text-emerald-600">Recovery</span>
+          </h2>
+          <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
+            Initiate credential reset protocol
+          </p>
         </div>
 
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Sending...' : 'Send Reset Link'}
-          </button>
-        </div>
-      </form>
+        <div className="glass p-8 rounded-[2.5rem] shadow-2xl border-white/40 ring-1 ring-slate-900/5">
+          {message ? (
+            <div className="space-y-8 py-4 text-center">
+              <div className="mx-auto w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600">
+                <CheckCircle size={32} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-black text-slate-900">Protocol Initiated</h3>
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">{message}</p>
+              </div>
+              <Link to="/login" className="btn-primary py-4 px-8 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2">
+                <ArrowLeft size={16} /> Return to Terminal
+              </Link>
+            </div>
+          ) : (
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl text-rose-700 text-xs font-black uppercase tracking-widest text-center animate-shake">
+                  {error}
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Authorized Email</label>
+                <div className="relative group">
+                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
+                    placeholder="agent@wildsafe.gov"
+                  />
+                </div>
+              </div>
 
-      <div className="mt-6 text-center">
-        <button
-          onClick={() => setPage('login')}
-          className="text-sm text-emerald-600 hover:text-emerald-500 font-medium"
-        >
-          Back to Sign In
-        </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-600 shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 group active:scale-95"
+              >
+                {loading ? 'Transmitting...' : 'Request Override'}
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <div className="pt-4 text-center">
+                <Link to="/login" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-emerald-600 flex items-center justify-center gap-2">
+                  <ArrowLeft size={12} /> Abort Recovery
+                </Link>
+              </div>
+            </form>
+          )}
+        </div>
+
+        <p className="text-center text-slate-500 font-medium text-sm">
+          Need new clearance? {' '}
+          <Link to="/register" className="text-emerald-600 font-black uppercase tracking-widest hover:underline text-xs" title="register" id="register">
+            Apply for Membership
+          </Link>
+        </p>
       </div>
     </div>
   );

@@ -1,3 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Brand Colors */
+  --primary: #059669; /* Emerald 600 */
+  --primary-dark: #047857; /* Emerald 700 */
+  --primary-light: #34d399; /* Emerald 400 */
+  
+  /* Neutral / Professional */
+  --surface: #ffffff;
+  --background: #f8fafc; /* Slate 50 */
+  --text-main: #0f172a; /* Slate 900 */
+  --text-muted: #64748b; /* Slate 500 */
+  
+  /* Accents */
+  --accent: #0ea5e9; /* Sky 500 */
+  --success: #10b981; /* Emerald 500 */
+  --warning: #f59e0b; /* Amber 500 */
+  --error: #ef4444; /* Red 500 */
+  
+  /* Glassmorphism & Borders */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --border-subtle: #e2e8f0; /* Slate 200 */
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-slate-900;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-md bg-white/70 border border-white/20;
+  }
+
+  .card-premium {
+    @apply bg-white border border-slate-200/60 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-emerald-900/5 hover:-translate-y-1 rounded-2xl;
+  }
+
+  .btn-primary {
+    @apply bg-emerald-600 text-white font-semibold py-2.5 px-6 rounded-xl hover:bg-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg hover:shadow-emerald-600/20 active:scale-95 disabled:bg-slate-300 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-slate-700 font-semibold py-2.5 px-6 rounded-xl border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm active:scale-95;
+  }
+
+  .input-standard {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/50 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all duration-200 backdrop-blur-sm;
+  }
+}
+
+/* Custom Scrollbar for modern look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}

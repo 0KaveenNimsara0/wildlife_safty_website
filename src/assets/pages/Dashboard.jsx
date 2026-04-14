@@ -1,344 +1,338 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../components/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Shield, User, LogOut, Mail, Lock, Camera, CheckCircle, XCircle } from 'lucide-react';
+import { FaUser, FaEnvelope, FaShieldAlt, FaKey, FaHistory, FaBell, FaSignOutAlt, FaEdit, FaCamera, FaChevronRight, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
+import { User, Shield, Key, History, Bell, LogOut, Camera, ChevronRight, Activity, Heart, Award, Mail, Lock, CheckCircle, XCircle } from 'lucide-react';
 import ProfilePictureUpload from '../components/ProfilePictureUpload';
 import UserFilesSection from '../components/UserFilesSection';
 
-function Dashboard() {
-    const { currentUser, logout, updateEmail, updatePassword, sendEmailVerification, uploadProfilePicture } = useAuth();
-    const navigate = useNavigate();
-    
-    const [editMode, setEditMode] = useState(false);
-    const [newEmail, setNewEmail] = useState(currentUser?.email || '');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const [showProfileUpload, setShowProfileUpload] = useState(false);
+const API_URL = 'http://localhost:5000/api';
 
-    const handleLogout = async () => {
-        await logout();
-        navigate('/');
+const Dashboard = () => {
+  const { currentUser, logout, updateEmail, updatePassword, sendEmailVerification, uploadProfilePicture } = useAuth();
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
+  const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
+  const [photoURL, setPhotoURL] = useState(currentUser?.photoURL || '');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const [userActivity, setUserActivity] = useState([]);
+  const [activeTab, setActiveTab] = useState('profile');
+  const [newEmail, setNewEmail] = useState(currentUser?.email || '');
+  const [showProfileUpload, setShowProfileUpload] = useState(false);
+
+  useEffect(() => {
+    const fetchUserActivity = async () => {
+      if (!currentUser) return;
+      try {
+        const response = await axios.get(`${API_URL}/posts`);
+        const userPosts = response.data.filter(post => post.authorId === currentUser.uid);
+        setUserActivity(userPosts);
+      } catch (err) {
+        console.error('Failed to sync activity log');
+      }
     };
+    fetchUserActivity();
+  }, [currentUser]);
 
-    const handleUpdateProfile = async () => {
-        setError('');
-        setSuccess('');
-        
-        try {
-            // Update email if changed
-            if (newEmail !== currentUser.email) {
-                await updateEmail(newEmail);
-            }
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError('');
+      setSuccess('');
+      
+      // Update email if changed
+      if (newEmail !== currentUser.email) {
+        await updateEmail(newEmail);
+      }
+      
+      await updateProfileInfo(displayName, photoURL);
+      setSuccess('Personnel profile updated successfully.');
+    } catch (err) {
+      setError(err.message || 'System rejected profile update.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            // Update password if provided
-            if (newPassword && newPassword === confirmPassword) {
-                await updatePassword(newPassword);
-            }
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) return setError('Encryption mismatch: Passwords do not align.');
+    try {
+      setLoading(true);
+      setError('');
+      setSuccess('');
+      await updatePassword(newPassword);
+      setSuccess('Security credentials updated.');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError(err.message || 'System rejected credential update.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            // TODO: Add profile picture update logic here
-            // You would need to implement image upload to storage
-            // and update the user's photoURL
+  const handleVerifyEmail = async () => {
+    try {
+      setError('');
+      setSuccess('');
+      await sendEmailVerification();
+      setSuccess('Verification email transmitted to your authorized frequency. Check your inbox.');
+    } catch (err) {
+      setError(err.message || 'Failed to transmit verification signal.');
+    }
+  };
 
-            setSuccess('Profile updated successfully!');
-            setEditMode(false);
-        } catch (err) {
-            setError(err.message || 'Failed to update profile');
-        }
-    };
+  const handleProfilePhotoUpdate = async (file, previewUrl) => {
+    try {
+      setError('');
+      setSuccess('');
+      setSuccess('Uploading profile assets to central intelligence...');
+      const photoURL = await uploadProfilePicture(file);
+      setSuccess('Intelligence asset profile picture updated.');
+      setShowProfileUpload(false);
+      window.location.reload();
+    } catch (err) {
+      setError(err.message || 'Asset synchronization failed.');
+    }
+  };
 
-    const handleVerifyEmail = async () => {
-        try {
-            await sendEmailVerification();
-            setSuccess('Verification email sent! Check your inbox.');
-        } catch (err) {
-            setError(err.message || 'Failed to send verification email');
-        }
-    };
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (err) {
+      setError('System lockout failure.');
+    }
+  };
 
-    // Get user profile picture or default icon
-    const getUserAvatar = () => {
-        if (currentUser?.photoURL) {
-            return (
-                <img 
-                    src={currentUser.photoURL} 
-                    alt="Profile" 
-                    className="h-full w-full rounded-full object-cover"
-                />
-            );
-        }
-        return <User className="h-12 w-12 text-emerald-600" />;
-    };
-
-    const handleProfilePhotoUpdate = async (file, previewUrl) => {
-        try {
-            setError('');
-            setSuccess('');
-            
-            // Show loading state
-            setSuccess('Uploading profile picture...');
-            
-            // Upload the profile picture using the new function
-            const photoURL = await uploadProfilePicture(file);
-            
-            setSuccess('Profile picture updated successfully!');
-            setShowProfileUpload(false);
-            
-            // Force refresh the user data
-            window.location.reload();
-            
-        } catch (error) {
-            console.error('Error updating profile picture:', error);
-            setError(error.message || 'Failed to update profile picture');
-        }
-    };
-
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <div className="bg-white rounded-xl shadow-md overflow-hidden p-8">
-                    <div className="text-center mb-8">
-                        <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-emerald-100 relative">
-                            {getUserAvatar()}
-                            {editMode && (
-                                <button className="absolute bottom-0 right-0 bg-emerald-600 p-2 rounded-full text-white hover:bg-emerald-700">
-                                    <Camera className="h-4 w-4" />
-                                    <input 
-                                        type="file" 
-                                        className="hidden" 
-                                        accept="image/*"
-                                        onChange={(e) => {
-                                            // Handle image upload here
-                                            const file = e.target.files[0];
-                                            if (file) {
-                                                // TODO: Upload image and get URL
-                                                // Then update user's photoURL
-                                            }
-                                        }}
-                                    />
-                                </button>
-                            )}
-                        </div>
-                        <h2 className="mt-4 text-2xl font-bold text-gray-800">
-                            {editMode ? 'Edit Profile' : 'Welcome to Your Dashboard'}
-                        </h2>
-                        <p className="mt-2 text-gray-600">
-                            {editMode ? 'Update your account details' : `Hello, ${currentUser?.displayName || currentUser?.email || 'User'}`}
-                        </p>
-                    </div>
-
-                    {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 flex items-center">
-                            <XCircle className="h-5 w-5 mr-2" />
-                            {error}
-                        </div>
-                    )}
-
-                    {success && (
-                        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-600 flex items-center">
-                            <CheckCircle className="h-5 w-5 mr-2" />
-                            {success}
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Profile Card */}
-                        <div className="lg:col-span-2 bg-gray-50 p-6 rounded-lg border border-gray-200">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="flex items-center space-x-4">
-                                    <div className="bg-emerald-100 p-3 rounded-full">
-                                        <User className="h-6 w-6 text-emerald-600" />
-                                    </div>
-                                    <h3 className="text-lg font-medium text-gray-800">
-                                        Profile Information
-                                    </h3>
-                                </div>
-                                {!editMode && (
-                                    <button 
-                                        onClick={() => setEditMode(true)}
-                                        className="text-sm text-emerald-600 hover:text-emerald-800"
-                                    >
-                                        Edit
-                                    </button>
-                                )}
-                            </div>
-
-                            {editMode ? (
-                                <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            Email Address
-                                        </label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <Mail className="h-5 w-5 text-gray-400" />
-                                            </div>
-                                            <input
-                                                type="email"
-                                                value={newEmail}
-                                                onChange={(e) => setNewEmail(e.target.value)}
-                                                className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            New Password
-                                        </label>
-                                        <div className="relative">
-                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                <Lock className="h-5 w-5 text-gray-400" />
-                                            </div>
-                                            <input
-                                                type="password"
-                                                placeholder="Leave blank to keep current"
-                                                value={newPassword}
-                                                onChange={(e) => setNewPassword(e.target.value)}
-                                                className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {newPassword && (
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                                Confirm Password
-                                            </label>
-                                            <div className="relative">
-                                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                    <Lock className="h-5 w-5 text-gray-400" />
-                                                </div>
-                                                <input
-                                                    type="password"
-                                                    value={confirmPassword}
-                                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    className="pl-10 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="flex space-x-3 pt-2">
-                                        <button
-                                            onClick={handleUpdateProfile}
-                                            className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
-                                        >
-                                            Save Changes
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setEditMode(false);
-                                                setError('');
-                                                setSuccess('');
-                                            }}
-                                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
-                                        >
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="space-y-2 text-gray-600">
-                                    <p className="flex items-center">
-                                        <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                                        {currentUser?.email}
-                                    </p>
-                                    <p className="flex items-center">
-                                        {currentUser?.emailVerified ? (
-                                            <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
-                                        ) : (
-                                            <XCircle className="h-4 w-4 mr-2 text-red-500" />
-                                        )}
-                                        Email {currentUser?.emailVerified ? 'Verified' : 'Not Verified'}
-                                        <button 
-                                            onClick={handleVerifyEmail}
-                                            className="ml-2 text-sm text-emerald-600 hover:text-emerald-800"
-                                        >
-                                            Verify Now
-                                        </button>
-                                    </p>
-                                    <p>
-                                        Account created: {new Date(currentUser?.metadata?.creationTime).toLocaleDateString()}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Profile Picture Card */}
-                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                            <h3 className="text-lg font-medium text-gray-800 mb-4">Profile Picture</h3>
-                            <div className="text-center">
-                                <div className="mx-auto mb-4">
-                                    {showProfileUpload ? (
-                                        <ProfilePictureUpload 
-                                            currentPhoto={currentUser?.photoURL}
-                                            onPhotoChange={handleProfilePhotoUpdate}
-                                        />
-                                    ) : (
-                                        <div className="relative inline-block">
-                                            <img 
-                                                src={currentUser?.photoURL || '/default-avatar.png'} 
-                                                alt="Profile" 
-                                                className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-                                            />
-                                            <button
-                                                onClick={() => setShowProfileUpload(true)}
-                                                className="absolute bottom-0 right-0 bg-emerald-600 p-2 rounded-full text-white hover:bg-emerald-700"
-                                            >
-                                                <Camera className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* User Files Section */}
-                    <div className="mt-6">
-                        <UserFilesSection userId={currentUser?.uid} />
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="mt-6 bg-gray-50 p-6 rounded-lg border border-gray-200">
-                        <h3 className="text-lg font-medium text-gray-800 mb-4">Quick Actions</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <button
-                                onClick={() => navigate('/animalDetail')}
-                                className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
-                            >
-                                <span>View Animals</span>
-                                <span>→</span>
-                            </button>
-                            <button
-                                onClick={() => navigate('/map')}
-                                className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
-                            >
-                                <span>View Map</span>
-                                <span>→</span>
-                            </button>
-                            <button
-                                onClick={() => navigate('/community')}
-                                className="flex items-center justify-between px-4 py-2 bg-white border border-gray-200 rounded-md text-gray-700 hover:bg-gray-100"
-                            >
-                                <span>Community Feed</span>
-                                <span>→</span>
-                            </button>
-                            <button
-                                onClick={handleLogout}
-                                className="flex items-center justify-center space-x-2 px-4 py-2 bg-red-50 border border-red-100 rounded-md text-red-600 hover:bg-red-100"
-                            >
-                                <LogOut className="h-4 w-4" />
-                                <span>Logout</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-12 animate-fade-in">
+      <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-10 border-b border-slate-200 mb-12">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-[0.2em] text-xs">
+            <Award size={16} />
+            <span>Authenticated Sector</span>
+          </div>
+          <h1 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter leading-none">
+            Member <span className="text-emerald-600">Dossier</span>
+          </h1>
+          <p className="text-lg text-slate-500 font-medium max-w-xl">
+            Secure management of your wildlife field data, security protocols, and operational history.
+          </p>
         </div>
-    );
-}
+
+        <button onClick={handleLogout} className="btn-secondary py-4 px-8 flex items-center gap-3 border-rose-100 text-rose-600 hover:bg-rose-50 group">
+          <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="font-black uppercase tracking-widest text-[10px]">Secure Exit</span>
+        </button>
+      </header>
+
+      <div className="grid lg:grid-cols-12 gap-12">
+        {/* Navigation Sidebar */}
+        <div className="lg:col-span-3 space-y-4">
+          {[
+            { id: 'profile', label: 'Identity Grid', icon: User },
+            { id: 'security', label: 'Security Layer', icon: Shield },
+            { id: 'activity', label: 'Field History', icon: Activity },
+            { id: 'notifications', label: 'Inbound Commms', icon: Bell }
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all border-2 ${
+                activeTab === item.id
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-xl scale-[1.02]'
+                  : 'bg-white text-slate-400 border-slate-50 hover:border-emerald-200 hover:text-emerald-600'
+              }`}
+            >
+              <div className="flex items-center gap-4">
+                <item.icon size={18} />
+                <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
+              </div>
+              <ChevronRight size={14} className={activeTab === item.id ? 'opacity-100' : 'opacity-0'} />
+            </button>
+          ))}
+        </div>
+
+        {/* Dynamic Content Sector */}
+        <div className="lg:col-span-9 space-y-8">
+          {error && (
+            <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-sm font-bold animate-shake">
+              <FaExclamationTriangle size={18} /> {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-4 bg-emerald-50 border-2 border-emerald-100 rounded-2xl flex items-center gap-3 text-emerald-700 text-sm font-bold">
+              <FaCheckCircle size={18} /> {success}
+            </div>
+          )}
+
+          <div className="card-premium p-10 bg-white shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full opacity-50 -mr-16 -mt-16" />
+            
+            {activeTab === 'profile' && (
+              <div className="space-y-10">
+                <div className="flex items-center gap-8 pb-10 border-b border-slate-50">
+                  <div className="relative group">
+                    {showProfileUpload ? (
+                      <div className="w-24 h-24 rounded-[2rem] overflow-hidden">
+                        <ProfilePictureUpload 
+                          currentPhoto={currentUser?.photoURL}
+                          onPhotoChange={handleProfilePhotoUpdate}
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 rounded-[2rem] bg-emerald-600 flex items-center justify-center text-white font-black text-4xl shadow-xl ring-8 ring-emerald-50 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
+                        {currentUser?.photoURL ? (
+                          <img src={currentUser.photoURL} alt="Profile Asset" className="w-full h-full object-cover" />
+                        ) : (
+                          displayName?.charAt(0) || currentUser?.email?.charAt(0).toUpperCase()
+                        )}
+                      </div>
+                    )}
+                    {!showProfileUpload && (
+                      <button 
+                        onClick={() => setShowProfileUpload(true)}
+                        className="absolute -bottom-2 -right-2 p-3 bg-white rounded-xl shadow-lg border border-slate-100 text-emerald-600 hover:scale-110 transition-transform"
+                      >
+                        <Camera size={16} />
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-black text-slate-900 tracking-tight">{displayName || 'Agent Unnamed'}</h3>
+                    <div className="space-y-1">
+                      <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2 mt-1">
+                        <FaEnvelope className="text-emerald-500" /> {currentUser?.email}
+                      </p>
+                      <p className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                        {currentUser?.emailVerified ? (
+                          <span className="text-emerald-600 flex items-center gap-1"><CheckCircle size={12} /> Verified Protocol</span>
+                        ) : (
+                          <>
+                            <span className="text-rose-500 flex items-center gap-1"><XCircle size={12} /> Unverified Frequency</span>
+                            <button onClick={handleVerifyEmail} className="text-emerald-600 hover:underline">Verify Frequency</button>
+                          </>
+                        )}
+                      </p>
+                      <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.2em]">Enlisted: {new Date(currentUser?.metadata?.creationTime).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <form onSubmit={handleUpdateProfile} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Codename</label>
+                    <input
+                      type="text"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Authorized Email Address</label>
+                    <input
+                      type="email"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+                    />
+                  </div>
+                  <div className="md:col-span-2 pt-4">
+                    <button type="submit" disabled={loading} className="btn-primary py-4 px-12 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-emerald-200">
+                      Sync Intelligence Data
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {activeTab === 'security' && (
+              <div className="space-y-10">
+                <div className="flex items-center gap-4 pb-8 border-b border-slate-50">
+                  <div className="p-3 bg-rose-50 rounded-2xl text-rose-600">
+                    <Shield size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black text-slate-900">Credential Hardening</h3>
+                    <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Update Sector Access Keys</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleUpdatePassword} className="space-y-8 max-w-lg">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">New Access Key</label>
+                    <div className="relative">
+                      <Key className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                      <input
+                        type="password"
+                        placeholder="••••••••"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Verify Key</label>
+                    <div className="relative">
+                      <Key className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
+                      <input
+                        type="password"
+                        placeholder="••••••••"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all"
+                      />
+                    </div>
+                  </div>
+                  <button type="submit" disabled={loading} className="w-full py-4 bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-rose-700 shadow-lg shadow-rose-200 transition-all">
+                    Commit Protocol Override
+                  </button>
+                </form>
+              </div>
+            )}
+
+            )}
+
+            {activeTab === 'files' && (
+              <div className="space-y-10">
+                <div className="pb-8 border-b border-slate-50">
+                  <h3 className="text-2xl font-black text-slate-900">Intelligence Assets</h3>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Managed field documents and uploads</p>
+                </div>
+                <UserFilesSection userId={currentUser?.uid} />
+              </div>
+            )}
+
+            {activeTab === 'notifications' && (
+              <div className="flex flex-col items-center justify-center py-32 text-center space-y-6">
+                <div className="p-8 bg-sky-50 rounded-full text-sky-400 relative">
+                  <Bell size={64} className="animate-bounce" />
+                  <div className="absolute top-4 right-4 w-6 h-6 bg-rose-500 rounded-full border-4 border-white shadow-lg" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black text-slate-900">Zero Comms</h3>
+                  <p className="text-slate-400 font-medium max-w-xs leading-relaxed italic">Intelligence grid reports no incoming transmissions for your current coordinates.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default Dashboard;
