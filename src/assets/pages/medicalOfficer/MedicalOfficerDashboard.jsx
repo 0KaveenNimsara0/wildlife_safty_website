@@ -10,7 +10,6 @@ import {
   Send,
   Edit2,
   Loader2,
-  Paperclip, // Added for potential attachments
 } from 'lucide-react';
 import ChatInterface from '../../components/ChatInterface'; // Assuming this component exists
 
@@ -92,9 +91,9 @@ const UserChatInterface = ({
           <div className="p-4 border-b border-gray-100">
             <h3 className="text-lg font-semibold text-gray-800">Inbox</h3>
           </div>
-          <div className="flex-1 overflow-y-auto">
-            {conversations.length > 0 ? (
-              conversations.map((conv) => (
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            {conversations && conversations.length > 0 ? (
+              conversations.filter(c => c && c._id).map((conv) => (
                 <div
                   key={conv._id}
                   onClick={() => onConversationSelect(conv)}
@@ -147,7 +146,7 @@ const UserChatInterface = ({
               </div>
 
               {/* Messages Area */}
-              <div className="flex-1 p-6 overflow-y-auto bg-gray-50">
+              <div className="flex-1 p-6 overflow-y-auto bg-gray-50 custom-scrollbar">
                 {loading ? (
                   <div className="flex items-center justify-center h-full">
                     <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
@@ -246,8 +245,8 @@ const ArticleManagement = ({ articles, onCreateArticle, onEditArticle }) => {
       </div>
 
       <div className="space-y-4">
-        {articles.length > 0 ? (
-          articles.map((article) => (
+        {articles && articles.length > 0 ? (
+          articles.filter(a => a && a._id).map((article) => (
             <div
               key={article._id}
               className="border border-gray-100 rounded-lg p-4 transition hover:shadow-sm hover:border-blue-200"
@@ -299,18 +298,23 @@ const ArticleManagement = ({ articles, onCreateArticle, onEditArticle }) => {
 };
 
 // --- Main Dashboard Component ---
+const API_BASE_URL = 'http://localhost:5000/api';
 
 export default function MedicalOfficerDashboard() {
   const [medicalOfficerData, setMedicalOfficerData] = useState(null);
   const [conversations, setConversations] = useState([]);
+  const [admins, setAdmins] = useState([]);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
   const [currentConversation, setCurrentConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [adminMessages, setAdminMessages] = useState([]);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
+  const [adminChatLoading, setAdminChatLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const pollingRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem('medicalOfficerToken');
@@ -323,24 +327,75 @@ export default function MedicalOfficerDashboard() {
     fetchDashboardData();
   }, [navigate]);
 
+  useEffect(() => {
+    // Set up polling for both user conversations and selected admin messages
+    if (!medicalOfficerData) return;
+    
+    pollingRef.current = setInterval(() => {
+      fetchConversations();
+      if (selectedAdmin) {
+        fetchAdminMessages(selectedAdmin._id);
+      }
+    }, 2000);
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [medicalOfficerData, selectedAdmin]);
+
   const fetchDashboardData = async () => {
     setLoading(true);
+    setError(null);
+    
+    // Parallel fetching with independent error handling
+    const fetchAdminsTask = fetchAdmins().catch(err => {
+      console.error('[Dashboard] Admin Node Discovery Failure:', err);
+    });
+
+    const fetchConversationsTask = fetchConversations().catch(err => {
+      console.error('[Dashboard] Signal Aggregation Failure:', err);
+    });
+
+    const fetchArticlesTask = fetch(`${API_BASE_URL}/medical-officer/articles/my-articles`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('medicalOfficerToken')}` }
+    }).then(res => res.ok ? res.json() : { articles: [] })
+      .then(data => {
+        if (data && Array.isArray(data.articles)) {
+          setArticles(data.articles);
+        } else {
+          setArticles([]);
+        }
+      })
+      .catch(err => {
+        console.error('[Dashboard] Article Sync Error:', err);
+        setArticles([]);
+      });
+
+    try {
+      await Promise.all([fetchAdminsTask, fetchConversationsTask, fetchArticlesTask]);
+    } catch (err) {
+      console.error('[Dashboard] Promise.all Critical Failure:', err);
+    }
+    
+    setLoading(false);
+  };
+
+  const fetchAdmins = async () => {
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      const articlesResponse = await fetch(
-        'http://localhost:5000/api/medical-officer/articles/my-articles',
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (articlesResponse.ok) {
-        const articlesData = await articlesResponse.json();
-        setArticles(articlesData.articles);
+      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/admins`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.success && Array.isArray(data.admins)) {
+        setAdmins(data.admins);
+        // Fallback selection if no admin is currently targeted
+        if (data.admins.length > 0 && !selectedAdmin) {
+          handleSelectAdmin(data.admins[0]);
+        }
       }
-      await fetchConversations();
     } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-      setError('Failed to load dashboard data. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('[Dashboard] Admin Node Discovery Failure:', err);
     }
   };
 
@@ -348,7 +403,7 @@ export default function MedicalOfficerDashboard() {
     try {
       const token = localStorage.getItem('medicalOfficerToken');
       const response = await fetch(
-        'http://localhost:5000/api/medical-officer/chat/conversations',
+        `${API_BASE_URL}/medical-officer/chat/conversations`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.ok) {
@@ -356,7 +411,44 @@ export default function MedicalOfficerDashboard() {
         setConversations(data.conversations || []);
       }
     } catch (err) {
-      console.error('Error fetching conversations:', err);
+      console.error('[Dashboard] Signal Aggregation Failure:', err);
+    }
+  };
+
+  const handleSelectAdmin = async (admin) => {
+    if (!admin || !admin._id) return;
+    if (selectedAdmin?._id === admin._id) return;
+    setSelectedAdmin(admin);
+    setAdminMessages([]); // Clear while loading specific node messages
+    fetchAdminMessages(admin._id);
+  };
+
+  const fetchAdminMessages = async (adminId) => {
+    try {
+      const token = localStorage.getItem('medicalOfficerToken');
+      // We need to find the conversation with this admin
+      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/conversations`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && Array.isArray(data.conversations)) {
+          const conv = data.conversations.find(c => c.admin?._id === adminId);
+          if (conv) {
+            const msgResponse = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conv._id}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (msgResponse.ok) {
+              const msgData = await msgResponse.json();
+              setAdminMessages(msgData.messages || []);
+            }
+          } else {
+            setAdminMessages([]);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('[Dashboard] Admin Signal Acquisition Failure:', err);
     }
   };
 
@@ -369,7 +461,7 @@ export default function MedicalOfficerDashboard() {
     try {
       const token = localStorage.getItem('medicalOfficerToken');
       const response = await fetch(
-        `http://localhost:5000/api/medical-officer/chat/messages/${conversation._id}`,
+        `${API_BASE_URL}/medical-officer/chat/messages/${conversation._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.ok) {
@@ -415,15 +507,19 @@ export default function MedicalOfficerDashboard() {
   };
 
   const handleSendMessageToAdmin = async (message) => {
+     if (!selectedAdmin) return;
      try {
        const token = localStorage.getItem('medicalOfficerToken');
-       const response = await fetch('http://localhost:5000/api/medical-officer/chat/send/admin', {
+       const response = await fetch(`http://localhost:5000/api/medical-officer/chat/send/${selectedAdmin._id}`, {
          method: 'POST',
          headers: {
            'Content-Type': 'application/json',
            'Authorization': `Bearer ${token}`
          },
-         body: JSON.stringify({ message })
+         body: JSON.stringify({ 
+           message,
+           receiverType: 'admin'
+         })
        });
        if (response.ok) {
          const data = await response.json();
@@ -506,19 +602,25 @@ export default function MedicalOfficerDashboard() {
           </div>
 
           {/* Right Column - Other Widgets */}
-          <div className="lg:col-span-1 flex flex-col gap-8">
+          <div className="lg:col-span-1 flex flex-col gap-8 sticky top-8">
             <ArticleManagement
               articles={articles}
               onCreateArticle={handleCreateArticle}
               onEditArticle={handleEditArticle}
             />
-             <ChatInterface
-               title="Chat with Admin"
-               messages={adminMessages}
-               onSendMessage={handleSendMessageToAdmin}
-               medicalOfficer={medicalOfficerData}
-               placeholder="Type your message to admin..."
-             />
+             <div className="h-[75vh]">
+               <ChatInterface
+                 title="Tactical Uplink: Admin"
+                 messages={adminMessages}
+                 onSendMessage={handleSendMessageToAdmin}
+                 participant={selectedAdmin}
+                 admins={admins}
+                 selectedAdminId={selectedAdmin?._id}
+                 onAdminSelect={handleSelectAdmin}
+                 currentSenderId={medicalOfficerData?._id}
+                 placeholder="Type your message to admin..."
+               />
+             </div>
           </div>
         </div>
       </main>

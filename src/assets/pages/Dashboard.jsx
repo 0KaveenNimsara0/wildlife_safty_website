@@ -304,8 +304,6 @@ const Dashboard = () => {
               </div>
             )}
 
-            )}
-
             {activeTab === 'files' && (
               <div className="space-y-10">
                 <div className="pb-8 border-b border-slate-50">

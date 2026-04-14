@@ -27,6 +27,7 @@ import AdminProfilePage from './assets/pages/admin/AdminProfilePage';
 import UserManagement from './assets/pages/admin/UserManagement';
 import MedicalOfficerManagement from './assets/pages/admin/MedicalOfficerManagement';
 import AdminChatManagement from './assets/pages/admin/AdminChatManagement';
+import AdminMedicalChat from './assets/pages/admin/AdminMedicalChat';
 import AdminArticleManagement from './assets/pages/admin/AdminArticleManagement';
 import AdminLayout from './assets/components/admin/AdminLayout';
 
@@ -65,6 +66,7 @@ export default function App() {
                             <Route path="/admin/users" element={<UserManagement />} />
                             <Route path="/admin/medical-officers" element={<MedicalOfficerManagement />} />
                             <Route path="/admin/chat" element={<AdminChatManagement />} />
+                            <Route path="/admin/chat/officer/:officerId" element={<AdminMedicalChat />} />
                             <Route path="/admin/articles" element={<AdminArticleManagement />} />
                         </Routes>
                     </AdminLayout>
@@ -95,6 +97,7 @@ export default function App() {
                                     <Route path="/admin/users" element={<UserManagement />} />
                                     <Route path="/admin/medical-officers" element={<MedicalOfficerManagement />} />
                                     <Route path="/admin/chat" element={<AdminChatManagement />} />
+                                    <Route path="/admin/chat/officer/:officerId" element={<AdminMedicalChat />} />
                                     <Route path="/admin/articles" element={<AdminArticleManagement />} />
 
                                     {/* Medical Officer routes */}

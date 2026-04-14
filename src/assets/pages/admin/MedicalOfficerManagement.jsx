@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
   Search, 
@@ -18,10 +19,12 @@ import {
   FileText,
   Phone,
   Building,
-  Eye
+  Eye,
+  MessageSquare
 } from 'lucide-react';
 
 export default function MedicalOfficerManagement() {
+  const navigate = useNavigate();
   const [medicalOfficers, setMedicalOfficers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -263,6 +266,9 @@ export default function MedicalOfficerManagement() {
                     </td>
                     <td className="px-8 py-6 whitespace-nowrap text-right">
                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => navigate(`/admin/chat/officer/${officer._id}`)} className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 rounded-xl shadow-sm transition-all active:scale-95">
+                             <MessageSquare size={16} />
+                          </button>
                           <button onClick={() => setViewingOfficer(officer)} className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 rounded-xl shadow-sm transition-all active:scale-95">
                              <Eye size={16} />
                           </button>

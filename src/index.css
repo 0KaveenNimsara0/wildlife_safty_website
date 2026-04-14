@@ -113,18 +113,23 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: rgba(0, 0, 0, 0.02);
   border-radius: 10px;
 }
 
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
