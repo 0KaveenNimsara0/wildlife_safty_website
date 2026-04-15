@@ -7,27 +7,20 @@ import {
   Loader2,
   Activity,
   ShieldCheck,
-  Maximize2
+  Maximize2,
+  MessageSquare
 } from 'lucide-react';
 
 // Specialized Tactical Components
 import ChatInterface from '../../components/ChatInterface';
-import MedicalOfficerUserChat from '../../components/medicalOfficer/MedicalOfficerUserChat';
 import MedicalOfficerArticleHub from '../../components/medicalOfficer/MedicalOfficerArticleHub';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
 export default function MedicalOfficerDashboard() {
   const [medicalOfficerData, setMedicalOfficerData] = useState(null);
-  const [conversations, setConversations] = useState([]);
-  const [admins, setAdmins] = useState([]);
-  const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const [currentConversation, setCurrentConversation] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [adminMessages, setAdminMessages] = useState([]);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [chatLoading, setChatLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const pollingRef = useRef(null);
@@ -48,21 +41,17 @@ export default function MedicalOfficerDashboard() {
     
     pollingRef.current = setInterval(() => {
       fetchConversations();
-      if (selectedAdmin) {
-        fetchAdminMessages(selectedAdmin._id);
-      }
     }, 2000);
 
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
-  }, [medicalOfficerData, selectedAdmin]);
+  }, [medicalOfficerData]);
 
   const fetchDashboardData = async () => {
     setLoading(true);
     setError(null);
     
-    const fetchAdminsTask = fetchAdmins().catch(err => console.error('[Dashboard] Admin Discovery Failure:', err));
     const fetchConversationsTask = fetchConversations().catch(err => console.error('[Dashboard] Signal Failure:', err));
     const fetchArticlesTask = fetch(`${API_BASE_URL}/medical-officer/articles/my-articles`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('medicalOfficerToken')}` }
@@ -71,29 +60,11 @@ export default function MedicalOfficerDashboard() {
       .catch(err => console.error('[Dashboard] Article Error:', err));
 
     try {
-      await Promise.all([fetchAdminsTask, fetchConversationsTask, fetchArticlesTask]);
+      await Promise.all([fetchConversationsTask, fetchArticlesTask]);
     } catch (err) {
       console.error('[Dashboard] Critical Failure:', err);
     }
     setLoading(false);
-  };
-
-  const fetchAdmins = async () => {
-    try {
-      const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/admins`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (data.success && Array.isArray(data.admins)) {
-        setAdmins(data.admins);
-        if (data.admins.length > 0 && !selectedAdmin) {
-          handleSelectAdmin(data.admins[0]);
-        }
-      }
-    } catch (err) {
-      console.error('[Dashboard] Admin Discovery Failure:', err);
-    }
   };
 
   const fetchConversations = async () => {
@@ -104,105 +75,14 @@ export default function MedicalOfficerDashboard() {
       });
       if (response.ok) {
         const data = await response.json();
-        setConversations(data.conversations || []);
+        const userConversations = (data.conversations || []).filter(c => c.user);
+        // We only need the count for dashboard
+        return userConversations.length;
       }
+      return 0;
     } catch (err) {
-      console.error('[Dashboard] Signal Failure:', err);
-    }
-  };
-
-  const handleSelectAdmin = async (admin) => {
-    if (!admin || !admin._id) return;
-    if (selectedAdmin?._id === admin._id) return;
-    setSelectedAdmin(admin);
-    fetchAdminMessages(admin._id);
-  };
-
-  const fetchAdminMessages = async (adminId) => {
-    try {
-      const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/conversations`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        const conv = (data.conversations || []).find(c => c.admin?._id === adminId);
-        if (conv) {
-          const msgResponse = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conv._id}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (msgResponse.ok) {
-            const msgData = await msgResponse.json();
-            setAdminMessages(msgData.messages || []);
-          }
-        }
-      }
-    } catch (err) {
-      console.error('[Dashboard] Admin Acquisition Failure:', err);
-    }
-  };
-
-  const handleConversationSelect = async (conversation) => {
-    if (currentConversation?._id === conversation._id) return;
-    setCurrentConversation(conversation);
-    setChatLoading(true);
-    setMessages([]);
-    try {
-      const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conversation._id}`, { 
-        headers: { Authorization: `Bearer ${token}` } 
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data.messages || []);
-      }
-    } catch (err) {
-      setError('Failed to load signal history.');
-    } finally {
-      setChatLoading(false);
-    }
-  };
-
-  const handleSendMessageToUser = async (message) => {
-    if (!currentConversation || !currentConversation.user?.uid) return;
-    try {
-      const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/send/${currentConversation.user.uid}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ message }),
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setMessages((prev) => [...prev, data.message]);
-        await fetchConversations();
-      }
-    } catch (err) {
-      setError('Signal transmission error.');
-    }
-  };
-
-  const handleSendMessageToAdmin = async (message) => {
-    if (!selectedAdmin) return;
-    try {
-      const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/send/${selectedAdmin._id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ message, receiverType: 'admin' })
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setAdminMessages(prev => [...prev, data.message]);
-      }
-    } catch (error) {
-       console.error('Admin Uplink Error:', error);
+      console.error('[Dashboard] Signals Failure:', err);
+      return 0;
     }
   };
 
@@ -214,78 +94,104 @@ export default function MedicalOfficerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-16 h-16 text-emerald-500 animate-spin mx-auto mb-6" />
-          <p className="text-xs font-black text-slate-400 uppercase tracking-[0.4em]">Initializing Command Center...</p>
+          <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mx-auto mb-6" />
+          <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest">Loading Medical Dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-transparent">
-      <main className="w-full">
-        {error && (
-          <div className="mb-10 glass bg-rose-50 border-rose-200 px-6 py-4 rounded-[2rem] flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
-            <AlertCircle className="text-rose-500" />
-            <span className="text-xs font-black uppercase tracking-widest text-rose-700">{error}</span>
+    <div className="bg-transparent">
+      {error && (
+        <div className="mb-8 bg-rose-50 border border-rose-100 px-6 py-4 rounded-2xl flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
+          <AlertCircle className="text-rose-500" />
+          <span className="text-sm font-semibold text-rose-700">{error}</span>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Main Content Panels */}
+        <div className="lg:col-span-8 flex flex-col gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div className="p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+                <div className="relative z-10">
+                   <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                      <Activity size={24} />
+                   </div>
+                   <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Patient Appointments</h3>
+                   <p className="text-3xl font-bold text-slate-900 leading-tight tracking-tight">24 Active</p>
+                   <p className="text-[10px] font-semibold text-indigo-600 uppercase tracking-widest mt-4 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                      Secure Channels Online
+                   </p>
+                </div>
+                <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
+                   <ShieldCheck size={120} />
+                </div>
+             </div>
+
+             <div className="p-8 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+                <div className="relative z-10">
+                   <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 mb-6 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                      <AlertCircle size={24} />
+                   </div>
+                   <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Emergency Alerts</h3>
+                   <p className="text-3xl font-bold text-slate-900 leading-tight tracking-tight">03 Queue</p>
+                   <p className="text-[10px] font-semibold text-amber-500 uppercase tracking-widest mt-4 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                      Priority Attention Required
+                   </p>
+                </div>
+             </div>
           </div>
-        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Signal Center - Primary Focal Point */}
-          <div className="lg:col-span-8 h-full">
-            <MedicalOfficerUserChat
-              conversations={conversations}
-              currentConversation={currentConversation}
-              messages={messages}
-              onConversationSelect={handleConversationSelect}
-              onSendMessage={handleSendMessageToUser}
-              loading={chatLoading}
-              error={error}
-            />
-          </div>
+          <div className="flex flex-col gap-8">
+             <div className="p-8 rounded-3xl bg-slate-900 text-white relative overflow-hidden group shadow-xl">
+                <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                  <Maximize2 size={80} />
+                </div>
+                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-400 mb-4">Official Bulletin</h4>
+                <p className="text-base font-medium leading-relaxed mb-6 text-slate-300">
+                  Official communications are strictly for professional use. 
+                  Ensure data privacy standards are upheld in all digital transmissions.
+                </p>
+                <div className="flex items-center gap-4">
+                   <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                     Compliance: Active
+                   </div>
+                   <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                     Security: High
+                   </div>
+                </div>
+             </div>
 
-          {/* Intelligence Modules - Sidebar */}
-          <div className="lg:col-span-4 flex flex-col gap-10 overflow-y-auto pr-2 custom-scrollbar">
-            <MedicalOfficerArticleHub
-              articles={articles}
-              onCreateArticle={() => navigate('/medical-officer/articles/create')}
-              onEditArticle={(article) => navigate(`/medical-officer/articles/edit/${article._id}`)}
-            />
-            
-            <div className="h-[700px]">
-               <ChatInterface
-                 title="Tactical Uplink: Admin"
-                 messages={adminMessages}
-                 onSendMessage={handleSendMessageToAdmin}
-                 participant={selectedAdmin}
-                 admins={admins}
-                 selectedAdminId={selectedAdmin?._id}
-                 onAdminSelect={handleSelectAdmin}
-                 currentSenderId={medicalOfficerData?._id}
-                 placeholder="Draft admin dispatch..."
-               />
-            </div>
-
-            <div className="p-8 glass card-premium rounded-[2.5rem] bg-emerald-950 text-white relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                <Maximize2 size={80} />
-              </div>
-              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 mb-4">Command Alert</h4>
-              <p className="text-sm font-bold leading-relaxed mb-6">
-                All transmissions are recorded on an immutable ledger. 
-                Ensure communication protocols are maintained at all times.
-              </p>
-              <div className="w-full h-1 bg-emerald-500/20 rounded-full overflow-hidden">
-                <div className="w-[85%] h-full bg-emerald-500" />
-              </div>
-              <p className="text-[9px] font-black uppercase tracking-widest mt-4 text-emerald-500/60">System Resilience: 85%</p>
-            </div>
+             <button 
+               onClick={() => navigate('/medical-officer/chat')}
+               className="w-full p-8 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-between group hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-md"
+             >
+                <div className="text-left">
+                   <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 text-indigo-600 group-hover:text-indigo-100">Messaging Center</h4>
+                   <p className="text-xl font-bold">Access Communications</p>
+                </div>
+                <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-indigo-600 group-hover:bg-indigo-400 group-hover:text-white transition-all duration-300 shadow-sm">
+                   <MessageSquare size={20} />
+                </div>
+             </button>
           </div>
         </div>
-      </main>
+
+        {/* Sidebar panels */}
+        <div className="lg:col-span-4 flex flex-col gap-8">
+          <MedicalOfficerArticleHub
+            articles={articles}
+            onCreateArticle={() => navigate('/medical-officer/articles/create')}
+            onEditArticle={(article) => navigate(`/medical-officer/articles/edit/${article._id}`)}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -23,7 +23,7 @@ const UserChatPage = () => {
     return null;
   };
 
-  const fetchConversations = async () => {
+  const fetchConversations = async (silent = false) => {
     try {
       const token = await getIdToken();
       if (!token) return;
@@ -41,13 +41,13 @@ const UserChatPage = () => {
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
-      setError('Failed to load conversations.');
+      if (!silent) setError('Failed to load conversations.');
     }
   };
 
-  const fetchMessages = async (conversationId) => {
+  const fetchMessages = async (conversationId, silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const token = await getIdToken();
       if (!token) return;
 
@@ -64,9 +64,9 @@ const UserChatPage = () => {
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
-      setError('Failed to load messages.');
+      if (!silent) setError('Failed to load messages.');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -147,15 +147,15 @@ const UserChatPage = () => {
     if (currentUser) {
       fetchConversations();
 
-      // Poll conversations every 5 seconds
+      // Poll conversations every 5 seconds (silent)
       conversationsInterval = setInterval(() => {
-        fetchConversations();
+        fetchConversations(true);
       }, 5000);
 
-      // Poll messages for current conversation every 3 seconds
+      // Poll messages for current conversation every 3 seconds (silent)
       messagesInterval = setInterval(() => {
         if (currentConversation) {
-          fetchMessages(currentConversation._id);
+          fetchMessages(currentConversation._id, true);
         }
       }, 3000);
     }
@@ -276,6 +276,7 @@ const UserChatPage = () => {
                   loading={loading}
                   error={error}
                   onClearError={() => setError(null)}
+                  currentSenderId={currentUser?.uid}
                 />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gray-50">

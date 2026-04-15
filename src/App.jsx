@@ -38,6 +38,9 @@ import MedicalOfficerDashboard from './pages/medicalOfficer/MedicalOfficerDashbo
 import MedicalOfficerChatPage from './pages/medicalOfficer/MedicalOfficerChatPage';
 import MedicalOfficerArticleCreatePage from './pages/medicalOfficer/MedicalOfficerArticleCreatePage';
 import MedicalOfficerArticleEditPage from './pages/medicalOfficer/MedicalOfficerArticleEditPage';
+import MedicalOfficerArticleListPage from './pages/medicalOfficer/MedicalOfficerArticleListPage';
+import MedicalOfficerProfilePage from './pages/medicalOfficer/MedicalOfficerProfilePage';
+import MedicalOfficerLayout from './components/medicalOfficer/MedicalOfficerLayout';
 
 // Components
 import Header from './components/Header';
@@ -72,9 +75,20 @@ export default function App() {
                             <Route path="/admin/articles" element={<AdminArticleManagement />} />
                         </Routes>
                     </AdminLayout>
+                ) : location.pathname.startsWith('/medical-officer') && !['/medical-officer/login', '/medical-officer/register'].includes(location.pathname) ? (
+                    <MedicalOfficerLayout>
+                        <Routes>
+                            <Route path="/medical-officer/dashboard" element={<MedicalOfficerDashboard />} />
+                            <Route path="/medical-officer/chat" element={<MedicalOfficerChatPage />} />
+                            <Route path="/medical-officer/articles" element={<MedicalOfficerArticleListPage />} />
+                            <Route path="/medical-officer/articles/create" element={<MedicalOfficerArticleCreatePage />} />
+                            <Route path="/medical-officer/articles/edit/:articleId" element={<MedicalOfficerArticleEditPage />} />
+                            <Route path="/medical-officer/profile" element={<MedicalOfficerProfilePage />} />
+                        </Routes>
+                    </MedicalOfficerLayout>
                 ) : (
                     <>
-                        {!location.pathname.startsWith('/admin') && <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />}
+                        {!location.pathname.startsWith('/admin') && !location.pathname.startsWith('/medical-officer') && <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />}
                         
                         {/* Main Interaction Area */}
                         <main className="flex-grow pt-24 pb-16">
@@ -102,13 +116,9 @@ export default function App() {
                                     <Route path="/admin/chat/officer/:officerId" element={<AdminMedicalChat />} />
                                     <Route path="/admin/articles" element={<AdminArticleManagement />} />
 
-                                    {/* Medical Officer routes */}
+                                    {/* Medical Officer routes - Auth only here, others in layout above */}
                                     <Route path="/medical-officer/login" element={<MedicalOfficerLoginPage />} />
                                     <Route path="/medical-officer/register" element={<MedicalOfficerRegisterPage />} />
-                                    <Route path="/medical-officer/dashboard" element={<MedicalOfficerDashboard />} />
-                                    <Route path="/medical-officer/chat" element={<MedicalOfficerChatPage />} />
-                                    <Route path="/medical-officer/articles/create" element={<MedicalOfficerArticleCreatePage />} />
-                                    <Route path="/medical-officer/articles/edit/:articleId" element={<MedicalOfficerArticleEditPage />} />
 
                                     <Route element={<PrivateRoute />}>
                                         <Route path="/dashboard" element={<Dashboard />} />

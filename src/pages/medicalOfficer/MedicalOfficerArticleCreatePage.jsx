@@ -79,75 +79,74 @@ const MedicalOfficerArticleCreatePage = () => {
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Header and Back Button */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-10 flex items-center justify-between">
           <div>
             <Link 
-              to="/medical-officer/dashboard" 
-              className="flex items-center text-slate-500 hover:text-emerald-600 transition-colors group mb-4"
+              to="/medical-officer/articles" 
+              className="flex items-center text-slate-400 hover:text-indigo-600 transition-colors group mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-              <span className="text-xs font-black uppercase tracking-widest">Return to Dashboard</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Return to Archive</span>
             </Link>
-            <h1 className="text-4xl font-black text-slate-900 flex items-center gap-4">
-              <FileEdit className="text-emerald-500" size={36} />
-              Draft Intelligence Bulletin
+            <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-4">
+               <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600">
+                  <FileEdit size={28} />
+               </div>
+               Create Medical Article
             </h1>
           </div>
         </div>
 
         {error && (
-          <div className="mb-8 glass bg-rose-50 border-rose-200 p-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="mb-10 bg-rose-50 border border-rose-100 p-4 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300">
             <AlertTriangle className="text-rose-500" />
-            <p className="text-sm font-bold text-rose-700 uppercase tracking-tight">{error}</p>
+            <p className="text-sm font-semibold text-rose-700">{error}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content Area */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="glass card-premium p-8 rounded-[2rem]">
-              <div className="space-y-6">
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+              <div className="space-y-8">
                 <div>
-                  <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">
-                    <FileText size={14} className="text-emerald-500" />
-                    Bulletin Title
+                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3 ml-1">
+                    Article Title
                   </label>
                   <input
                     type="text"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
-                    className="input-standard transition-all"
-                    placeholder="Enter mission-critical title..."
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300"
+                    placeholder="Enter article title..."
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">
-                    <Globe size={14} className="text-emerald-500" />
-                    Core intelligence Content
+                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3 ml-1">
+                    Article Content
                   </label>
                   <textarea
                     value={content}
                     onChange={e => setContent(e.target.value)}
                     rows={12}
-                    className="input-standard resize-none transition-all"
-                    placeholder="Detailed investigation findings and advice..."
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300 resize-none"
+                    placeholder="Write detailed medical information and advice..."
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">
-                    <span className="text-emerald-500">#</span>
-                    Executive Summary / Excerpt
+                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3 ml-1">
+                    Executive Summary
                   </label>
                   <textarea
                     value={excerpt}
                     onChange={e => setExcerpt(e.target.value)}
                     rows={3}
-                    className="input-standard resize-none transition-all"
-                    placeholder="Brief overview for quick reference..."
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300 resize-none"
+                    placeholder="Brief overview for the dashboard preview..."
                   />
                 </div>
               </div>
@@ -156,22 +155,22 @@ const MedicalOfficerArticleCreatePage = () => {
 
           {/* Sidebar / Metadata */}
           <div className="lg:col-span-1 space-y-8">
-            <div className="glass card-premium p-8 rounded-[2rem]">
-              <h3 className="text-xs font-black uppercase tracking-widest text-slate-900 mb-6 pb-4 border-b border-slate-100 flex items-center gap-2">
-                <Tag size={14} className="text-emerald-500" />
-                Data Classification
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+              <h3 className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 mb-6 pb-4 border-b border-slate-50 flex items-center gap-2">
+                <Tag size={14} />
+                Article Settings
               </h3>
               
               <div className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Primary Category</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1">Primary Category</label>
                   <select
                     value={category}
                     onChange={e => setCategory(e.target.value)}
-                    className="input-standard appearance-none cursor-pointer"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all appearance-none cursor-pointer"
                     required
                   >
-                    <option value="">Select Classification...</option>
+                    <option value="">Select Category...</option>
                     {validCategories.map(cat => (
                       <option key={cat.value} value={cat.value}>{cat.label}</option>
                     ))}
@@ -179,60 +178,61 @@ const MedicalOfficerArticleCreatePage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Intelligence Tags</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1">Navigation Tags</label>
                   <input
                     type="text"
                     value={tags}
                     onChange={e => setTags(e.target.value)}
-                    className="input-standard"
-                    placeholder="snake, bite, venom..."
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all"
+                    placeholder="wildlife, first aid, venom..."
                   />
-                  <p className="mt-2 text-[9px] text-slate-400 font-medium tracking-wide">Separate with commas</p>
+                  <p className="mt-2 text-[10px] text-slate-400 font-medium ml-1">Separate with commas</p>
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">
-                    <ImageIcon size={14} className="text-emerald-500" />
-                    Visual Assets (URLs)
+                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1">
+                    Image Assets (URLs)
                   </label>
                   <textarea
                     value={images}
                     onChange={e => setImages(e.target.value)}
                     rows={3}
-                    className="input-standard resize-none text-[11px]"
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all text-xs resize-none"
                     placeholder="https://image-url-1.com, https://..."
                   />
                 </div>
               </div>
 
-              <div className="mt-8 pt-8 border-t border-slate-100">
+              <div className="mt-10 pt-8 border-t border-slate-50">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full btn-primary flex items-center justify-center gap-3 py-4 text-sm tracking-widest"
+                  className="w-full bg-indigo-600 text-white rounded-2xl flex items-center justify-center gap-3 py-4 text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
                 >
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                      Publishing Intelligence...
+                      Publishing...
                     </>
                   ) : (
                     <>
-                      <Send size={18} />
-                      Commit Bulletin
+                      <Send size={16} />
+                      Publish Article
                     </>
                   )}
                 </button>
               </div>
             </div>
 
-            <div className="p-6 glass border-emerald-100 rounded-[1.5rem] bg-emerald-50/30">
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-800 flex items-center gap-2 mb-3">
-                <Layers size={14} />
-                Publication Protocol
+            <div className="p-6 bg-slate-900 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
+                  <Layers size={60} />
+               </div>
+               <h4 className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 flex items-center gap-2 mb-3">
+                Guidelines
               </h4>
-              <p className="text-[10px] text-emerald-700/70 font-medium leading-relaxed">
-                By committing this intelligence, you certify that the information provided is medically accurate and adheres to the Wildlife Safety Security Protocols.
+              <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                By publishing this article, you certify that the information provided is medically accurate and adheres to official safety standards.
               </p>
             </div>
           </div>

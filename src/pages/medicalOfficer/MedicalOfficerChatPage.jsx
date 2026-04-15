@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Loader2, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Loader2, MessageSquare, ChevronDown } from 'lucide-react';
 import MessageBubble from '../../components/chat/MessageBubble';
 import ChatInput from '../../components/chat/ChatInput';
 import { formatDate } from '../../utils/formatters';
@@ -15,6 +15,11 @@ const MedicalOfficerChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [newMessagesCount, setNewMessagesCount] = useState(0);
+  
+  const messagesContainerRef = useRef(null);
+  const lastParticipantRef = useRef(null);
+  const lastMessagesLengthRef = useRef(0);
 
   // Get medical officer ID from localStorage
   useEffect(() => {
@@ -38,15 +43,15 @@ const MedicalOfficerChatPage = () => {
         fetchConversations(medicalOfficerId);
       }
 
-      // Poll conversations every 2 seconds
+      // Poll conversations every 2 seconds (silent)
       conversationsInterval = setInterval(() => {
-        fetchConversations(medicalOfficerId);
+        fetchConversations(medicalOfficerId, true);
       }, 2000);
 
-      // Poll messages for current conversation every 2 seconds
-      if (currentConversation && currentConversation._id) {
+      // Poll messages for current conversation every 2 seconds (silent)
+      if (currentConversation?._id) {
         messagesInterval = setInterval(() => {
-          fetchMessages(currentConversation._id);
+          fetchMessages(currentConversation._id, true);
         }, 2000);
       }
     }
@@ -55,10 +60,56 @@ const MedicalOfficerChatPage = () => {
       if (messagesInterval) clearInterval(messagesInterval);
       if (conversationsInterval) clearInterval(conversationsInterval);
     };
-  }, [medicalOfficerId, currentConversation, activeTab]);
+  }, [medicalOfficerId, currentConversation?._id, activeTab]);
+
+  // Handle Scroll to reset new message count
+  const handleScroll = () => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+      if (isAtBottom && newMessagesCount > 0) {
+        setNewMessagesCount(0);
+      }
+    }
+  };
+
+  // Smart Scrolling Effect
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+      const isNewChannel = lastParticipantRef.current !== (currentConversation?.user?._id || currentConversation?.admin?._id);
+      
+      const hasNewMessages = messages.length > lastMessagesLengthRef.current;
+
+      if (isNewChannel) {
+        container.scrollTop = container.scrollHeight;
+        setNewMessagesCount(0);
+      } else if (hasNewMessages) {
+        if (isNearBottom) {
+          container.scrollTop = container.scrollHeight;
+          setNewMessagesCount(0);
+        } else {
+          setNewMessagesCount(prev => prev + (messages.length - lastMessagesLengthRef.current));
+        }
+      }
+
+      lastMessagesLengthRef.current = messages.length;
+      if (currentConversation?._id || currentConversation?.user?._id || currentConversation?.admin?._id) {
+        lastParticipantRef.current = currentConversation.user?._id || currentConversation.admin?._id;
+      }
+    }
+  }, [messages, currentConversation?._id, currentConversation?.user?._id, currentConversation?.admin?._id]);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      setNewMessagesCount(0);
+    }
+  };
 
   // Fetch conversations
-  const fetchConversations = async (id) => {
+  const fetchConversations = async (id, silent = false) => {
     try {
       const response = await fetch(`${API_BASE_URL}/medical-officer/chat/conversations`, {
         headers: {
@@ -71,11 +122,11 @@ const MedicalOfficerChatPage = () => {
       if (data.success) {
         setConversations(data.conversations);
       } else {
-        setError(data.message || 'Failed to load conversations');
+        if (!silent) setError(data.message || 'Failed to load conversations');
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
-      setError('Failed to load conversations');
+      if (!silent) setError('Failed to load conversations');
     }
   };
 
@@ -98,7 +149,7 @@ const MedicalOfficerChatPage = () => {
   };
 
   // Fetch messages for a conversation
-  const fetchMessages = async (conversationId) => {
+  const fetchMessages = async (conversationId, silent = false) => {
     if (!conversationId) return;
     try {
       const response = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conversationId}`, {
@@ -171,6 +222,7 @@ const MedicalOfficerChatPage = () => {
 
   const handleConversationSelect = (conversation) => {
     setCurrentConversation(conversation);
+    setMessages([]); // Clear immediately to prevent ghosting and stabilize scroll height
     if (conversation._id) {
       fetchMessages(conversation._id);
     } else {
@@ -190,39 +242,32 @@ const MedicalOfficerChatPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-green-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
-          <div className="px-6 py-4 bg-green-600 text-white">
-            <h1 className="text-2xl font-bold">Medical Officer Chat</h1>
-            <p className="text-green-100">Respond to user inquiries and provide medical guidance</p>
-          </div>
-
-          <div className="flex h-[38rem]">
+    <div className="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-200 flex flex-col h-[calc(100vh-12rem)]">
+      <div className="flex h-full">
              {/* Sidebar */}
-            <div className="w-1/3 border-r border-green-100 flex flex-col bg-green-50/30">
-              <div className="p-4 border-b border-green-100 bg-white">
-                 <div className="flex bg-green-50 p-1 rounded-xl mb-4">
+            <div className="w-1/3 border-r border-slate-100 flex flex-col bg-slate-50/30">
+              <div className="p-4 border-b border-slate-100 bg-white">
+                 <div className="flex bg-slate-100 p-1 rounded-xl mb-4">
                     <button 
                       onClick={() => setActiveTab('users')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === 'users' ? 'bg-green-600 text-white shadow-md' : 'text-green-600 hover:bg-green-100'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === 'users' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
                     >
-                       User Inquiries
+                       Users
                     </button>
                     <button 
                       onClick={() => setActiveTab('admins')}
-                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === 'admins' ? 'bg-green-600 text-white shadow-md' : 'text-green-600 hover:bg-green-100'}`}
+                      className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${activeTab === 'admins' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
                     >
-                       Admin Comms
+                       Administration
                     </button>
                  </div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-green-800 uppercase tracking-wider">
-                     {activeTab === 'users' ? 'Active Feed' : 'Command Nodes'}
+                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                     {activeTab === 'users' ? 'Active Inquiries' : 'Support Channels'}
                   </h3>
                   <button
                     onClick={() => fetchConversations(medicalOfficerId)}
-                    className="text-green-600 hover:text-green-800 p-1.5 rounded-lg hover:bg-green-50 transition-colors"
+                    className="text-slate-400 hover:text-indigo-600 p-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -237,18 +282,18 @@ const MedicalOfficerChatPage = () => {
                       <div
                         key={conversation._id}
                         onClick={() => handleConversationSelect(conversation)}
-                        className={`p-4 cursor-pointer hover:bg-green-100/50 transition ${
+                        className={`p-4 cursor-pointer hover:bg-slate-50 transition-all border-b border-slate-50 ${
                           currentConversation?._id === conversation._id
-                            ? 'bg-green-100 border-r-4 border-green-500'
+                            ? 'bg-indigo-50/50 border-r-4 border-indigo-600'
                             : ''
                         }`}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-green-900 truncate">
+                            <p className="font-bold text-slate-900 truncate text-sm">
                               {conversation.user?.displayName || conversation.user?.email || 'User'}
                             </p>
-                            <p className="text-xs text-green-700 truncate mt-1">
+                            <p className="text-[11px] text-slate-500 truncate mt-1">
                               {conversation.lastMessage?.message || 'No messages yet'}
                             </p>
                           </div>
@@ -324,7 +369,22 @@ const MedicalOfficerChatPage = () => {
                   </div>
 
                   {/* Messages Area */}
-                  <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/20">
+                  <div className="flex-1 relative flex flex-col bg-slate-50/20 overflow-hidden">
+                    {newMessagesCount > 0 && (
+                      <button 
+                        onClick={scrollToBottom}
+                        className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-green-600 text-white px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg flex items-center gap-2 z-20 animate-bounce hover:bg-green-700 transition-all"
+                      >
+                         <ChevronDown size={14} />
+                         {newMessagesCount} New Messages
+                      </button>
+                    )}
+
+                    <div 
+                      className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar"
+                      ref={messagesContainerRef}
+                      onScroll={handleScroll}
+                    >
                     {messages.length === 0 && (
                       <div className="flex flex-col items-center justify-center h-full opacity-30">
                         <MessageSquare size={48} className="text-slate-300 mb-4" />
@@ -354,6 +414,7 @@ const MedicalOfficerChatPage = () => {
                       );
                     })}
                   </div>
+                </div>
 
                   {/* Message Input */}
                   <div className="p-4 bg-white border-t border-gray-100">
@@ -376,10 +437,8 @@ const MedicalOfficerChatPage = () => {
                 </div>
               )}
             </div>
-          </div>
         </div>
       </div>
-    </div>
   );
 };
 
