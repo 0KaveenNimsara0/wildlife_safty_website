@@ -57,10 +57,10 @@ const ChatInterface = ({
       <div className="px-8 py-5 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/90">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl translate-y-[-2px] transition-all duration-500 ${selectedAdminId ? 'bg-emerald-600' : 'bg-slate-300 animate-pulse'}`}>
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl translate-y-[-2px] transition-all duration-500 ${participant ? 'bg-emerald-600' : 'bg-slate-300 animate-pulse'}`}>
               {participant?.name?.charAt(0).toUpperCase() || '?'}
             </div>
-            {selectedAdminId && (
+            {participant && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-4 border-white shadow-sm" />
             )}
           </div>
@@ -69,8 +69,8 @@ const ChatInterface = ({
               {participant?.name || 'Awaiting Selection...'}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
-               <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border italic ${selectedAdminId ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
-                  {selectedAdminId ? 'Admin Node' : 'Standby Mode'}
+               <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border italic ${participant ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
+                  {participant ? (selectedAdminId ? 'Admin Node' : 'Active Connection') : 'Standby Mode'}
                </span>
             </div>
           </div>

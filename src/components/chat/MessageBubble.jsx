@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle2, CheckCircle } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { formatTime } from '../../utils/formatters';
 
 const MessageBubble = ({ message, isMe, showStatus = true }) => {
@@ -19,9 +19,9 @@ const MessageBubble = ({ message, isMe, showStatus = true }) => {
              {formatTime(message.createdAt)}
           </span>
           {isMe && showStatus && (
-             <div className="flex items-center gap-0.5">
-                <CheckCircle2 size={8} className="text-emerald-500" />
-                {message.isRead && <CheckCircle2 size={8} className="text-emerald-500 -ml-1" />}
+             <div className="flex items-center">
+                <Check size={12} className="text-emerald-500" />
+                {message.isRead && <Check size={12} className="text-emerald-500 -ml-2" />}
              </div>
           )}
         </div>

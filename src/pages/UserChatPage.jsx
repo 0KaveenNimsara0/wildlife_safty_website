@@ -118,9 +118,20 @@ const UserChatPage = () => {
   };
 
   const handleMedicalOfficerSelect = (medicalOfficer) => {
-    setSelectedMedicalOfficer(medicalOfficer);
-    setCurrentConversation(null);
-    setMessages([]);
+    // Check if there's already an active conversation with this medical officer
+    const existingConversation = conversations.find(
+      (conv) => conv.medicalOfficer?._id === medicalOfficer._id
+    );
+
+    if (existingConversation) {
+      // If conversation exists, select it and load messages
+      handleConversationSelect(existingConversation);
+    } else {
+      // If no conversation exists, prepare for a new one
+      setSelectedMedicalOfficer(medicalOfficer);
+      setCurrentConversation(null);
+      setMessages([]);
+    }
   };
 
   const handleConversationSelect = (conversation) => {
@@ -259,7 +270,7 @@ const UserChatPage = () => {
             <main className="flex-1 flex flex-col">
               {selectedMedicalOfficer ? (
                 <ChatInterface
-                  medicalOfficer={selectedMedicalOfficer}
+                  participant={selectedMedicalOfficer}
                   messages={messages}
                   onSendMessage={sendMessage}
                   loading={loading}

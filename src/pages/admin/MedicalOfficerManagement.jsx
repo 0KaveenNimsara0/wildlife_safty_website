@@ -39,7 +39,7 @@ export default function MedicalOfficerManagement() {
     email: '',
     password: '',
     phoneNumber: '',
-    specialization: 'veterinary_surgeon',
+    specialization: 'general',
     licenseNumber: '',
     hospital: ''
   });
@@ -107,7 +107,7 @@ export default function MedicalOfficerManagement() {
       setEditingOfficer(null);
       setFormData({
         name: '', email: '', password: '', phoneNumber: '',
-        specialization: 'veterinary_surgeon', licenseNumber: '', hospital: ''
+        specialization: 'general', licenseNumber: '', hospital: ''
       });
       fetchMedicalOfficers();
     } catch (error) {
@@ -160,10 +160,10 @@ export default function MedicalOfficerManagement() {
 
   const getSpecializationLabel = (val) => {
     const specs = {
-      'veterinary_surgeon': 'Veterinary Surgeon',
-      'wildlife_biologist': 'Wildlife Biologist',
-      'ecologist': 'Ecologist',
-      'zoologist': 'Zoologist',
+      'general': 'General Practitioner',
+      'toxicology': 'Toxicology Specialist',
+      'emergency': 'Emergency Response',
+      'wildlife_medicine': 'Wildlife Medicine',
       'other': 'Specialist'
     };
     return specs[val] || val;
@@ -341,7 +341,7 @@ export default function MedicalOfficerManagement() {
               </div>
               
               <form onSubmit={handleSubmit} className="p-10 space-y-6">
-                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Identity</label>
                        <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Command Name" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required />
@@ -350,18 +350,37 @@ export default function MedicalOfficerManagement() {
                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Comms Email</label>
                        <input name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="officer@uplink.net" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required />
                     </div>
+                    
+                    {!editingOfficer && (
+                      <div className="space-y-2">
+                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Access Password</label>
+                         <input name="password" value={formData.password} onChange={handleInputChange} type="password" placeholder="MIN_6_CHARS" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required={!editingOfficer} />
+                      </div>
+                    )}
+
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Medical License</label>
+                       <input name="licenseNumber" value={formData.licenseNumber} onChange={handleInputChange} placeholder="LIC-XXXX-XXXX" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required />
+                    </div>
+
                     <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Specialization</label>
                        <select name="specialization" value={formData.specialization} onChange={handleInputChange} className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all">
-                          <option value="veterinary_surgeon">Vet Surgeon</option>
-                          <option value="wildlife_biologist">Wild Biologist</option>
-                          <option value="ecologist">Ecologist</option>
-                          <option value="zoologist">Zoologist</option>
+                          <option value="general">General Practitioner</option>
+                          <option value="toxicology">Toxicology Specialist</option>
+                          <option value="emergency">Emergency Response</option>
+                          <option value="wildlife_medicine">Wildlife Medicine</option>
                        </select>
                     </div>
+
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Base Hospital</label>
-                       <input name="hospital" value={formData.hospital} onChange={handleInputChange} placeholder="Station / HQ" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" />
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Contact Number</label>
+                       <input name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} placeholder="+XX XXX XXX XXXX" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" />
+                    </div>
+
+                    <div className="md:col-span-2 space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Base Hospital / Station</label>
+                       <input name="hospital" value={formData.hospital} onChange={handleInputChange} placeholder="GALLE GENERAL HOSPITAL / STATION HQ" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" />
                     </div>
                  </div>
                  
