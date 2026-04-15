@@ -1,303 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Users,
-  MessageSquare,
-  FileText,
   LogOut,
   Stethoscope,
   AlertCircle,
-  Send,
-  Edit2,
   Loader2,
+  Activity,
+  ShieldCheck,
+  Maximize2
 } from 'lucide-react';
-import ChatInterface from '../../components/ChatInterface'; // Assuming this component exists
 
-// --- Helper Functions (for better code organization) ---
+// Specialized Tactical Components
+import ChatInterface from '../../components/ChatInterface';
+import MedicalOfficerUserChat from '../../components/medicalOfficer/MedicalOfficerUserChat';
+import MedicalOfficerArticleHub from '../../components/medicalOfficer/MedicalOfficerArticleHub';
 
-/**
- * Formats a date string into "Today", "Yesterday", or a localized date string.
- */
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  if (date.toDateString() === today.toDateString()) return 'Today';
-  if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
-  return date.toLocaleDateString();
-};
-
-/**
- * Formats a date string into a localized time string (e.g., "10:30 AM").
- */
-const formatTime = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-};
-
-// --- Re-designed Child Components ---
-
-// User Chat Interface Component
-const UserChatInterface = ({
-  conversations,
-  currentConversation,
-  messages,
-  onConversationSelect,
-  onSendMessage,
-  loading,
-  error,
-}) => {
-  const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef(null);
-
-  // Effect to scroll to the latest message
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleSend = () => {
-    if (newMessage.trim() && currentConversation) {
-      onSendMessage(newMessage.trim());
-      setNewMessage('');
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const UserAvatar = ({ user }) => (
-    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-      <span className="text-white font-bold text-sm">
-        {user?.displayName?.charAt(0).toUpperCase() ||
-          user?.email?.charAt(0).toUpperCase() ||
-          'U'}
-      </span>
-    </div>
-  );
-
-  return (
-    <div className="bg-white rounded-xl shadow-md flex flex-col h-[75vh]">
-      <div className="flex-1 flex overflow-hidden">
-        {/* Conversations Sidebar */}
-        <div className="w-1/3 border-r border-gray-100 flex flex-col">
-          <div className="p-4 border-b border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-800">Inbox</h3>
-          </div>
-          <div className="flex-1 overflow-y-auto custom-scrollbar">
-            {conversations && conversations.length > 0 ? (
-              conversations.filter(c => c && c._id).map((conv) => (
-                <div
-                  key={conv._id}
-                  onClick={() => onConversationSelect(conv)}
-                  className={`flex items-center p-3 cursor-pointer transition-colors duration-200 ${
-                    currentConversation?._id === conv._id
-                      ? 'bg-blue-50'
-                      : 'hover:bg-gray-50'
-                  }`}
-                >
-                  <UserAvatar user={conv.user} />
-                  <div className="flex-1 ml-3 overflow-hidden">
-                    <p className="font-semibold text-gray-900 text-sm truncate">
-                      {conv.user?.displayName || conv.user?.email || 'User'}
-                    </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {conv.lastMessage?.message || 'No messages yet'}
-                    </p>
-                  </div>
-                  {conv.unreadCount > 0 && (
-                    <span className="bg-blue-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                      {conv.unreadCount}
-                    </span>
-                  )}
-                </div>
-              ))
-            ) : (
-              <div className="p-4 text-center text-gray-400 mt-10">
-                <MessageSquare className="h-10 w-10 mx-auto mb-2" />
-                <p className="text-sm">No conversations found.</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {currentConversation ? (
-            <>
-              {/* Chat Header */}
-              <div className="flex items-center p-3 border-b border-gray-100 bg-gray-50/50">
-                <UserAvatar user={currentConversation.user} />
-                <div className="ml-3">
-                  <h4 className="font-semibold text-gray-900">
-                    {currentConversation.user?.displayName ||
-                      currentConversation.user?.email ||
-                      'User'}
-                  </h4>
-                  <p className="text-xs text-green-600">Online</p>
-                </div>
-              </div>
-
-              {/* Messages Area */}
-              <div className="flex-1 p-6 overflow-y-auto bg-gray-50 custom-scrollbar">
-                {loading ? (
-                  <div className="flex items-center justify-center h-full">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {messages.map((message) => {
-                      const isMedicalOfficer = message.senderType === 'medical_officer';
-                      return (
-                        <div
-                          key={message._id}
-                          className={`flex items-end gap-2 ${
-                            isMedicalOfficer ? 'justify-end' : 'justify-start'
-                          }`}
-                        >
-                          <div
-                            className={`max-w-md px-4 py-3 rounded-2xl ${
-                              isMedicalOfficer
-                                ? 'bg-blue-500 text-white rounded-br-none'
-                                : 'bg-white text-gray-800 rounded-bl-none border border-gray-200'
-                            }`}
-                          >
-                            <p className="text-sm">{message.message}</p>
-                            <p
-                              className={`text-xs mt-1 text-right ${
-                                isMedicalOfficer ? 'text-blue-100' : 'text-gray-400'
-                              }`}
-                            >
-                              {formatTime(message.createdAt)}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    <div ref={messagesEndRef} />
-                  </div>
-                )}
-              </div>
-
-              {/* Message Input */}
-              <div className="p-4 border-t border-gray-100 bg-white">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Type your medical advice here..."
-                    className="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-shadow"
-                    disabled={loading}
-                  />
-                  <button
-                    onClick={handleSend}
-                    disabled={!newMessage.trim() || loading}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    <Send className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center bg-gray-50">
-              <div className="text-center text-gray-400">
-                <MessageSquare className="h-16 w-16 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-700">
-                  Select a Conversation
-                </h3>
-                <p className="text-sm">
-                  Choose a user from the list to start chatting.
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Article Management Component
-const ArticleManagement = ({ articles, onCreateArticle, onEditArticle }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Article Management
-        </h3>
-        <button
-          onClick={onCreateArticle}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition flex items-center gap-2 text-sm font-medium"
-        >
-          <FileText className="h-4 w-4" />
-          Create New
-        </button>
-      </div>
-
-      <div className="space-y-4">
-        {articles && articles.length > 0 ? (
-          articles.filter(a => a && a._id).map((article) => (
-            <div
-              key={article._id}
-              className="border border-gray-100 rounded-lg p-4 transition hover:shadow-sm hover:border-blue-200"
-            >
-              <div className="flex justify-between items-start gap-4">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900">
-                    {article.title}
-                  </h4>
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                    {article.excerpt || 'No excerpt available.'}
-                  </p>
-                  <div className="flex items-center mt-3 space-x-3">
-                    <span
-                      className={`px-2.5 py-0.5 text-xs font-medium rounded-full ${
-                        article.status === 'published'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {article.status.replace('_', ' ').toUpperCase()}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {new Date(article.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => onEditArticle(article)}
-                  className="p-2 text-gray-400 hover:text-blue-500 transition"
-                >
-                  <Edit2 className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center text-gray-400 py-10 border-2 border-dashed border-gray-200 rounded-lg">
-            <FileText className="h-10 w-10 mx-auto mb-2" />
-            <p className="font-medium">No Articles Found</p>
-            <p className="text-sm">
-              Click "Create New" to write your first article.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// --- Main Dashboard Component ---
 const API_BASE_URL = 'http://localhost:5000/api';
 
 export default function MedicalOfficerDashboard() {
@@ -311,7 +28,6 @@ export default function MedicalOfficerDashboard() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
-  const [adminChatLoading, setAdminChatLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const pollingRef = useRef(null);
@@ -328,7 +44,6 @@ export default function MedicalOfficerDashboard() {
   }, [navigate]);
 
   useEffect(() => {
-    // Set up polling for both user conversations and selected admin messages
     if (!medicalOfficerData) return;
     
     pollingRef.current = setInterval(() => {
@@ -347,36 +62,19 @@ export default function MedicalOfficerDashboard() {
     setLoading(true);
     setError(null);
     
-    // Parallel fetching with independent error handling
-    const fetchAdminsTask = fetchAdmins().catch(err => {
-      console.error('[Dashboard] Admin Node Discovery Failure:', err);
-    });
-
-    const fetchConversationsTask = fetchConversations().catch(err => {
-      console.error('[Dashboard] Signal Aggregation Failure:', err);
-    });
-
+    const fetchAdminsTask = fetchAdmins().catch(err => console.error('[Dashboard] Admin Discovery Failure:', err));
+    const fetchConversationsTask = fetchConversations().catch(err => console.error('[Dashboard] Signal Failure:', err));
     const fetchArticlesTask = fetch(`${API_BASE_URL}/medical-officer/articles/my-articles`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('medicalOfficerToken')}` }
     }).then(res => res.ok ? res.json() : { articles: [] })
-      .then(data => {
-        if (data && Array.isArray(data.articles)) {
-          setArticles(data.articles);
-        } else {
-          setArticles([]);
-        }
-      })
-      .catch(err => {
-        console.error('[Dashboard] Article Sync Error:', err);
-        setArticles([]);
-      });
+      .then(data => setArticles(data.articles || []))
+      .catch(err => console.error('[Dashboard] Article Error:', err));
 
     try {
       await Promise.all([fetchAdminsTask, fetchConversationsTask, fetchArticlesTask]);
     } catch (err) {
-      console.error('[Dashboard] Promise.all Critical Failure:', err);
+      console.error('[Dashboard] Critical Failure:', err);
     }
-    
     setLoading(false);
   };
 
@@ -389,29 +87,27 @@ export default function MedicalOfficerDashboard() {
       const data = await response.json();
       if (data.success && Array.isArray(data.admins)) {
         setAdmins(data.admins);
-        // Fallback selection if no admin is currently targeted
         if (data.admins.length > 0 && !selectedAdmin) {
           handleSelectAdmin(data.admins[0]);
         }
       }
     } catch (err) {
-      console.error('[Dashboard] Admin Node Discovery Failure:', err);
+      console.error('[Dashboard] Admin Discovery Failure:', err);
     }
   };
 
   const fetchConversations = async () => {
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(
-        `${API_BASE_URL}/medical-officer/chat/conversations`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/conversations`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
       if (response.ok) {
         const data = await response.json();
         setConversations(data.conversations || []);
       }
     } catch (err) {
-      console.error('[Dashboard] Signal Aggregation Failure:', err);
+      console.error('[Dashboard] Signal Failure:', err);
     }
   };
 
@@ -419,36 +115,30 @@ export default function MedicalOfficerDashboard() {
     if (!admin || !admin._id) return;
     if (selectedAdmin?._id === admin._id) return;
     setSelectedAdmin(admin);
-    setAdminMessages([]); // Clear while loading specific node messages
     fetchAdminMessages(admin._id);
   };
 
   const fetchAdminMessages = async (adminId) => {
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      // We need to find the conversation with this admin
       const response = await fetch(`${API_BASE_URL}/medical-officer/chat/conversations`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (response.ok) {
         const data = await response.json();
-        if (data.success && Array.isArray(data.conversations)) {
-          const conv = data.conversations.find(c => c.admin?._id === adminId);
-          if (conv) {
-            const msgResponse = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conv._id}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (msgResponse.ok) {
-              const msgData = await msgResponse.json();
-              setAdminMessages(msgData.messages || []);
-            }
-          } else {
-            setAdminMessages([]);
+        const conv = (data.conversations || []).find(c => c.admin?._id === adminId);
+        if (conv) {
+          const msgResponse = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conv._id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (msgResponse.ok) {
+            const msgData = await msgResponse.json();
+            setAdminMessages(msgData.messages || []);
           }
         }
       }
     } catch (err) {
-      console.error('[Dashboard] Admin Signal Acquisition Failure:', err);
+      console.error('[Dashboard] Admin Acquisition Failure:', err);
     }
   };
 
@@ -456,23 +146,18 @@ export default function MedicalOfficerDashboard() {
     if (currentConversation?._id === conversation._id) return;
     setCurrentConversation(conversation);
     setChatLoading(true);
-    setError('');
     setMessages([]);
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(
-        `${API_BASE_URL}/medical-officer/chat/messages/${conversation._id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/messages/${conversation._id}`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
       if (response.ok) {
         const data = await response.json();
         setMessages(data.messages || []);
-      } else {
-        throw new Error('Failed to fetch messages');
       }
     } catch (err) {
-      console.error('Error fetching messages:', err);
-      setError('Failed to load messages.');
+      setError('Failed to load signal history.');
     } finally {
       setChatLoading(false);
     }
@@ -482,58 +167,45 @@ export default function MedicalOfficerDashboard() {
     if (!currentConversation || !currentConversation.user?.uid) return;
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(
-        `http://localhost:5000/api/medical-officer/chat/send/${currentConversation.user.uid}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ message }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/send/${currentConversation.user.uid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ message }),
+      });
       if (response.ok) {
         const data = await response.json();
         setMessages((prev) => [...prev, data.message]);
-        await fetchConversations(); // Refresh conversations to update last message
-      } else {
-        setError('Failed to send message.');
+        await fetchConversations();
       }
     } catch (err) {
-      console.error('Error sending message to user:', err);
-      setError('Failed to send message.');
+      setError('Signal transmission error.');
     }
   };
 
   const handleSendMessageToAdmin = async (message) => {
-     if (!selectedAdmin) return;
-     try {
-       const token = localStorage.getItem('medicalOfficerToken');
-       const response = await fetch(`http://localhost:5000/api/medical-officer/chat/send/${selectedAdmin._id}`, {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json',
-           'Authorization': `Bearer ${token}`
-         },
-         body: JSON.stringify({ 
-           message,
-           receiverType: 'admin'
-         })
-       });
-       if (response.ok) {
-         const data = await response.json();
-         setAdminMessages(prev => [...prev, data.message]);
-       }
-     } catch (error) {
-       console.error('Error sending message to admin:', error);
-     }
+    if (!selectedAdmin) return;
+    try {
+      const token = localStorage.getItem('medicalOfficerToken');
+      const response = await fetch(`${API_BASE_URL}/medical-officer/chat/send/${selectedAdmin._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ message, receiverType: 'admin' })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAdminMessages(prev => [...prev, data.message]);
+      }
+    } catch (error) {
+       console.error('Admin Uplink Error:', error);
+    }
   };
 
-
-  const handleCreateArticle = () => navigate('/medical-officer/articles/create');
-  const handleEditArticle = (article) => navigate(`/medical-officer/articles/edit/${article._id}`);
-  
   const handleLogout = () => {
     localStorage.removeItem('medicalOfficerToken');
     localStorage.removeItem('medicalOfficerData');
@@ -542,55 +214,29 @@ export default function MedicalOfficerDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto" />
-          <p className="mt-4 text-gray-600 font-medium">Loading Dashboard...</p>
+          <Loader2 className="w-16 h-16 text-emerald-500 animate-spin mx-auto mb-6" />
+          <p className="text-xs font-black text-slate-400 uppercase tracking-[0.4em]">Initializing Command Center...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100/50">
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-3">
-            <div className="flex items-center gap-3">
-              <Stethoscope className="h-8 w-8 text-blue-500" />
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
-                  Medical Officer Dashboard
-                </h1>
-                <p className="text-sm text-gray-500">
-                  Welcome, {medicalOfficerData?.name || 'Doctor'}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center px-4 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-screen-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-transparent">
+      <main className="w-full">
         {error && (
-          <div className="mb-6 flex items-center bg-red-100 border border-red-300 text-red-800 px-4 py-3 rounded-lg">
-            <AlertCircle className="w-5 h-5 mr-3" />
-            <span>{error}</span>
+          <div className="mb-10 glass bg-rose-50 border-rose-200 px-6 py-4 rounded-[2rem] flex items-center gap-4 animate-in fade-in slide-in-from-top-4">
+            <AlertCircle className="text-rose-500" />
+            <span className="text-xs font-black uppercase tracking-widest text-rose-700">{error}</span>
           </div>
         )}
 
-        {/* Updated Main Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Left Column (Wider) - Chat with Users */}
-          <div className="lg:col-span-2">
-            <UserChatInterface
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          {/* Signal Center - Primary Focal Point */}
+          <div className="lg:col-span-8 h-full">
+            <MedicalOfficerUserChat
               conversations={conversations}
               currentConversation={currentConversation}
               messages={messages}
@@ -601,14 +247,15 @@ export default function MedicalOfficerDashboard() {
             />
           </div>
 
-          {/* Right Column - Other Widgets */}
-          <div className="lg:col-span-1 flex flex-col gap-8 sticky top-8">
-            <ArticleManagement
+          {/* Intelligence Modules - Sidebar */}
+          <div className="lg:col-span-4 flex flex-col gap-10 overflow-y-auto pr-2 custom-scrollbar">
+            <MedicalOfficerArticleHub
               articles={articles}
-              onCreateArticle={handleCreateArticle}
-              onEditArticle={handleEditArticle}
+              onCreateArticle={() => navigate('/medical-officer/articles/create')}
+              onEditArticle={(article) => navigate(`/medical-officer/articles/edit/${article._id}`)}
             />
-             <div className="h-[75vh]">
+            
+            <div className="h-[700px]">
                <ChatInterface
                  title="Tactical Uplink: Admin"
                  messages={adminMessages}
@@ -618,12 +265,27 @@ export default function MedicalOfficerDashboard() {
                  selectedAdminId={selectedAdmin?._id}
                  onAdminSelect={handleSelectAdmin}
                  currentSenderId={medicalOfficerData?._id}
-                 placeholder="Type your message to admin..."
+                 placeholder="Draft admin dispatch..."
                />
-             </div>
+            </div>
+
+            <div className="p-8 glass card-premium rounded-[2.5rem] bg-emerald-950 text-white relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                <Maximize2 size={80} />
+              </div>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400 mb-4">Command Alert</h4>
+              <p className="text-sm font-bold leading-relaxed mb-6">
+                All transmissions are recorded on an immutable ledger. 
+                Ensure communication protocols are maintained at all times.
+              </p>
+              <div className="w-full h-1 bg-emerald-500/20 rounded-full overflow-hidden">
+                <div className="w-[85%] h-full bg-emerald-500" />
+              </div>
+              <p className="text-[9px] font-black uppercase tracking-widest mt-4 text-emerald-500/60">System Resilience: 85%</p>
+            </div>
           </div>
         </div>
       </main>
     </div>
   );
-}
+}
