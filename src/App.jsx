@@ -1,51 +1,53 @@
 import React, { useState } from 'react';
 import 'leaflet/dist/leaflet.css';
-import { AuthProvider } from './assets/components/AuthContext';
-import { Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 // Page components
-import IdentifierPage from './assets/pages/IdentifierPage';
-import EmergencyPage from './assets/pages/EmergencyPage';
-import LearnPage from './assets/pages/LearnPage';
-import MapPage from './assets/pages/MapPage';
-import AnimalDetailPage from './assets/pages/AnimalDetailPage';
-import CommunityFeedPage from './assets/pages/CommunityFeedPage';
-import ArticleSelectionPage from './assets/pages/ArticleSelectionPage';
-import LoginPage from './assets/pages/auth/LoginPage';
-import RegisterPage from './assets/pages/auth/RegisterPage';
-import ResetPasswordPage from './assets/pages/auth/ResetPasswordPage';
-import Dashboard from './assets/pages/Dashboard';
-import PrivateRoute from './assets/components/PrivateRoute';
-import UserPostsPage from './assets/pages/UserPostsPage';
-import UserChatPage from './assets/pages/UserChatPage';
+import IdentifierPage from './pages/IdentifierPage';
+import EmergencyPage from './pages/EmergencyPage';
+import LearnPage from './pages/LearnPage';
+import MapPage from './pages/MapPage';
+import AnimalDetailPage from './pages/AnimalDetailPage';
+import CommunityFeedPage from './pages/CommunityFeedPage';
+import ArticleSelectionPage from './pages/ArticleSelectionPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
+import Dashboard from './pages/Dashboard';
+import PrivateRoute from './routes/PrivateRoute';
+import UserPostsPage from './pages/UserPostsPage';
+import UserChatPage from './pages/UserChatPage';
 
 // Admin pages & Components
-import AdminLoginPage from './assets/pages/admin/AdminLoginPage';
-import AdminRegisterPage from './assets/pages/admin/AdminRegisterPage';
-import AdminDashboard from './assets/pages/admin/AdminDashboard';
-import AdminProfilePage from './assets/pages/admin/AdminProfilePage';
-import UserManagement from './assets/pages/admin/UserManagement';
-import MedicalOfficerManagement from './assets/pages/admin/MedicalOfficerManagement';
-import AdminChatManagement from './assets/pages/admin/AdminChatManagement';
-import AdminMedicalChat from './assets/pages/admin/AdminMedicalChat';
-import AdminArticleManagement from './assets/pages/admin/AdminArticleManagement';
-import AdminLayout from './assets/components/admin/AdminLayout';
+import AdminLoginPage from './pages/admin/AdminLoginPage';
+import AdminRegisterPage from './pages/admin/AdminRegisterPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProfilePage from './pages/admin/AdminProfilePage';
+import UserManagement from './pages/admin/UserManagement';
+import MedicalOfficerManagement from './pages/admin/MedicalOfficerManagement';
+import AdminChatManagement from './pages/admin/AdminChatManagement';
+import AdminMedicalChat from './pages/admin/AdminMedicalChat';
+import AdminArticleManagement from './pages/admin/AdminArticleManagement';
+import AdminLayout from './components/admin/AdminLayout';
 
 // Medical Officer pages
-import MedicalOfficerLoginPage from './assets/pages/medicalOfficer/MedicalOfficerLoginPage';
-import MedicalOfficerRegisterPage from './assets/pages/medicalOfficer/MedicalOfficerRegisterPage';
-import MedicalOfficerDashboard from './assets/pages/medicalOfficer/MedicalOfficerDashboard';
-import MedicalOfficerChatPage from './assets/pages/medicalOfficer/MedicalOfficerChatPage';
-import MedicalOfficerArticleCreatePage from './assets/pages/medicalOfficer/MedicalOfficerArticleCreatePage';
-import MedicalOfficerArticleEditPage from './assets/pages/medicalOfficer/MedicalOfficerArticleEditPage';
+import MedicalOfficerLoginPage from './pages/medicalOfficer/MedicalOfficerLoginPage';
+import MedicalOfficerRegisterPage from './pages/medicalOfficer/MedicalOfficerRegisterPage';
+import MedicalOfficerDashboard from './pages/medicalOfficer/MedicalOfficerDashboard';
+import MedicalOfficerChatPage from './pages/medicalOfficer/MedicalOfficerChatPage';
+import MedicalOfficerArticleCreatePage from './pages/medicalOfficer/MedicalOfficerArticleCreatePage';
+import MedicalOfficerArticleEditPage from './pages/medicalOfficer/MedicalOfficerArticleEditPage';
 
 // Components
-import Header from './assets/components/Header';
-import Footer from './assets/components/Footer';
+import Header from './components/Header';
+import Footer from './components/Footer';
+
 
 export default function App() {
     const [page, setPage] = useState('home'); 
     const [authPage, setAuthPage] = useState(null);
+    const location = useLocation();
 
     return (
         <AuthProvider>
@@ -58,7 +60,7 @@ export default function App() {
                             {authPage === 'resetPassword' && <ResetPasswordPage setPage={setAuthPage} />}
                         </div>
                     </div>
-                ) : window.location.pathname.startsWith('/admin') && !['/admin/login', '/admin/register'].includes(window.location.pathname) ? (
+                ) : location.pathname.startsWith('/admin') && !['/admin/login', '/admin/register'].includes(location.pathname) ? (
                     <AdminLayout>
                         <Routes>
                             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -72,7 +74,7 @@ export default function App() {
                     </AdminLayout>
                 ) : (
                     <>
-                        {!window.location.pathname.startsWith('/admin') && <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />}
+                        {!location.pathname.startsWith('/admin') && <Header page={page} setPage={setPage} setAuthPage={setAuthPage} />}
                         
                         {/* Main Interaction Area */}
                         <main className="flex-grow pt-24 pb-16">
@@ -116,10 +118,11 @@ export default function App() {
                             </div>
                         </main>
 
-                        {!window.location.pathname.startsWith('/admin') && <Footer setPage={setPage} />}
+                        {!location.pathname.startsWith('/admin') && <Footer setPage={setPage} />}
                     </>
                 )}
             </div>
         </AuthProvider>
     );
 }
+
