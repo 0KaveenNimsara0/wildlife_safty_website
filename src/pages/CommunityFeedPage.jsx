@@ -292,6 +292,22 @@ const CommunityFeedPage = () => {
     setPopupArticle(null);
   };
 
+  const handleReviewLater = (article) => {
+    if (!article) return;
+    const currentSaved = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
+    if (!currentSaved.find(a => a._id === article._id)) {
+      const newItem = {
+        _id: article._id,
+        title: article.title,
+        category: article.category || selectedCategory,
+        excerpt: article.excerpt,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('wildsafe_review_later', JSON.stringify([newItem, ...currentSaved]));
+    }
+    closeArticlePopup();
+  };
+
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 py-8 animate-fade-in text-slate-900">
@@ -597,10 +613,10 @@ const CommunityFeedPage = () => {
             <div className="p-10 border-t border-slate-50 bg-slate-50/80 flex items-center justify-between">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Authenticated Field Research</span>
               <button 
-                onClick={closeArticlePopup}
+                onClick={() => handleReviewLater(popupArticle)}
                 className="bg-slate-900 text-white px-12 py-4 rounded-[2.5rem] font-black uppercase tracking-widest text-xs hover:bg-emerald-600 shadow-2xl transition-all active:scale-95"
               >
-                Acknowledge Intel
+                Review Later
               </button>
             </div>
           </div>
