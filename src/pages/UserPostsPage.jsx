@@ -235,7 +235,7 @@ const UserPostsPage = () => {
                     className="w-full px-4 py-3 bg-white border-2 border-emerald-500 rounded-2xl outline-none font-medium"
                   />
                 ) : (
-                  <p className="text-slate-600 font-medium leading-relaxed italic border-l-4 border-slate-100 pl-6">"{post.experience}"</p>
+                  <p className="text-slate-600 font-medium leading-relaxed italic border-l-4 border-slate-100 pl-6 break-all">"{post.experience}"</p>
                 )}
                 
                 {post.photoUrl && (

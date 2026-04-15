@@ -163,6 +163,50 @@ const PredictionResults = ({ prediction, imageURL, onReset }) => {
         accent: { bg: 'bg-sky-50/50', icon: 'text-sky-600' }
     };
 
+    const isNotSnake = prediction.ClassName === 'Not_Snake';
+
+    if (isNotSnake) {
+        return (
+            <div className="space-y-8 animate-fade-in max-w-4xl mx-auto text-center py-12">
+                <div className="mx-auto w-fit p-6 rounded-[2.5rem] bg-amber-100 text-amber-600 shadow-xl shadow-amber-500/10 mb-8 font-black">
+                   <div className="flex flex-col items-center">
+                    <AlertTriangle size={64} className="mb-2" />
+                    <span className="text-xs uppercase tracking-[0.3em]">Detection Empty</span>
+                   </div>
+                </div>
+                
+                <div className="space-y-4">
+                    <h2 className="text-5xl font-black text-slate-900 tracking-tighter">No Snake Identified</h2>
+                    <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
+                        Our neural network analyzed the visual patterns but could not confirm the presence of a snake. 
+                        Please provide a clearer image of a Sri Lankan snake for more accurate results.
+                    </p>
+                </div>
+
+                <div className="flex flex-col items-center space-y-10 pt-10">
+                    <div className="card-premium overflow-hidden border-0 shadow-2xl w-full max-w-sm group">
+                        <img src={imageURL} alt="Analyzed Sample" className="w-full h-64 object-cover opacity-50 grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100" />
+                        <div className="p-4 bg-slate-900 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                            Processed Input Sample
+                        </div>
+                    </div>
+
+                    <button 
+                        onClick={onReset} 
+                        className="btn-primary flex items-center gap-4 px-12 py-6 text-xl shadow-2xl shadow-emerald-600/40 rounded-[2rem] active:scale-95 transition-transform"
+                    >
+                        <UploadCloud size={28} />
+                        <span>Upload Another Image</span>
+                    </button>
+                    
+                    <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">
+                        Tip: Ensure good lighting and a clear view of the snake's head/body pattern.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     const isVenomous = prediction.Venom?.toLowerCase().includes('venomous') && !prediction.Venom?.toLowerCase().includes('non');
 
     return (

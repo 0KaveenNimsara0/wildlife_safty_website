@@ -392,7 +392,7 @@ const CommunityFeedPage = () => {
                   <h3 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-3">
                     {post.animalName}
                   </h3>
-                  <p className="text-slate-600 font-medium leading-relaxed italic border-l-4 border-slate-100 pl-6">
+                  <p className="text-slate-600 font-medium leading-relaxed italic border-l-4 border-slate-100 pl-6 break-all">
                     "{post.experience}"
                   </p>
                 </div>
@@ -638,7 +638,7 @@ const CommunityFeedPage = () => {
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg w-fit flex items-center gap-2">
                        <BookOpen size={12} /> Narrative
                     </span>
-                    <p className="text-lg text-slate-700 font-medium leading-relaxed italic">"{selectedPost.experience}"</p>
+                    <p className="text-lg text-slate-700 font-medium leading-relaxed italic break-all">"{selectedPost.experience}"</p>
                   </div>
                   
                   {selectedPost.photoUrl && (

@@ -222,7 +222,7 @@ const NestedComment = ({
                 autoFocus
               />
             ) : (
-              <p className="text-gray-700 text-sm mt-2 whitespace-pre-wrap break-words">
+              <p className="text-gray-700 text-sm mt-2 whitespace-pre-wrap break-all">
                 {comment.text}
               </p>
             )}
