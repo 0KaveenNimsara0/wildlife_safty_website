@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../config/constants';
 import { 
   Users, 
   Search, 
@@ -52,7 +53,7 @@ export default function MedicalOfficerManagement() {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/users/medical-officers?page=${currentPage}&limit=10`, {
+      const response = await fetch(`${BASE_URL}/admin/users/medical-officers?page=${currentPage}&limit=10`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -83,8 +84,8 @@ export default function MedicalOfficerManagement() {
     try {
       const token = localStorage.getItem('adminToken');
       const url = editingOfficer 
-        ? `http://localhost:5000/api/admin/users/medical-officers/${editingOfficer}`
-        : 'http://localhost:5000/api/medical-officer/auth/register';
+        ? `${BASE_URL}/admin/users/medical-officers/${editingOfficer}`
+        : `${BASE_URL}/medical-officer/auth/register`;
       
       const method = editingOfficer ? 'PUT' : 'POST';
 
@@ -119,7 +120,7 @@ export default function MedicalOfficerManagement() {
     if (!window.confirm('Terminate officer access? This action is logged.')) return;
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/users/medical-officers/${id}`, {
+      const response = await fetch(`${BASE_URL}/admin/users/medical-officers/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -136,7 +137,7 @@ export default function MedicalOfficerManagement() {
   const handleApprovalToggle = async (officer) => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:5000/api/admin/users/medical-officers/${officer._id}`, {
+      const response = await fetch(`${BASE_URL}/admin/users/medical-officers/${officer._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,12 +151,6 @@ export default function MedicalOfficerManagement() {
     } catch (error) {
       alert(error.message);
     }
-  };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
-      year: 'numeric', month: 'short', day: 'numeric'
-    });
   };
 
   const getSpecializationLabel = (val) => {
@@ -177,7 +172,6 @@ export default function MedicalOfficerManagement() {
 
   return (
     <div className="space-y-10 animate-fade-in">
-      {/* Medical Logistics Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="flex-1 w-full max-w-2xl">
           <div className="relative group">
@@ -212,7 +206,6 @@ export default function MedicalOfficerManagement() {
         </div>
       )}
 
-      {/* Medical Directory Table */}
       <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
         {loading ? (
            <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
@@ -291,7 +284,6 @@ export default function MedicalOfficerManagement() {
         )}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-6 flex justify-center">
           <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
@@ -326,7 +318,6 @@ export default function MedicalOfficerManagement() {
         </div>
       )}
 
-      {/* Enroll/Edit Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
            <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-100 overflow-hidden animate-scale-in">
@@ -394,7 +385,6 @@ export default function MedicalOfficerManagement() {
         </div>
       )}
 
-      {/* Quick View Modal */}
       {viewingOfficer && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
            <div className="bg-white rounded-[40px] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-up">
@@ -435,4 +425,3 @@ export default function MedicalOfficerManagement() {
     </div>
   );
 }
-

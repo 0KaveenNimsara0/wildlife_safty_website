@@ -1,10 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
-import './index.css';
+import './assets/styles/global.css';
 import App from './App.jsx';
 import 'leaflet/dist/leaflet.css';
-import { ErrorBoundary } from './components/ErrorBoundary.jsx';
+import { ErrorBoundary } from './components/ui/ErrorBoundary.jsx';
 
 // Create root element
 const container = document.getElementById('root');

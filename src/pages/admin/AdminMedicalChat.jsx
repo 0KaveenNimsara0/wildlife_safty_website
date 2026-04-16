@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../config/constants';
 import { 
   MessageSquare, 
   Search, 
   MoreVertical,
   Activity,
   Shield,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
-import MessageBubble from '../../components/chat/MessageBubble';
-import ChatInput from '../../components/chat/ChatInput';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import MessageBubble from '../../features/chat/components/MessageBubble';
+import ChatInput from '../../features/chat/components/ChatInput';
 
 export default function AdminMedicalChat() {
   const { officerId: paramOfficerId } = useParams();
@@ -71,7 +71,7 @@ export default function AdminMedicalChat() {
   const fetchOfficerDetails = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/admin/users/medical-officers`, {
+      const response = await fetch(`${BASE_URL}/admin/users/medical-officers`, {
         headers: { 'Authorization': `Bearer ${adminToken}` }
       });
       const data = await response.json();
@@ -91,7 +91,7 @@ export default function AdminMedicalChat() {
   const fetchConversations = async () => {
     try {
       setConvLoading(true);
-      const response = await fetch(`${API_BASE_URL}/admin/chat/conversations/medical-officers`, {
+      const response = await fetch(`${BASE_URL}/admin/chat/conversations/medical-officers`, {
         headers: { 'Authorization': `Bearer ${adminToken}` }
       });
       const data = await response.json();
@@ -108,7 +108,7 @@ export default function AdminMedicalChat() {
   const fetchMessages = async (convId) => {
     if (!convId) return;
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/chat/messages/medical-officer/${convId}`, {
+      const response = await fetch(`${BASE_URL}/admin/chat/messages/medical-officer/${convId}`, {
         headers: { 'Authorization': `Bearer ${adminToken}` }
       });
       const data = await response.json();
@@ -144,7 +144,7 @@ export default function AdminMedicalChat() {
     const officerId = currentOfficer._id;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/chat/send/medical-officer/${officerId}`, {
+      const response = await fetch(`${BASE_URL}/admin/chat/send/medical-officer/${officerId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -182,7 +182,6 @@ export default function AdminMedicalChat() {
 
   return (
     <div className="h-[calc(100vh-140px)] flex gap-6 animate-fade-in">
-      {/* Sidebar - Conversation List */}
       <div className="w-80 flex flex-col bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
         <div className="p-6 border-b border-slate-50 bg-slate-50/30">
            <h2 className="text-lg font-black uppercase tracking-tight mb-4 flex items-center gap-2">
@@ -252,11 +251,9 @@ export default function AdminMedicalChat() {
         </div>
       </div>
 
-      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden relative">
         {currentOfficer ? (
           <>
-            {/* Chat Header */}
             <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white/50 backdrop-blur-md z-10">
                <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-emerald-500/20">
@@ -267,7 +264,7 @@ export default function AdminMedicalChat() {
                      <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Tactical Uplink Active</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500 ml-2 border-l border-slate-200 pl-2">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500 ml-2 border-l border-slate-200 pr-2">
                            {currentOfficer.specialization?.replace('_', ' ')}
                         </span>
                      </div>
@@ -284,7 +281,6 @@ export default function AdminMedicalChat() {
                </div>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6 bg-slate-50/30">
                {msgLoading ? (
                  <div className="flex items-center justify-center h-full opacity-30">
@@ -312,7 +308,6 @@ export default function AdminMedicalChat() {
                <div ref={messagesEndRef} />
             </div>
 
-            {/* Input */}
             <ChatInput 
               onSendMessage={onSendMessage} 
               loading={loading} 
@@ -341,5 +336,3 @@ export default function AdminMedicalChat() {
     </div>
   );
 }
-
-
