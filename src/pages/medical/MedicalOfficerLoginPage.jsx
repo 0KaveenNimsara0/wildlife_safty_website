@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Stethoscope, AlertCircle, Mail, Lock, LogIn } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
 
 export default function MedicalOfficerLoginPage() {
