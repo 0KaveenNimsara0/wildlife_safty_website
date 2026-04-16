@@ -18,7 +18,12 @@ const UserChatPage = () => {
     try {
       const response = await api.get('/user/chat/conversations');
       if (response.data.success) {
-        setConversations(response.data.conversations);
+        // Logically clear unread count for current chat to avoid ghost badges during polling
+        const syncedConversations = response.data.conversations.map(conv => ({
+          ...conv,
+          unreadCount: currentConversation?._id === conv._id ? 0 : conv.unreadCount
+        }));
+        setConversations(syncedConversations);
       }
     } catch (error) {
       console.error('Error fetching conversations:', error);
@@ -32,6 +37,8 @@ const UserChatPage = () => {
       const response = await api.get(`/user/chat/messages/${conversationId}`);
       if (response.data.success) {
         setMessages(response.data.messages);
+        // Sync conversation list immediately to clear unread badges
+        fetchConversations(true);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);

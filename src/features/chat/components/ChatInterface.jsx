@@ -32,6 +32,13 @@ const ChatInterface = ({
     }
   };
 
+  const isFirstLoadRef = useRef(true);
+  
+  // Reset transformers on channel switch
+  useEffect(() => {
+    isFirstLoadRef.current = true;
+  }, [participant?._id]);
+
   // Scroll to bottom when new messages arrive, but only if user is at bottom or switching chats
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -47,6 +54,12 @@ const ChatInterface = ({
       if (isNewChannel) {
         container.scrollTop = container.scrollHeight;
         setNewMessagesCount(0);
+        // Important: Use a small timeout to allow layout to settle before marking first load as done
+        setTimeout(() => {
+          if (lastParticipantRef.current === participant?._id) {
+            isFirstLoadRef.current = false;
+          }
+        }, 100);
       } else if (hasNewMessages) {
         if (isNearBottom) {
           container.scrollTo({
@@ -54,8 +67,8 @@ const ChatInterface = ({
              behavior: 'smooth'
           });
           setNewMessagesCount(0);
-        } else {
-          // User is reading history, increment new messages count
+        } else if (!isFirstLoadRef.current) {
+          // User is reading history AND it's not the initial initial load batch
           setNewMessagesCount(prev => prev + (messages.length - lastMessagesLengthRef.current));
         }
       }
