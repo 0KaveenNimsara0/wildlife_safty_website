@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    localStorage.removeItem('userToken');
     return signOut(auth);
   }
 
@@ -335,7 +336,13 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        localStorage.setItem('userToken', token);
+      } else {
+        localStorage.removeItem('userToken');
+      }
       setCurrentUser(user);
       setLoading(false);
       console.log('Auth state changed:', user);

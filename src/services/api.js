@@ -13,13 +13,16 @@ api.interceptors.request.use(
   (config) => {
     const adminToken = localStorage.getItem('adminToken');
     const medicalToken = localStorage.getItem('medicalOfficerToken');
+    const userToken = localStorage.getItem('userToken');
     
     // Logic to decide which token to use based on target URL or other context
-    // For now, if adminToken exists and it's an admin route, use it
     if (config.url.startsWith('/admin') && adminToken) {
       config.headers.Authorization = `Bearer ${adminToken}`;
     } else if (config.url.startsWith('/medical-officer') && medicalToken) {
       config.headers.Authorization = `Bearer ${medicalToken}`;
+    } else if (userToken) {
+      // Default to user token for other routes (like /user/chat)
+      config.headers.Authorization = `Bearer ${userToken}`;
     }
     
     return config;
