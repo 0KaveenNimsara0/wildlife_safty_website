@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../config/constants';
+import { BASE_URL } from '../../../config/constants';
 import { 
   MessageSquare, 
   Search, 
@@ -10,10 +10,10 @@ import {
   AlertCircle,
   Loader2
 } from 'lucide-react';
-import MessageBubble from '../../features/chat/components/MessageBubble';
-import ChatInput from '../../features/chat/components/ChatInput';
+import MessageBubble from '../../chat/components/MessageBubble';
+import ChatInput from '../../chat/components/ChatInput';
 
-export default function AdminMedicalChat() {
+export default function AdminMedicalChatSection() {
   const { officerId: paramOfficerId } = useParams();
   const navigate = useNavigate();
   const [conversations, setConversations] = useState([]);
@@ -34,11 +34,6 @@ export default function AdminMedicalChat() {
   };
 
   useEffect(() => {
-    if (!adminToken) {
-      navigate('/admin/login');
-      return;
-    }
-
     fetchConversations();
     
     if (paramOfficerId) {
@@ -181,7 +176,7 @@ export default function AdminMedicalChat() {
   };
 
   return (
-    <div className="h-[calc(100vh-140px)] flex gap-6 animate-fade-in">
+    <div className="h-[calc(100vh-220px)] flex gap-6 animate-fade-in">
       <div className="w-80 flex flex-col bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
         <div className="p-6 border-b border-slate-50 bg-slate-50/30">
            <h2 className="text-lg font-black uppercase tracking-tight mb-4 flex items-center gap-2">

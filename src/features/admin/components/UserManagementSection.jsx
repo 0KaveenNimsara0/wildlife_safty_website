@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../config/constants';
+import { BASE_URL } from '../../../config/constants';
 import {
   Users,
   Search,
   Edit,
   Trash2,
-  ArrowLeft,
   AlertCircle,
   CheckCircle,
   XCircle,
   Filter,
-  MoreVertical,
-  UserCheck
+  MoreVertical
 } from 'lucide-react';
 
-export default function UserManagement() {
+export default function UserManagementSection() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,13 +25,8 @@ export default function UserManagement() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
-    if (!token) {
-      navigate('/admin/login');
-      return;
-    }
     fetchUsers();
-  }, [currentPage, navigate]);
+  }, [currentPage]);
 
   const fetchUsers = async () => {
     try {
@@ -185,7 +178,14 @@ export default function UserManagement() {
         </div>
       </div>
 
-        <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
+      {error && (
+        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-6 py-4 rounded-2xl shadow-sm">
+          <AlertCircle className="w-5 h-5 mr-3 text-rose-500" />
+          <span className="text-sm font-black uppercase tracking-widest">{error}</span>
+        </div>
+      )}
+
+      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
               <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
@@ -233,7 +233,7 @@ export default function UserManagement() {
                           <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                             {user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
-                              year: 'numeric', month: 'short', day: 'numeric'
+                               year: 'numeric', month: 'short', day: 'numeric'
                             }) : 'UNKNOWN'}
                           </span>
                         </div>

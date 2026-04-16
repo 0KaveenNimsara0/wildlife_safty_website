@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import { 
   Menu, 
   Activity,
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import MedicalOfficerSidebar from '../features/medical/components/MedicalOfficerSidebar';
 
-export default function MedicalOfficerLayout({ children }) {
+export default function MedicalOfficerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -73,10 +73,9 @@ export default function MedicalOfficerLayout({ children }) {
            </div>
         </header>
 
-        {/* Child Content Rendering */}
         <main className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
            <div className="max-w-[1600px] mx-auto">
-              {children}
+              <Outlet />
            </div>
         </main>
       </div>

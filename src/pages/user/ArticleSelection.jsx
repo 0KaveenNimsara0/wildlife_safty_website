@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, ChevronRight, Search, ArrowLeft, Award, Book } from 'lucide-react';
+import { BookOpen, ChevronRight, Search, ArrowLeft, Award, Book, ExternalLink } from 'lucide-react';
+import ArticlePreviewModal from '../../components/common/ArticlePreviewModal';
 
 const categories = [
   'wildlife_safety',
@@ -178,62 +179,21 @@ const ArticleSelection = () => {
         </div>
       )}
 
-      {showPopup && popupArticle && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-          <div className="bg-white rounded-[3rem] max-w-4xl w-full max-h-[85vh] overflow-hidden shadow-2xl border-2 border-white flex flex-col relative group">
-            <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-widest text-[10px]">
-                  <Award size={14} />
-                  <span>Intelligence Report: {popupArticle.category}</span>
-                </div>
-                <h2 className="text-3xl font-black text-slate-900 tracking-tight">{popupArticle.title}</h2>
-              </div>
-              <button 
-                onClick={closeArticlePopup}
-                className="p-4 bg-white rounded-2xl shadow-sm border border-slate-100 text-slate-400 hover:text-rose-500 hover:border-rose-100 transition-all active:scale-95"
-              >
-                <ArrowLeft size={20} />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
-              <div className="prose prose-slate max-w-none">
-                <p className="text-slate-600 text-lg font-medium leading-relaxed whitespace-pre-wrap italic mb-10 border-l-4 border-emerald-500 pl-8">
-                  {popupArticle.excerpt}
-                </p>
-                <div className="text-slate-800 text-lg leading-[2] font-medium whitespace-pre-wrap font-serif">
-                  {popupArticle.content}
-                </div>
-              </div>
-
-              {popupArticle.images && popupArticle.images.length > 0 && (
-                <div className="mt-12 space-y-6">
-                  {popupArticle.images.map((img, idx) => (
-                    <div key={idx} className="rounded-[2rem] overflow-hidden border-4 border-slate-50 group-hover:border-emerald-50 transition-colors">
-                      <img
-                        src={img.url}
-                        alt={`Intelligence Asset ${idx + 1}`}
-                        className="w-full h-auto object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="p-8 border-t border-slate-50 bg-slate-50/50 flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Identity Verified Source</span>
-              <button 
-                onClick={() => handleReviewLater(popupArticle)}
-                className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 shadow-xl transition-all active:scale-95"
-              >
-                Review Later
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Standardized Preview Terminal */}
+      <ArticlePreviewModal 
+        article={popupArticle}
+        isOpen={showPopup}
+        onClose={closeArticlePopup}
+        actionButton={
+          <button 
+            onClick={() => handleReviewLater(popupArticle)}
+            className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 shadow-xl transition-all active:scale-95 flex items-center gap-2"
+          >
+            <Clock size={16} />
+            Save For Mission Review
+          </button>
+        }
+      />
     </div>
   );
 };

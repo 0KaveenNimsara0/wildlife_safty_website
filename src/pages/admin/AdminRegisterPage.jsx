@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AlertCircle, User, Mail, Lock, UserPlus, Fingerprint } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
 
 export default function AdminRegisterPage() {

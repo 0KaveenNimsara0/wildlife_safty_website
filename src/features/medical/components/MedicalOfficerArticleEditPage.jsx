@@ -13,7 +13,7 @@ import {
   Loader2
 } from 'lucide-react';
 
-import { BASE_URL } from '../../config/constants';
+import { BASE_URL } from '../../../config/constants';
 
 const MedicalOfficerArticleEditPage = () => {
   const { articleId } = useParams();

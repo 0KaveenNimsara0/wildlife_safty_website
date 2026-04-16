@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Outlet } from 'react-router-dom';
 import { 
   Shield, 
   Menu, 
@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import AdminSidebar from '../features/admin/components/AdminSidebar';
 
-export default function AdminLayout({ children }) {
+export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -66,10 +66,9 @@ export default function AdminLayout({ children }) {
            </div>
         </header>
 
-        {/* Child Content */}
         <main className="flex-1 overflow-y-auto custom-scrollbar p-8">
            <div className="max-w-[1600px] mx-auto animate-fade-in">
-              {children}
+              <Outlet />
            </div>
         </main>
       </div>

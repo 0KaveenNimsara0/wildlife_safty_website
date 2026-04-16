@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../config/constants';
+import { BASE_URL } from '../../../config/constants';
 import { 
   Users, 
   Search, 
-  Plus, 
   MoreVertical, 
   Trash2, 
   Edit, 
   CheckCircle, 
   XCircle, 
   AlertCircle,
-  Clock,
-  Filter,
   UserPlus,
   Hospital,
   Shield,
   Activity,
-  FileText,
   Phone,
-  Building,
   Eye,
   MessageSquare
 } from 'lucide-react';
 
-export default function MedicalOfficerManagement() {
+export default function MedicalOfficerManagementSection() {
   const navigate = useNavigate();
   const [medicalOfficers, setMedicalOfficers] = useState([]);
   const [loading, setLoading] = useState(true);
