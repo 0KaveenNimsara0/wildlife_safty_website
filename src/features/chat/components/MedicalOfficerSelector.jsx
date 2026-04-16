@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { RefreshCcw, Loader2 } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+import { BASE_URL } from '../../../config/constants';
 
 const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
   const { currentUser } = useAuth();
@@ -25,7 +25,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
       const token = await getIdToken();
       if (!token) return;
 
-      const response = await fetch(`${API_BASE_URL}/user/chat/medical-officers`, {
+      const response = await fetch(`${BASE_URL}/user/chat/medical-officers`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

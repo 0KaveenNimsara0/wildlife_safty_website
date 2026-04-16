@@ -12,7 +12,7 @@ import {
   Globe
 } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+import { BASE_URL } from '../../config/constants';
 
 const MedicalOfficerArticleCreatePage = () => {
   const [title, setTitle] = useState('');
@@ -46,7 +46,7 @@ const MedicalOfficerArticleCreatePage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/articles`, {
+      const response = await fetch(`${BASE_URL}/medical-officer/articles`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

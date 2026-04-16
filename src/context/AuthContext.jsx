@@ -10,7 +10,7 @@ import {
 } from '../config/firebase';
 import { onAuthStateChanged, signOut, updateEmail, updatePassword } from 'firebase/auth';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+import { BASE_URL } from '../config/constants';
 
 const AuthContext = createContext();
 
@@ -76,7 +76,7 @@ export function AuthProvider({ children }) {
       const formData = new FormData();
       formData.append('profilePicture', file);
 
-      const response = await fetch(`${API_BASE_URL}/users/${currentUser.uid}/profile-picture`, {
+      const response = await fetch(`${BASE_URL}/users/${currentUser.uid}/profile-picture`, {
         method: 'POST',
         body: formData
       });
@@ -98,7 +98,7 @@ export function AuthProvider({ children }) {
     try {
       if (!currentUser) throw new Error('No user logged in');
       
-      const response = await fetch(`${API_BASE_URL}/users/${currentUser.uid}`, {
+      const response = await fetch(`${BASE_URL}/users/${currentUser.uid}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export function AuthProvider({ children }) {
   // Get user profile from MongoDB
   async function getUserProfile(uid) {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${uid}`);
+      const response = await fetch(`${BASE_URL}/users/${uid}`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch user profile');
@@ -138,7 +138,7 @@ export function AuthProvider({ children }) {
   // Admin authentication functions
   async function adminLogin(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/auth/login`, {
+      const response = await fetch(`${BASE_URL}/admin/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ export function AuthProvider({ children }) {
 
   async function adminRegister(name, email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/auth/register`, {
+      const response = await fetch(`${BASE_URL}/admin/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ export function AuthProvider({ children }) {
   async function updateUser(userId, userData) {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+      const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -235,7 +235,7 @@ export function AuthProvider({ children }) {
   async function deleteUser(userId) {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${API_BASE_URL}/admin/users/${userId}`, {
+      const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -256,7 +256,7 @@ export function AuthProvider({ children }) {
   async function searchUsers(query) {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${API_BASE_URL}/admin/users/search/${encodeURIComponent(query)}`, {
+      const response = await fetch(`${BASE_URL}/admin/users/search/${encodeURIComponent(query)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -277,7 +277,7 @@ export function AuthProvider({ children }) {
   // Medical Officer authentication functions
   async function medicalOfficerLogin(email, password) {
     try {
-      const response = await fetch(`${API_BASE_URL}/medical-officer/auth/login`, {
+      const response = await fetch(`${BASE_URL}/medical-officer/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -304,7 +304,7 @@ export function AuthProvider({ children }) {
 
   async function medicalOfficerRegister(formData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/medical-officer/auth/register`, {
+      const response = await fetch(`${BASE_URL}/medical-officer/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL, IMAGE_BASE_URL } from '../../config/constants';
 import NestedComment from '../../features/community/components/NestedComment';
 import api from '../../services/api';
 import { formatDistanceToNow } from 'date-fns';
@@ -388,7 +389,7 @@ const CommunityFeed = () => {
 
                 {post.photoUrl && (
                   <div className="rounded-3xl overflow-hidden border border-slate-100 shadow-inner brightness-95 group-hover:brightness-100 transition-all duration-700">
-                    <img src={`http://localhost:5000${post.photoUrl}`} alt="Observation Data" className="w-full h-auto max-h-[500px] object-cover" />
+                    <img src={`${IMAGE_BASE_URL}${post.photoUrl}`} alt="Observation Data" className="w-full h-auto max-h-[500px] object-cover" />
                   </div>
                 )}
               </div>
@@ -625,7 +626,7 @@ const CommunityFeed = () => {
                   
                   {selectedPost.photoUrl && (
                     <div className="rounded-3xl overflow-hidden border-2 border-slate-50 shadow-inner">
-                       <img src={`http://localhost:5000${selectedPost.photoUrl}`} alt="Observation Detail" className="w-full h-auto object-cover" />
+                       <img src={`${IMAGE_BASE_URL}${selectedPost.photoUrl}`} alt="Observation Detail" className="w-full h-auto object-cover" />
                     </div>
                   )}
 

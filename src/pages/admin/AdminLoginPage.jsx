@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, Mail, Lock, AlertCircle, Shield, ArrowRight, Fingerprint } from 'lucide-react';
+import { BASE_URL } from '../../config/constants';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
       setError('');
       setLoading(true);
 
-      const response = await fetch('http://localhost:5000/api/admin/auth/login', {
+      const response = await fetch(`${BASE_URL}/admin/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

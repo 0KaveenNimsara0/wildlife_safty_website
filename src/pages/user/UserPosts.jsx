@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { IMAGE_BASE_URL } from '../../config/constants';
 import api from '../../services/api';
 import { formatDistanceToNow } from 'date-fns';
 import { Shield, MapPin, Search, Plus, Trash2, Edit3, CheckCircle, XCircle } from 'lucide-react';
@@ -236,7 +237,7 @@ const UserPosts = () => {
                 
                 {post.photoUrl && (
                   <div className="rounded-2xl overflow-hidden border-2 border-slate-50 shadow-inner group">
-                    <img src={`http://localhost:5000${post.photoUrl}`} alt="Sighting Evidence" className="w-full h-auto max-h-80 object-cover group-hover:scale-102 transition-transform duration-700" />
+                    <img src={`${IMAGE_BASE_URL}${post.photoUrl}`} alt="Sighting Evidence" className="w-full h-auto max-h-80 object-cover group-hover:scale-102 transition-transform duration-700" />
                   </div>
                 )}
               </div>

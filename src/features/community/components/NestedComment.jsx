@@ -3,7 +3,7 @@ import { FaHeart, FaRegHeart, FaReply, FaEdit, FaTrash, FaCheck, FaTimes } from 
 import { useAuth } from '../../../context/AuthContext';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+import { BASE_URL } from '../../../config/constants';
 
 const NestedComment = ({ 
   comment, 
@@ -45,7 +45,7 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/posts/${postId}/comments/${comment._id}/react`, {
+      const response = await axios.post(`${BASE_URL}/posts/${postId}/comments/${comment._id}/react`, {
         userId: currentUser.uid,
         userName: currentUser.displayName || currentUser.email,
         type: reactionType
@@ -67,7 +67,7 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}/posts/${postId}/comments`, {
+      const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, {
         parentId: comment._id,
         authorId: currentUser.uid,
         authorName: currentUser.displayName || currentUser.email,
@@ -90,7 +90,7 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      const response = await axios.put(`${API_URL}/posts/${postId}/comments/${comment._id}`, {
+      const response = await axios.put(`${BASE_URL}/posts/${postId}/comments/${comment._id}`, {
         text: editingText
       });
       
@@ -109,7 +109,7 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      await axios.delete(`${API_URL}/posts/${postId}/comments/${comment._id}`);
+      await axios.delete(`${BASE_URL}/posts/${postId}/comments/${comment._id}`);
       onDelete(comment._id);
     } catch (err) {
       console.error('Failed to delete comment:', err);

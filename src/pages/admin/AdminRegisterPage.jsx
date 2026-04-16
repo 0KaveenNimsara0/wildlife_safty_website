@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, Shield, User, ArrowRight, Fingerprint } from 'lucide-react';
+import { BASE_URL } from '../../config/constants';
 
 export default function AdminRegisterPage() {
   const [formData, setFormData] = useState({
@@ -35,7 +35,7 @@ export default function AdminRegisterPage() {
       setError('');
       setLoading(true);
 
-      const response = await fetch('http://localhost:5000/api/admin/auth/register', {
+      const response = await fetch(`${BASE_URL}/admin/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

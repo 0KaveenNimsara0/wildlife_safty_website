@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Mail, Lock, AlertCircle, Stethoscope, Phone, MapPin, FileText } from 'lucide-react';
+import { BASE_URL } from '../../config/constants';
 
 export default function MedicalOfficerRegisterPage() {
   const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ export default function MedicalOfficerRegisterPage() {
       setError('');
       setLoading(true);
 
-      const response = await fetch('http://localhost:5000/api/medical-officer/auth/register', {
+      const response = await fetch(`${BASE_URL}/medical-officer/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

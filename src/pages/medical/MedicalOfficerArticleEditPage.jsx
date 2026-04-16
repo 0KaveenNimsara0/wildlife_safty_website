@@ -13,7 +13,7 @@ import {
   Loader2
 } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+import { BASE_URL } from '../../config/constants';
 
 const MedicalOfficerArticleEditPage = () => {
   const { articleId } = useParams();
@@ -42,7 +42,7 @@ const MedicalOfficerArticleEditPage = () => {
       setLoadingArticle(true);
       try {
         const token = localStorage.getItem('medicalOfficerToken');
-        const response = await fetch(`${API_BASE_URL}/medical-officer/articles/${articleId}`, {
+        const response = await fetch(`${BASE_URL}/medical-officer/articles/${articleId}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -80,7 +80,7 @@ const MedicalOfficerArticleEditPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${API_BASE_URL}/medical-officer/articles/${articleId}`, {
+      const response = await fetch(`${BASE_URL}/medical-officer/articles/${articleId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
