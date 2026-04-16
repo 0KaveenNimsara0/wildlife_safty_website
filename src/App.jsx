@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
 import { AuthProvider } from './context/AuthContext';
 import AppRoutes from './routes/AppRoutes';
+import ScrollToTop from './components/ScrollToTop';
 
 // Layouts
 import UserLayout from './layouts/UserLayout';
@@ -67,6 +68,7 @@ export default function App() {
 
     return (
         <AuthProvider>
+            <ScrollToTop />
             <div className="flex flex-col min-h-screen selection:bg-emerald-200 selection:text-emerald-900">
                 {renderContent()}
             </div>

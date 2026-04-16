@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, Shield, Map, BookOpen, GraduationCap, ArrowRight, Lightbulb, Search, Info, Leaf, Target } from 'lucide-react';
 
 export default function LearnPage() {
+    const navigate = useNavigate();
     const snakeTypes = [
         {
             name: "Venomous Species",
@@ -154,7 +156,10 @@ export default function LearnPage() {
             </div>
             
             <div className="text-center pb-12">
-                <button className="btn-primary px-12 py-5 text-lg shadow-2xl shadow-emerald-500/20">
+                <button 
+                    onClick={() => navigate("/article-selection")}
+                    className="btn-primary px-12 py-5 text-lg shadow-2xl shadow-emerald-500/20"
+                >
                     Access Digital Library
                 </button>
             </div>

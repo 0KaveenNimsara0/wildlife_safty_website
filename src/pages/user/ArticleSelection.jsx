@@ -51,55 +51,86 @@ const ArticleSelection = () => {
     setPopupArticle(null);
   };
 
+  const handleReviewLater = (article) => {
+    if (!article) return;
+    const currentSaved = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
+    if (!currentSaved.find(a => a._id === article._id)) {
+      const newItem = {
+        _id: article._id,
+        title: article.title,
+        category: article.category || selectedCategory,
+        excerpt: article.excerpt,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('wildsafe_review_later', JSON.stringify([newItem, ...currentSaved]));
+    }
+    closeArticlePopup();
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 space-y-12 animate-fade-in text-slate-900">
-      <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b border-slate-200">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-[0.2em] text-xs">
-            <BookOpen size={16} />
-            <span>Educational Repository</span>
+    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8 animate-fade-in text-slate-900">
+      <header className="grid lg:grid-cols-3 gap-8 pb-8 border-b border-slate-200">
+        <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-[0.2em] text-[10px]">
+              <BookOpen size={14} />
+              <span>Educational Repository</span>
+            </div>
+            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-none">
+              Knowledge <span className="text-emerald-600">Base</span>
+            </h1>
           </div>
-          <h1 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter leading-none">
-            Knowledge <span className="text-emerald-600">Base</span>
-          </h1>
-          <p className="text-lg text-slate-500 font-medium max-w-xl">
-            Access our peer-reviewed library of safety protocols, medical guidance, and species intelligence.
+          
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 whitespace-nowrap ${
+                  selectedCategory === category
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-lg'
+                    : 'bg-white text-slate-400 border-slate-50 hover:border-emerald-300 hover:text-emerald-600 shadow-sm'
+                }`}
+              >
+                {category.replace(/_/g, ' ')}
+              </button>
+            ))}
+          </div>
+          
+          <p className="text-sm text-slate-500 font-medium max-w-2xl leading-relaxed">
+            Access our peer-reviewed library of safety protocols, medical guidance, and species intelligence. Curated by top herpetologists for rapid field response.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-fit">
-          <div className="relative group flex-1 sm:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={18} />
-            <input
-              type="text"
-              placeholder="Query repository..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-100 rounded-3xl focus:border-emerald-500 focus:outline-none transition-all shadow-sm"
-            />
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2">
+             <button onClick={() => navigate(-1)} className="p-4 bg-slate-50 border border-slate-100 text-slate-400 hover:text-slate-900 rounded-2xl transition-all active:scale-95">
+                <ArrowLeft size={20} />
+             </button>
+             <div className="relative group flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-600 transition-colors" size={18} />
+                <input
+                  type="text"
+                  placeholder="Query repository..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-100 rounded-2xl focus:border-emerald-500 focus:outline-none transition-all shadow-sm text-sm"
+                />
+             </div>
           </div>
-          <button onClick={() => navigate(-1)} className="btn-secondary py-4 px-8 flex items-center justify-center gap-3">
-            <ArrowLeft size={20} />
-            <span>Return</span>
-          </button>
+
+          <div className="grid grid-cols-2 gap-3">
+             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Archive Size</p>
+                <p className="text-xl font-black text-slate-900">{articles.length} <span className="text-[10px] text-slate-400 font-bold">Nodes</span></p>
+             </div>
+             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Last Update</p>
+                <p className="text-xl font-black text-slate-900">Live <span className="text-[10px] text-emerald-500 font-bold">●</span></p>
+             </div>
+          </div>
         </div>
       </header>
-
-      <div className="flex flex-wrap gap-3 pb-4 overflow-x-auto scrollbar-hide">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all border-2 whitespace-nowrap ${
-              selectedCategory === category
-                ? 'bg-slate-900 text-white border-slate-900 shadow-xl'
-                : 'bg-white text-slate-400 border-slate-50 hover:border-emerald-300 hover:text-emerald-600 shadow-sm'
-            }`}
-          >
-            {category.replace(/_/g, ' ')}
-          </button>
-        ))}
-      </div>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-4">
@@ -194,10 +225,10 @@ const ArticleSelection = () => {
             <div className="p-8 border-t border-slate-50 bg-slate-50/50 flex items-center justify-between">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-300">Identity Verified Source</span>
               <button 
-                onClick={closeArticlePopup}
+                onClick={() => handleReviewLater(popupArticle)}
                 className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 shadow-xl transition-all active:scale-95"
               >
-                Dismiss Intelligence
+                Review Later
               </button>
             </div>
           </div>
