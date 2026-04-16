@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // User Pages
-import Home from '../pages/user/Home';
+import Dashboard from '../pages/user/Dashboard';
 import Identifier from '../pages/user/Identifier';
 import Emergency from '../pages/user/Emergency';
 import Learn from '../pages/user/Learn';
@@ -79,7 +79,7 @@ export default function AppRoutes() {
 
       {/* Protected User Routes */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Route>
     </Routes>
   );
