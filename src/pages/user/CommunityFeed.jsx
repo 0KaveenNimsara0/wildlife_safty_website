@@ -5,7 +5,7 @@ import NestedComment from '../../features/community/components/NestedComment';
 import api from '../../services/api';
 import { formatDistanceToNow } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { Search, Filter, BookOpen, MessageSquare, Share2, Heart, Award, ChevronRight, X, Shield, Activity, XCircle, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Search, Filter, BookOpen, MessageSquare, Share2, Heart, Award, ChevronRight, X, Shield, Activity, ArrowLeft } from 'lucide-react';
 import { FaHeart, FaRegHeart, FaComment, FaShare, FaArrowLeft, FaTimes, FaCalendarAlt, FaClock } from 'react-icons/fa';
 import UserPosts from './UserPosts';
 

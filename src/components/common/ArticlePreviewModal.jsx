@@ -1,10 +1,11 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowLeft, Award, Clock, User } from 'lucide-react';
 
 const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
   if (!isOpen || !article) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-8 animate-in fade-in duration-300">
       <div className="bg-white rounded-[2.5rem] max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-2xl border border-white/20 flex flex-col relative animate-scale-in">
         
@@ -95,8 +96,10 @@ const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
           {actionButton}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
 export default ArticlePreviewModal;
+

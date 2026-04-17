@@ -17,13 +17,6 @@ export default function LoginPage({ setPage }) {
       setError('');
       setLoading(true);
 
-      // Restore specific credential check
-      if (email === 'mithun' && password === 'mithun@07') {
-        setPage(null);
-        navigate('/dashboard', { replace: true });
-        return;
-      }
-
       await login(email, password);
       setPage(null); // Reset authPage state to show main app
       navigate('/home', { replace: true });

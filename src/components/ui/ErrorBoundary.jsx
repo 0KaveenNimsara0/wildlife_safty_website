@@ -2,13 +2,14 @@
 import React from 'react';
 
 export class ErrorBoundary extends React.Component {
-  state = { hasError: false };
+  state = { hasError: false, error: null, errorInfo: null };
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error, errorInfo: null };
   }
 
   componentDidCatch(error, errorInfo) {
+    this.setState({ errorInfo });
     console.error('Error caught:', error, errorInfo);
   }
 
@@ -20,9 +21,8 @@ export class ErrorBoundary extends React.Component {
             <h2 className="text-xl font-bold text-red-600 mb-2">Something went wrong</h2>
             <p className="text-red-600 mb-2">Please try again later</p>
             <p className="text-red-600 mb-2">If the problem persists, please contact support</p>
-            <p className="text-red-600 mb-2">Error: {this.state.error}</p>
-            <p className="text-red-600 mb-2">Error Info: {this.state.errorInfo}</p>
-            <p className="text-red-600 mb-2">Error Stack: {this.state.errorStack}</p>
+            <p className="text-red-600 mb-2">Error: {this.state.error?.message || 'Unknown error'}</p>
+            <p className="text-red-600 mb-2">Error Info: {this.state.errorInfo?.componentStack || 'No additional info'}</p>
             <button 
               onClick={() => window.location.reload()}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"

@@ -37,7 +37,7 @@ export default function Header({ page, setPage, setAuthPage }) {
     const getUserInfo = () => {
         if (currentUser) {
             return {
-                name: currentUser.displayName || currentUser.email.split('@')[0],
+                name: currentUser.displayName || (currentUser.email && currentUser.email.includes('@') ? currentUser.email.split('@')[0] : 'User'),
                 dashboardPath: '/dashboard',
                 avatar: getUserAvatar()
             };
@@ -85,7 +85,7 @@ export default function Header({ page, setPage, setAuthPage }) {
     };
 
     const handleNavigation = (path) => {
-        setPage(path.split('/')[1] || 'home');
+        setPage(path.startsWith('/') ? path.split('/')[1] || 'home' : 'home');
         navigate(path);
         setMobileMenuOpen(false);
     };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Loader2, MessageSquare, ChevronDown } from 'lucide-react';
+import { Loader2, MessageSquare, ChevronDown, Activity } from 'lucide-react';
 import MessageBubble from '../../chat/components/MessageBubble';
 import ChatInput from '../../chat/components/ChatInput';
 import { formatDate } from '../../../utils/formatters';

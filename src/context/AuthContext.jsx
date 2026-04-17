@@ -196,19 +196,6 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('adminData');
   }
 
-  // Admin user management functions
-  async function getAllUsers(page = 1, limit = 10) {
-    try {
-      // Fetch users from Firebase Admin SDK or Firebase directly
-      // This function needs to be implemented to fetch users from Firebase
-      // For now, throw an error to indicate it's not implemented
-      throw new Error('getAllUsers from Firebase not implemented');
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      throw error;
-    }
-  }
-
   async function updateUser(userId, userData) {
     try {
       const token = localStorage.getItem('adminToken');
@@ -345,7 +332,6 @@ export function AuthProvider({ children }) {
       }
       setCurrentUser(user);
       setLoading(false);
-      console.log('Auth state changed:', user);
     });
 
     return unsubscribe;
@@ -368,7 +354,6 @@ export function AuthProvider({ children }) {
     adminLogin,
     adminRegister,
     adminLogout,
-    getAllUsers,
     updateUser,
     deleteUser,
     searchUsers,
