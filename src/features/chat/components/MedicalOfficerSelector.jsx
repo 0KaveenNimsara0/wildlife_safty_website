@@ -12,7 +12,12 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
 
   const getIdToken = async () => {
     if (currentUser) {
-      return await currentUser.getIdToken();
+      // Firebase users have this method
+      if (typeof currentUser.getIdToken === 'function') {
+        return await currentUser.getIdToken();
+      }
+      // MongoDB users have their token in localStorage
+      return localStorage.getItem('userToken');
     }
     return null;
   };

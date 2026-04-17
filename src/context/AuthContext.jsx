@@ -22,23 +22,52 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+  async function mongoLogin(email, password) {
+    try {
+      const response = await fetch(`${BASE_URL}/auth/user/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Login failed');
+
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('mongoUser', JSON.stringify(data.user));
+      setCurrentUser(data.user);
+      return data;
+    } catch (error) {
+      console.error("MongoDB Login error:", error);
+      throw error;
+    }
   }
 
-  async function login(email, password) {
+  async function mongoSignup(email, password, displayName) {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setCurrentUser(userCredential.user);
-      return userCredential;
+      const response = await fetch(`${BASE_URL}/auth/user/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, displayName })
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Registration failed');
+
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('mongoUser', JSON.stringify(data.user));
+      setCurrentUser(data.user);
+      return data;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("MongoDB Signup error:", error);
       throw error;
     }
   }
 
   function logout() {
     localStorage.removeItem('userToken');
+    localStorage.removeItem('mongoUser');
+    setCurrentUser(null);
     return signOut(auth);
   }
 
@@ -323,14 +352,22 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    // Check if we have a persisted MongoDB session
+    const savedUser = localStorage.getItem('mongoUser');
+    if (savedUser) {
+      setCurrentUser(JSON.parse(savedUser));
+      setLoading(false);
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const token = await user.getIdToken();
         localStorage.setItem('userToken', token);
-      } else {
+        setCurrentUser(user);
+      } else if (!localStorage.getItem('mongoUser')) {
         localStorage.removeItem('userToken');
+        setCurrentUser(null);
       }
-      setCurrentUser(user);
       setLoading(false);
     });
 
@@ -339,10 +376,12 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
-    login,
-    signup,
+    login: mongoLogin,
+    signup: mongoSignup,
     logout,
     googleSignIn,
+    mongoLogin,
+    mongoSignup,
     resetPassword,
     updateEmail: updateUserEmail,
     updatePassword: updateUserPassword,

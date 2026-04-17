@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, UserPlus, Shield, ArrowRight, Chrome, Github, Twitter, CheckCircle } from 'lucide-react';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
-export default function RegisterPage({ setPage }) {
+export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -21,29 +21,16 @@ export default function RegisterPage({ setPage }) {
       setError('');
       setLoading(true);
       
-      const userCredential = await signup(email, password);
-      const user = userCredential.user;
-      
-      const db = getFirestore();
-      await setDoc(doc(db, "users", user.uid), {
-        name: name,
-        email: email,
-        createdAt: new Date().toISOString(),
-        emailVerified: false
-      });
-
-      await sendEmailVerification(user);
+      // Use MongoDB registration
+      await signup(email, password, name);
       
       setError('');
-      alert('Verification email transmitted. Please check your inbox.');
+      alert('Personnel record established successfully. You may now access the terminal.');
       navigate('/login');
     } catch (err) {
+      console.error('Registration error:', err);
       setError(err.message || 'Registration failed. Personnel record could not be established.');
     } finally {
-      // Small delay before navigation to allow user to see success message
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 1500);
       setLoading(false);
     }
   }

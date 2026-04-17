@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, Shield, ArrowRight, Chrome, Github, Twitter } from 'lucide-react';
 
-export default function LoginPage({ setPage }) {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +18,6 @@ export default function LoginPage({ setPage }) {
       setLoading(true);
 
       await login(email, password);
-      setPage(null); // Reset authPage state to show main app
       navigate('/home', { replace: true });
     } catch (err) {
       setError(err.message || 'Authorization failed. Please verify credentials.');
@@ -32,7 +31,6 @@ export default function LoginPage({ setPage }) {
       setError('');
       setLoading(true);
       await googleSignIn();
-      setPage(null); // Reset authPage state to show main app
       navigate('/home');
     } catch (err) {
       setError(err.message || 'Google Authentication failed.');
