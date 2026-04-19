@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { Link } from 'react-router-dom';
 import MedicalOfficerSelector from '../../features/chat/components/MedicalOfficerSelector';
 import ChatInterface from '../../features/chat/components/ChatInterface';
 import { Shield, MessageCircle, Users, Activity, ChevronRight, XCircle, Search } from 'lucide-react';
@@ -126,10 +127,41 @@ const UserChatPage = () => {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-center p-8 bg-white rounded-lg shadow-md">
-          <h2 className="text-3xl font-extrabold text-green-700 mb-4">Access Denied</h2>
-          <p className="text-gray-600">Please log in to use the chat feature and connect with our medical professionals.</p>
+      <div className="min-h-[80vh] flex items-center justify-center p-4">
+        <div className="max-w-md w-full relative group">
+          {/* Background Decorative Blur */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+          
+          <div className="relative glass p-10 rounded-[2.5rem] shadow-2xl border-white/40 ring-1 ring-slate-900/5 text-center space-y-8">
+            <div className="mx-auto w-24 h-24 relative flex items-center justify-center">
+              <div className="absolute inset-0 bg-emerald-500/10 rounded-full animate-ping opacity-20" />
+              <div className="relative bg-emerald-50 w-20 h-20 rounded-3xl flex items-center justify-center text-emerald-600 shadow-inner">
+                <Shield size={40} />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-4xl font-black text-slate-900 tracking-tighter">
+                Access <span className="text-emerald-600">Restricted</span>
+              </h2>
+              <p className="text-slate-500 font-medium leading-relaxed">
+                Log in to establish a secure uplink with our medical professionals and receive real-time species guidance.
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 space-y-4">
+              <Link 
+                to="/login"
+                className="btn-primary w-full py-4 flex items-center justify-center gap-3 group"
+              >
+                <span>Establish Connection</span>
+                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                Authorized Personnel Only
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     );

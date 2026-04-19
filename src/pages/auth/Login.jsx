@@ -59,7 +59,7 @@ export default function LoginPage() {
             </div>
           </div>
           <h2 className="mt-6 text-4xl font-black text-slate-900 tracking-tighter">
-            Sector <span className="text-emerald-600">Access</span>
+            User <span className="text-emerald-600">Login</span>
           </h2>
           <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
             Identity verification required
@@ -76,7 +76,7 @@ export default function LoginPage() {
             
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Authorized Email</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Email</label>
                 <div className="relative group">
                   <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
                   <input
@@ -92,8 +92,8 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-4">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Security Key</label>
-                  <Link to="/forgot-password/reset-password" class="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700">Lost Key?</Link>
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Password</label>
+                  <Link to="/forgot-password/reset-password" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700">Forgot Password?</Link>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
@@ -114,7 +114,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-600 shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 group active:scale-95"
             >
-              {loading ? 'Authorizing...' : 'Establish Connection'}
+              {loading ? 'Authorizing...' : 'Login'}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
@@ -122,7 +122,7 @@ export default function LoginPage() {
           <div className="mt-8 pt-8 border-t border-slate-100 space-y-6">
             <div className="flex items-center gap-4">
               <div className="flex-1 h-px bg-slate-100" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 whitespace-nowrap">Collaborative Sync</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 whitespace-nowrap">Login with</span>
               <div className="flex-1 h-px bg-slate-100" />
             </div>
 
@@ -141,9 +141,9 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-slate-500 font-medium text-sm">
-          No active clearance? {' '}
+          Don't have an account? {' '}
           <Link to="/register" className="text-emerald-600 font-black uppercase tracking-widest hover:underline text-xs">
-            Apply for Membership
+            Register
           </Link>
         </p>
       </div>

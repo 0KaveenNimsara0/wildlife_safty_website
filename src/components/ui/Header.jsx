@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function Header({ page, setPage, setAuthPage }) {
+export default function Header() {
+    const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { currentUser, logout, googleSignIn, adminLogout, medicalOfficerLogout } = useAuth();
     const navigate = useNavigate();
@@ -77,7 +78,6 @@ export default function Header({ page, setPage, setAuthPage }) {
     const handleGoogleSignIn = async () => {
         try {
             await googleSignIn();
-            setAuthPage(null); // Reset authPage state to show main app
             navigate('/home');
         } catch (error) {
             console.error('Google sign-in failed:', error);
@@ -85,9 +85,14 @@ export default function Header({ page, setPage, setAuthPage }) {
     };
 
     const handleNavigation = (path) => {
-        setPage(path.startsWith('/') ? path.split('/')[1] || 'home' : 'home');
         navigate(path);
         setMobileMenuOpen(false);
+    };
+
+    // Helper to check if a path is active
+    const isPathActive = (path) => {
+        if (path === '/home' && (location.pathname === '/' || location.pathname === '/home')) return true;
+        return location.pathname === path;
     };
 
     // Get user profile picture or default icon
@@ -164,7 +169,7 @@ export default function Header({ page, setPage, setAuthPage }) {
                     <div className="hidden lg:flex items-center space-x-1">
                         {navigation.map((item) => {
                             const IconComponent = item.icon;
-                            const isActive = page === item.id;
+                            const isActive = isPathActive(item.path);
                             return (
                                 <button
                                     key={item.id}
@@ -220,14 +225,20 @@ export default function Header({ page, setPage, setAuthPage }) {
                         ) : (
                             <div className="flex items-center space-x-3">
                                 <button
-                                    onClick={() => setAuthPage('login')}
-                                    className="text-sm font-bold text-slate-600 hover:text-emerald-600 px-3 transition-colors"
+                                    onClick={() => navigate('/login')}
+                                    className={`text-sm font-bold px-3 transition-colors ${
+                                        location.pathname === '/login' 
+                                            ? 'text-emerald-600' 
+                                            : 'text-slate-600 hover:text-emerald-600'
+                                    }`}
                                 >
                                     Log In
                                 </button>
                                 <button
-                                    onClick={() => setAuthPage('login')}
-                                    className="btn-primary flex items-center space-x-2 py-2 px-5 text-sm"
+                                    onClick={() => navigate('/register')}
+                                    className={`btn-primary flex items-center space-x-2 py-2 px-5 text-sm ${
+                                        location.pathname === '/register' ? 'ring-2 ring-emerald-500 ring-offset-2' : ''
+                                    }`}
                                 >
                                     <span>Get Started</span>
                                     <Shield className="w-4 h-4" />
@@ -251,7 +262,7 @@ export default function Header({ page, setPage, setAuthPage }) {
                         <div className="p-4 space-y-2">
                             {navigation.map((item) => {
                                 const IconComponent = item.icon;
-                                const isActive = page === item.id;
+                                const isActive = isPathActive(item.path);
                                 return (
                                     <button
                                         key={item.id}
@@ -296,13 +307,13 @@ export default function Header({ page, setPage, setAuthPage }) {
                                 ) : (
                                     <div className="grid grid-cols-2 gap-3">
                                         <button
-                                            onClick={() => { setAuthPage('login'); setMobileMenuOpen(false); }}
+                                            onClick={() => { navigate('/login'); setMobileMenuOpen(false); }}
                                             className="btn-secondary py-3 text-sm"
                                         >
                                             Sign In
                                         </button>
                                         <button
-                                            onClick={() => { setAuthPage('login'); setMobileMenuOpen(false); }}
+                                            onClick={() => { navigate('/register'); setMobileMenuOpen(false); }}
                                             className="btn-primary py-3 text-sm"
                                         >
                                             Register

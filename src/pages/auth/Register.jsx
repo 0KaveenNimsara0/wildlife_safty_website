@@ -55,7 +55,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <h2 className="mt-6 text-4xl font-black text-slate-900 tracking-tighter">
-            Sector <span className="text-emerald-600">Enlistment</span>
+            User <span className="text-emerald-600">Registration</span>
           </h2>
           <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
             Establish your identity record
@@ -72,7 +72,7 @@ export default function RegisterPage() {
             
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Full Identity Name</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Full Name</label>
                 <div className="relative group">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
                   <input
@@ -87,7 +87,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Authorized Email</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Email</label>
                 <div className="relative group">
                   <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
                   <input
@@ -102,7 +102,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Security Key</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Password</label>
                 <div className="relative group">
                   <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
                   <input
@@ -117,7 +117,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Verify Key</label>
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Verify Password</label>
                 <div className="relative group">
                   <CheckCircle className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
                   <input
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                     value={passwordConfirm}
                     onChange={(e) => setPasswordConfirm(e.target.value)}
                     className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
-                    placeholder="Repeat key"
+                    placeholder="Repeat Password"
                   />
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-600 shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 group active:scale-95"
             >
-              {loading ? 'Initializing...' : 'Enlist Personnel'}
+              {loading ? 'Initializing...' : 'Register'}
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
@@ -145,7 +145,7 @@ export default function RegisterPage() {
           <div className="mt-8 pt-8 border-t border-slate-100 space-y-6">
             <div className="flex items-center gap-4">
               <div className="flex-1 h-px bg-slate-100" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 whitespace-nowrap">Collaborative Sync</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 whitespace-nowrap">Login with</span>
               <div className="flex-1 h-px bg-slate-100" />
             </div>
 
@@ -160,9 +160,9 @@ export default function RegisterPage() {
         </div>
 
         <p className="text-center text-slate-500 font-medium text-sm">
-          Already cleared? {' '}
+          Already have an account? {' '}
           <Link to="/login" className="text-emerald-600 font-black uppercase tracking-widest hover:underline text-xs">
-            Access Terminal
+            Login
           </Link>
         </p>
       </div>

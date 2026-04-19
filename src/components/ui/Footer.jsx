@@ -4,8 +4,10 @@ import {
     Zap, Target, Brain, Globe, Award, Users, 
     Facebook, Twitter, Instagram, Mail, MapPin
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export default function Footer({ setPage }) {
+export default function Footer() {
+    const navigate = useNavigate();
     const features = [
         {
             icon: Brain,
@@ -109,7 +111,7 @@ export default function Footer({ setPage }) {
                             ].map((link, i) => (
                                 <li key={i}>
                                     <button 
-                                        onClick={() => setPage(link.path)}
+                                        onClick={() => navigate(`/${link.path}`)}
                                         className="text-slate-400 hover:text-emerald-400 font-bold transition-colors text-sm"
                                     >
                                         {link.name}
