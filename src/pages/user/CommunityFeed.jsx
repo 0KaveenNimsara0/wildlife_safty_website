@@ -18,7 +18,7 @@ const fixedCategories = [
 ];
 
 const CommunityFeed = () => {
-  const { currentUser } = useAuth();
+  const { activeUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [commentTexts, setCommentTexts] = useState({});
   const [loading, setLoading] = useState(false);
@@ -114,13 +114,13 @@ const CommunityFeed = () => {
 
   const handleCommentSubmit = async (postId) => {
     const commentText = commentTexts[postId] || '';
-    if (!currentUser || !commentText.trim()) return;
+    if (!activeUser || !commentText.trim()) return;
 
     try {
       setLoading(true);
       const response = await api.post(`/posts/${postId}/comments`, {
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || currentUser.email,
+        authorId: activeUser.uid,
+        authorName: activeUser.displayName || activeUser.email,
         text: commentText
       });
 
@@ -154,15 +154,15 @@ const CommunityFeed = () => {
   };
 
   const handleLike = async (postId) => {
-    if (!currentUser) return;
+    if (!activeUser) return;
     
     setPosts(prevPosts => prevPosts.map(post => {
       if (post._id === postId) {
-        const isLiked = post.likedBy?.includes(currentUser.uid);
+        const isLiked = post.likedBy?.includes(activeUser.uid);
         const newLikes = isLiked ? Math.max(0, (post.likes || 1) - 1) : (post.likes || 0) + 1;
         const newLikedBy = isLiked 
-          ? post.likedBy.filter(id => id !== currentUser.uid)
-          : [...(post.likedBy || []), currentUser.uid];
+          ? post.likedBy.filter(id => id !== activeUser.uid)
+          : [...(post.likedBy || []), activeUser.uid];
           
         return { ...post, likes: newLikes, likedBy: newLikedBy };
       }
@@ -170,7 +170,7 @@ const CommunityFeed = () => {
     }));
 
     try {
-      await api.post(`/posts/${postId}/like`, { userId: currentUser.uid });
+      await api.post(`/posts/${postId}/like`, { userId: activeUser.uid });
     } catch (err) {
       console.error(err);
       fetchPosts();
@@ -198,7 +198,11 @@ const CommunityFeed = () => {
   const updateCommentInTree = (comments, commentId, updatedComment) => {
     return comments.map(comment => {
       if (comment._id === commentId) {
-        return updatedComment;
+        return {
+          ...comment,
+          ...updatedComment,
+          replies: comment.replies // Preserve manually populated nested replies tree
+        };
       }
       if (comment.replies && comment.replies.length > 0) {
         return {
@@ -320,7 +324,7 @@ const CommunityFeed = () => {
         <header className="bg-white/95 backdrop-blur-sm shadow-sm sticky top-0 z-40 w-full border-b border-slate-200 mb-8 py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
-            {currentUser && (
+            {activeUser && (
               <button
                 onClick={() => setShowMyPosts(true)}
                 className="p-3 bg-slate-900 text-white rounded-2xl hover:bg-emerald-600 shadow-xl transition-all active:scale-95 flex items-center gap-2 group hover:shadow-emerald-500/20"
@@ -351,13 +355,13 @@ const CommunityFeed = () => {
               </span>
             </div>
 
-            {currentUser && (
+            {activeUser && (
               <div className="flex items-center gap-4 bg-slate-50 pl-4 pr-1 py-1 rounded-2xl border border-slate-100">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 hidden sm:inline">
-                  {currentUser.displayName || currentUser.email.split('@')[0]}
+                  {activeUser.displayName || activeUser.email.split('@')[0]}
                 </span>
                 <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black shadow-lg">
-                  {currentUser.displayName?.charAt(0) || currentUser.email.charAt(0).toUpperCase()}
+                  {activeUser.displayName?.charAt(0) || activeUser.email.charAt(0).toUpperCase()}
                 </div>
               </div>
             )}
@@ -459,7 +463,7 @@ const CommunityFeed = () => {
                 <div className="flex gap-8">
                   <button onClick={() => handleLike(post._id)} className="flex items-center gap-2 group/btn">
                     <div className="p-2.5 rounded-xl group-hover/btn:bg-rose-50 transition-all">
-                      {currentUser && post.likedBy?.includes(currentUser.uid) ? <Heart size={20} className="fill-rose-500 text-rose-500" /> : <Heart size={20} className="text-slate-400 group-hover/btn:text-rose-500" />}
+                      {activeUser && post.likedBy?.includes(activeUser.uid) ? <Heart size={20} className="fill-rose-500 text-rose-500" /> : <Heart size={20} className="text-slate-400 group-hover/btn:text-rose-500" />}
                     </div>
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover/btn:text-rose-600">{post.likes || 0} Likes</span>
                   </button>
@@ -477,7 +481,7 @@ const CommunityFeed = () => {
                 </div>
               </footer>
               
-              {currentUser && (
+              {activeUser && (
                 <div className="px-8 pb-6 pt-2">
                    <div className="flex gap-4 p-1.5 bg-white rounded-2xl border-2 border-slate-100 ring-4 ring-slate-50">
                     <input
@@ -557,10 +561,10 @@ const CommunityFeed = () => {
              <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6">
                Your contributions are reviewed by experts to ensure high-quality safety guidance and valid species insights for the community.
              </p>
-             <Link to="/dashboard" className="w-full py-4 bg-slate-900 rounded-2xl flex items-center justify-center gap-3 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg hover:shadow-emerald-200">
+             <button onClick={() => setShowMyPosts(true)} className="w-full py-4 bg-slate-900 rounded-2xl flex items-center justify-center gap-3 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg hover:shadow-emerald-200">
                 View My Dashboard
                 <ChevronRight size={14} />
-             </Link>
+             </button>
           </div>
         </aside>
       </div>
@@ -716,7 +720,7 @@ const CommunityFeed = () => {
                           postId={selectedPost._id} 
                           depth={0} 
                           maxDepth={4} 
-                          currentUser={currentUser} 
+                          activeUser={activeUser} 
                           onReply={handleReply} 
                           onUpdate={handleUpdateComment} 
                           onDelete={handleDeleteComment} 
@@ -734,7 +738,7 @@ const CommunityFeed = () => {
                </div>
             </div>
 
-            {currentUser && (
+            {activeUser && (
               <div className="p-6 bg-white border-t border-slate-50 sticky bottom-0">
                 <div className="flex gap-3 p-1.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-sm">
                   <input

@@ -22,6 +22,45 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const getActiveUser = () => {
+    if (currentUser) {
+      return {
+        uid: currentUser.uid || currentUser._id,
+        displayName: currentUser.displayName || currentUser.name || currentUser.email,
+        email: currentUser.email,
+        role: 'user',
+        ...currentUser
+      };
+    }
+    const adminData = localStorage.getItem('adminData');
+    if (adminData) {
+      try {
+        const parsed = JSON.parse(adminData);
+        return {
+          uid: parsed._id,
+          displayName: parsed.name,
+          email: parsed.email,
+          role: 'admin',
+          ...parsed
+        };
+      } catch (e) {}
+    }
+    const medicalData = localStorage.getItem('medicalOfficerData');
+    if (medicalData) {
+      try {
+        const parsed = JSON.parse(medicalData);
+        return {
+          uid: parsed._id,
+          displayName: parsed.name,
+          email: parsed.email,
+          role: 'medicalOfficer',
+          ...parsed
+        };
+      } catch (e) {}
+    }
+    return null;
+  };
+
   async function mongoLogin(email, password) {
     try {
       const response = await fetch(`${BASE_URL}/auth/user/login`, {
@@ -376,6 +415,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     currentUser,
+    activeUser: getActiveUser(),
     login: mongoLogin,
     signup: mongoSignup,
     logout,

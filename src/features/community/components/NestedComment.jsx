@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { FaHeart, FaRegHeart, FaReply, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../../../context/AuthContext';
-import axios from 'axios';
-
+import api from '../../../services/api';
 import { BASE_URL } from '../../../config/constants';
 
 const NestedComment = ({ 
@@ -15,7 +14,7 @@ const NestedComment = ({
   maxDepth = 3,
   postAuthorId
 }) => {
-  const { currentUser } = useAuth();
+  const { activeUser } = useAuth();
   const [showReplyInput, setShowReplyInput] = useState(false);
   const [replyText, setReplyText] = useState('');
   const [editingText, setEditingText] = useState(comment.text);
@@ -23,7 +22,7 @@ const NestedComment = ({
   const [loading, setLoading] = useState(false);
   const [activeReaction, setActiveReaction] = useState(null);
 
-  const isAuthor = currentUser && comment.authorId === currentUser.uid;
+  const isAuthor = activeUser && comment.authorId === activeUser.uid;
   const isPostAuthor = comment.authorId === postAuthorId;
   const canReply = depth < maxDepth;
 
@@ -41,13 +40,13 @@ const NestedComment = ({
   };
 
   const handleReaction = async (reactionType) => {
-    if (!currentUser) return;
+    if (!activeUser) return;
     
     try {
       setLoading(true);
-      const response = await axios.post(`${BASE_URL}/posts/${postId}/comments/${comment._id}/react`, {
-        userId: currentUser.uid,
-        userName: currentUser.displayName || currentUser.email,
+      const response = await api.post(`/posts/${postId}/comments/${comment._id}/react`, {
+        userId: activeUser.uid,
+        userName: activeUser.displayName || activeUser.email,
         type: reactionType
       });
       
@@ -67,10 +66,10 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, {
+      const response = await api.post(`/posts/${postId}/comments`, {
         parentId: comment._id,
-        authorId: currentUser.uid,
-        authorName: currentUser.displayName || currentUser.email,
+        authorId: activeUser.uid,
+        authorName: activeUser.displayName || activeUser.email,
         text: replyText
       });
       
@@ -90,7 +89,7 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      const response = await axios.put(`${BASE_URL}/posts/${postId}/comments/${comment._id}`, {
+      const response = await api.put(`/posts/${postId}/comments/${comment._id}`, {
         text: editingText
       });
       
@@ -109,7 +108,7 @@ const NestedComment = ({
     
     try {
       setLoading(true);
-      await axios.delete(`${BASE_URL}/posts/${postId}/comments/${comment._id}`);
+      await api.delete(`/posts/${postId}/comments/${comment._id}`);
       onDelete(comment._id);
     } catch (err) {
       console.error('Failed to delete comment:', err);
@@ -119,7 +118,7 @@ const NestedComment = ({
   };
 
   // Get user's reaction
-  const userReaction = comment.reactions?.find(r => r.userId === currentUser?.uid)?.type;
+  const userReaction = comment.reactions?.find(r => r.userId === activeUser?.uid)?.type;
 
   // Calculate reaction counts
   const reactionCounts = {};
@@ -237,7 +236,7 @@ const NestedComment = ({
                     className={`flex items-center gap-1 text-xs px-3 py-1 rounded-full ${
                       userReaction ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
-                    disabled={!currentUser || loading}
+                    disabled={!activeUser || loading}
                   >
                     {userReaction ? (
                       <>
@@ -264,7 +263,7 @@ const NestedComment = ({
                               : 'hover:scale-110 hover:bg-gray-100'
                           }`}
                           title={type}
-                          disabled={!currentUser || loading}
+                          disabled={!activeUser || loading}
                         >
                           {icon}
                         </button>
@@ -291,7 +290,7 @@ const NestedComment = ({
               </div>
               
               {/* Reply button */}
-              {canReply && currentUser && (
+              {canReply && activeUser && (
                 <button
                   onClick={() => {
                     setShowReplyInput(!showReplyInput);

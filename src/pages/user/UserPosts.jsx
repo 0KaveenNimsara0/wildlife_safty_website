@@ -7,7 +7,7 @@ import { Shield, MapPin, Search, Plus, Trash2, Edit3, CheckCircle, XCircle } fro
 import { FaHeart, FaComment, FaEdit, FaTrash, FaCheck, FaTimes, FaCamera, FaPlus, FaCloudUploadAlt, FaHistory } from 'react-icons/fa';
 
 const UserPosts = () => {
-  const { currentUser } = useAuth();
+  const { activeUser } = useAuth();
   const [userPosts, setUserPosts] = useState([]);
   const [newPost, setNewPost] = useState({ animalName: '', experience: '', photo: null });
   const [editingPostId, setEditingPostId] = useState(null);
@@ -17,11 +17,11 @@ const UserPosts = () => {
 
   useEffect(() => {
     const fetchUserPosts = async () => {
-      if (!currentUser) return;
+      if (!activeUser) return;
       try {
         setLoading(true);
         const response = await api.get('/posts');
-        const filteredPosts = response.data.filter(post => post.authorId === currentUser.uid);
+        const filteredPosts = response.data.filter(post => post.authorId === activeUser.uid);
         setUserPosts(filteredPosts);
       } catch (err) {
         setError('Failed to sync your field logs.');
@@ -30,7 +30,7 @@ const UserPosts = () => {
       }
     };
     fetchUserPosts();
-  }, [currentUser]);
+  }, [activeUser]);
 
   const handlePostSubmit = async (e) => {
     e.preventDefault();
@@ -40,8 +40,8 @@ const UserPosts = () => {
       const formData = new FormData();
       formData.append('animalName', newPost.animalName);
       formData.append('experience', newPost.experience);
-      formData.append('authorId', currentUser.uid);
-      formData.append('authorName', currentUser.displayName || currentUser.email);
+      formData.append('authorId', activeUser.uid);
+      formData.append('authorName', activeUser.displayName || activeUser.email);
       if (newPost.photo) formData.append('photo', newPost.photo);
 
       const response = await api.post('/posts', formData, {
@@ -199,7 +199,12 @@ const UserPosts = () => {
                         className="font-black text-slate-900 bg-white border-2 border-emerald-500 px-3 py-1 rounded-lg outline-none"
                       />
                     ) : (
-                      <h4 className="font-black text-slate-800">{post.animalName}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-black text-slate-800">{post.animalName}</h4>
+                        {post.status === 'verified' && <span className="text-[9px] bg-sky-50 text-sky-600 px-2 py-0.5 rounded border border-sky-100 font-black uppercase tracking-widest flex items-center gap-1"><Shield size={10}/> Verified</span>}
+                        {post.status === 'rejected' && <span className="text-[9px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded font-black uppercase tracking-widest flex items-center gap-1"><XCircle size={10}/> Rejected</span>}
+                        {post.status === 'pending' && <span className="text-[9px] bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded border border-yellow-100 font-black uppercase tracking-widest flex items-center gap-1">Pending</span>}
+                      </div>
                     )}
                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">
                       {post.createdAt ? (() => { try { return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true }); } catch { return 'Recent'; } })() : 'Historical'}
