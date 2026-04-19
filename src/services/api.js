@@ -18,10 +18,17 @@ api.interceptors.request.use(
     // Logic to decide which token to use based on target URL or other context
     if (config.url.includes('/admin') && adminToken) {
       config.headers.Authorization = `Bearer ${adminToken}`;
-    } else if (config.url.includes('/posts/verify') && medicalToken) {
-      config.headers.Authorization = `Bearer ${medicalToken}`;
     } else if (config.url.includes('/medical-officer') && medicalToken) {
       config.headers.Authorization = `Bearer ${medicalToken}`;
+    } else if (config.url.includes('/posts') || config.url.includes('/articles')) {
+      // Community endpoints - use whatever token is available (priority: medical -> user -> admin)
+      if (medicalToken) {
+        config.headers.Authorization = `Bearer ${medicalToken}`;
+      } else if (userToken) {
+        config.headers.Authorization = `Bearer ${userToken}`;
+      } else if (adminToken) {
+        config.headers.Authorization = `Bearer ${adminToken}`;
+      }
     } else if (userToken) {
       config.headers.Authorization = `Bearer ${userToken}`;
     }

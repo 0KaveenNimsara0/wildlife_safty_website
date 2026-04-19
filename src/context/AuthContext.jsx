@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
       try {
         const parsed = JSON.parse(adminData);
         return {
-          uid: parsed._id,
+          uid: parsed._id || parsed.id,
           displayName: parsed.name,
           email: parsed.email,
           role: 'admin',
@@ -50,7 +50,7 @@ export function AuthProvider({ children }) {
       try {
         const parsed = JSON.parse(medicalData);
         return {
-          uid: parsed._id,
+          uid: parsed._id || parsed.id,
           displayName: parsed.name,
           email: parsed.email,
           role: 'medicalOfficer',
