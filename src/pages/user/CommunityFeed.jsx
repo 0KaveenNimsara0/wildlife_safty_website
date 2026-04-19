@@ -121,6 +121,7 @@ const CommunityFeed = () => {
       const response = await api.post(`/posts/${postId}/comments`, {
         authorId: activeUser.uid,
         authorName: activeUser.displayName || activeUser.email,
+        authorRole: activeUser.role || 'user',
         text: commentText
       });
 

@@ -70,6 +70,7 @@ const NestedComment = ({
         parentId: comment._id,
         authorId: activeUser.uid,
         authorName: activeUser.displayName || activeUser.email,
+        authorRole: activeUser.role || 'user',
         text: replyText
       });
       
@@ -144,8 +145,8 @@ const NestedComment = ({
       }`}>
         {/* Comment Header */}
         <div className="flex items-start gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium ${
-            isPostAuthor ? 'bg-green-600' : 'bg-blue-600'
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium shadow-sm ${
+            isPostAuthor ? 'bg-green-600' : comment.authorRole === 'medicalOfficer' ? 'bg-emerald-600 ring-2 ring-emerald-100 ring-offset-2' : 'bg-blue-600'
           }`}>
             {comment.authorName?.charAt(0)?.toUpperCase() || 'U'}
           </div>
@@ -153,12 +154,20 @@ const NestedComment = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-gray-800 truncate">
+                <span className="text-sm font-semibold text-gray-800 flex items-center gap-2 truncate">
                   {comment.authorName}
                   {isPostAuthor && (
-                    <span className="ml-1 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold bg-green-100 text-green-800 px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm">
                       OP
                     </span>
+                  )}
+                  {comment.authorRole === 'medicalOfficer' && (
+                    <div className="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full border border-emerald-100/50 shadow-sm">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span className="text-[10px] font-black uppercase tracking-widest">Medical Expert</span>
+                    </div>
                   )}
                 </span>
                 <span className="text-xs text-gray-500">
