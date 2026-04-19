@@ -23,6 +23,8 @@ const CommunityFeed = () => {
   const [commentTexts, setCommentTexts] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isMedicalOfficer, setIsMedicalOfficer] = useState(false);
   const [showMyPosts, setShowMyPosts] = useState(false);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -36,6 +38,11 @@ const CommunityFeed = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
+    const medicalData = localStorage.getItem('medicalOfficerData');
+    if (medicalData) {
+      setIsMedicalOfficer(true);
+    }
+
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -259,6 +266,28 @@ const CommunityFeed = () => {
     }
   };
 
+  const handleVerifyPost = async (postId, status) => {
+    try {
+      console.log('Attempting verification for post:', postId, 'with status:', status);
+      setLoading(true);
+      const response = await api.post(`/posts/verify/${postId}`, { status });
+      console.log('Verification response:', response.data);
+      
+      if (response.data) {
+        setPosts(prevPosts => prevPosts.map(post => 
+          post._id === postId ? { ...post, status: response.data.status } : post
+        ));
+        setSuccess(`Observation ${status === 'verified' ? 'verified' : 'rejected'} successfully.`);
+        setTimeout(() => setSuccess(''), 3000);
+      }
+    } catch (err) {
+      console.error('Verification error:', err);
+      setError('Expert verification failed. Please check credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openArticlePopup = (article) => {
     setPopupArticle(article);
     setShowPopup(true);
@@ -339,8 +368,13 @@ const CommunityFeed = () => {
       <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-12 gap-10">
         <div className="lg:col-span-8 space-y-8">
           {error && (
-            <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl text-rose-700 text-xs font-black uppercase tracking-widest text-center">
+            <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl text-rose-700 text-xs font-black uppercase tracking-widest text-center animate-shake">
               {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-4 bg-emerald-50 border-2 border-emerald-100 rounded-2xl text-emerald-700 text-xs font-black uppercase tracking-widest text-center animate-fade-in">
+              {success}
             </div>
           )}
           {loading && (
@@ -369,12 +403,39 @@ const CommunityFeed = () => {
                       <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md">
                         <Award size={10} /> Certified Observer
                       </span>
+                      {post.status === 'verified' && (
+                        <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-sky-50 text-sky-600 px-2 py-0.5 rounded-md border border-sky-100 shadow-sm">
+                          <Shield size={10} className="fill-sky-600/10" /> Verified Insight
+                        </span>
+                      )}
+                      {post.status === 'rejected' && (
+                        <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-400 px-2 py-0.5 rounded-md">
+                          <X size={10} /> Discredited
+                        </span>
+                      )}
                       <span className="text-[10px] font-bold uppercase tracking-tighter flex items-center gap-1">
                         <FaClock size={10} /> {post.createdAt ? (() => { try { return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true }); } catch { return 'Recent'; } })() : 'Historical'}
                       </span>
                     </div>
                   </div>
                 </div>
+
+                {isMedicalOfficer && post.status === 'pending' && (
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => handleVerifyPost(post._id, 'verified')}
+                      className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200"
+                    >
+                      Verify
+                    </button>
+                    <button 
+                      onClick={() => handleVerifyPost(post._id, 'rejected')}
+                      className="px-4 py-2 bg-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
               </header>
 
               <div className="p-8 space-y-6">
