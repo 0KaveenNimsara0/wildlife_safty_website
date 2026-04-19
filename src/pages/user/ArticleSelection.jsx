@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, ChevronRight, Search, ArrowLeft, Award, Book, ExternalLink } from 'lucide-react';
+import { BookOpen, ChevronRight, Search, ArrowLeft, Award, Book, ExternalLink, Clock } from 'lucide-react';
 import ArticlePreviewModal from '../../components/common/ArticlePreviewModal';
 
 const categories = [

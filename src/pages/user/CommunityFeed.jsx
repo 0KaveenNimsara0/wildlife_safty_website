@@ -298,12 +298,12 @@ const CommunityFeed = () => {
                 aria-label="Open Field Records"
               >
                 <Activity size={18} className="group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Field Records</span>
+                <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Share Your Experience</span>
               </button>
             )}
             <div className="space-y-1">
               <h1 className="text-3xl font-black text-slate-900 tracking-tighter">
-                Sector <span className="text-emerald-600">Intelligence</span>
+                Community <span className="text-emerald-600">Feed</span>
               </h1>
               <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
                 <Shield size={12} className="text-emerald-500" />
@@ -447,7 +447,7 @@ const CommunityFeed = () => {
             </div>
 
             <div className="space-y-6 mb-8 relative z-10">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Sector Classification</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Categories</h4>
               <div className="flex flex-wrap gap-2">
                 {fixedCategories.map((cat) => (
                   <button
@@ -478,7 +478,7 @@ const CommunityFeed = () => {
                     className="w-full text-left group space-y-3 p-4 rounded-2xl hover:bg-white/5 transition-all"
                   >
                     <div className="flex items-center gap-2">
-                       <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">INTEL REF: {article._id.slice(-4).toUpperCase()}</span>
+                       <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">REF: {article._id.slice(-4).toUpperCase()}</span>
                     </div>
                     <h4 className="text-sm text-white leading-tight group-hover:text-emerald-400 transition-colors uppercase tracking-tight">{article.title}</h4>
                     <p className="text-[11px] text-white/40 line-clamp-2 italic leading-relaxed">"{article.excerpt}"</p>
@@ -488,17 +488,17 @@ const CommunityFeed = () => {
             </div>
           </div>
 
-          <div className="card-premium p-8 border-dashed border-2 border-slate-200 bg-white">
+          <div className="card-premium p-8 border-dashed border-2 border-slate-200 bg-white group hover:border-emerald-300 transition-all duration-500">
              <div className="flex items-center gap-3 mb-6">
-                <Shield size={16} className="text-emerald-600" />
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900">Security Clearance</h4>
+                <Shield size={16} className="text-emerald-600 transition-transform group-hover:scale-110" />
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-900">Expert Verification</h4>
              </div>
              <p className="text-xs text-slate-500 font-medium leading-relaxed mb-6">
-               Your field observations are peer-reviewed by our medical officers and research team for validity and impact.
+               Your contributions are reviewed by experts to ensure high-quality safety guidance and valid species insights for the community.
              </p>
-             <Link to="/dashboard" className="w-full py-3 bg-slate-50 rounded-xl flex items-center justify-center gap-2 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:bg-emerald-50 hover:text-emerald-600 transition-all">
-                Access HQ Console
-                <ChevronRight size={12} />
+             <Link to="/dashboard" className="w-full py-4 bg-slate-900 rounded-2xl flex items-center justify-center gap-3 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg hover:shadow-emerald-200">
+                View My Dashboard
+                <ChevronRight size={14} />
              </Link>
           </div>
         </aside>
@@ -516,8 +516,8 @@ const CommunityFeed = () => {
                   <Activity size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">Personal Chronicle</h2>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Observer Data Logs</p>
+                  <h2 className="text-2xl font-black text-slate-900 tracking-tight">My Posts</h2>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Shared Experience</p>
                 </div>
               </div>
               <button 
@@ -541,7 +541,7 @@ const CommunityFeed = () => {
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-widest text-[10px]">
                   <Award size={14} />
-                  <span>Sector Report: {popupArticle.category}</span>
+                  <span>Topic: {popupArticle.category}</span>
                 </div>
                 <h2 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-tight">{popupArticle.title}</h2>
               </div>
@@ -569,7 +569,7 @@ const CommunityFeed = () => {
                     <div key={idx} className="rounded-[3rem] overflow-hidden border-8 border-slate-50 shadow-inner group-hover:border-emerald-50 transition-colors">
                       <img
                         src={img.url}
-                        alt={`Intelligence Brief ${idx + 1}`}
+                        alt={`Supporting Image ${idx + 1}`}
                         className="w-full h-auto object-cover"
                       />
                     </div>

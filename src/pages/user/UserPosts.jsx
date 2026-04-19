@@ -109,7 +109,7 @@ const UserPosts = () => {
               <Plus size={20} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-slate-900 tracking-tight">Post Encounter</h3>
+              <h3 className="text-xl font-black text-slate-900 tracking-tight">Share Your Experience</h3>
               <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Global Sighting Database</p>
             </div>
           </div>
@@ -159,7 +159,7 @@ const UserPosts = () => {
                 className="btn-primary py-4 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-emerald-200 active:scale-95 transition-transform"
                 disabled={loading}
               >
-                {loading ? 'Transmitting...' : 'Log Sighting'}
+                {loading ? 'Transmitting...' : 'Publish'}
               </button>
             </div>
           </form>
