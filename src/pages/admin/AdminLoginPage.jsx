@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Shield, AlertCircle, Mail, Lock, Fingerprint } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
 import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
@@ -103,7 +103,10 @@ export default function AdminLoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Access Pass-Cipher</label>
+              <div className="flex items-center justify-between ml-1">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Access Pass-Cipher</label>
+                <Link to="/admin/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-emerald-500 hover:text-emerald-400">Forgot Cipher?</Link>
+              </div>
               <div className="relative group/field">
                 <div className="absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
                   <Lock size={18} />

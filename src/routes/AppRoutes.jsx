@@ -26,6 +26,7 @@ import AdminLogin from '../pages/admin/AdminLoginPage';
 import AdminRegister from '../pages/admin/AdminRegisterPage';
 import MedicalLogin from '../pages/medical/MedicalOfficerLoginPage';
 import MedicalRegister from '../pages/medical/MedicalOfficerRegisterPage';
+import ForgotPassword from '../pages/auth/ForgotPassword';
 
 // Admin Sections
 import AdminOverviewSection from '../features/admin/components/AdminOverviewSection';
@@ -70,14 +71,17 @@ export default function AppRoutes() {
         {/* Authentication Routes - Now inside UserLayout for Header visibility */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword mode="user" />} />
       </Route>
 
       {/* Authentication Layer - Other Auth types can stay here or move */}
       <Route element={<AuthLayout />}>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />
+        <Route path="/admin/forgot-password" element={<ForgotPassword mode="admin" />} />
         <Route path="/medical-officer/login" element={<MedicalLogin />} />
         <Route path="/medical-officer/register" element={<MedicalRegister />} />
+        <Route path="/medical-officer/forgot-password" element={<ForgotPassword mode="medicalOfficer" />} />
       </Route>
 
       {/* Admin Portal Layer - Wrapped in AdminLayout */}
