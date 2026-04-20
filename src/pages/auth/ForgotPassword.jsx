@@ -61,7 +61,7 @@ export default function ForgotPassword({ mode = "user" }) {
   const handleSendRequest = async (e) => {
     if (e) e.preventDefault();
     if (!email) {
-      setError('Email is required');
+      setError("Email is required");
       return;
     }
 
@@ -96,26 +96,21 @@ export default function ForgotPassword({ mode = "user" }) {
   };
 
   const handleOtpVerified = async (otpValue) => {
-    try {
-      const response = await fetch(`${BASE_URL}/shared-auth/forgot-password/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: otpValue })
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Invalid validation code');
-      }
-
-      setVerifiedOtp(otpValue);
-      setShowOtp(false);
-      setStep(2); // Proceed to the new password setup interface
-    } catch (err) {
-      // Re-throw to be caught by the Modal's internal attempt handler
-      throw err;
+    const response = await fetch(`${BASE_URL}/shared-auth/forgot-password/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp: otpValue })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || "Invalid validation code");
     }
+
+    setVerifiedOtp(otpValue);
+    setShowOtp(false);
+    setStep(2); // Proceed to the new password setup interface
   };
 
   const handleUpdatePassword = async (e) => {
@@ -216,7 +211,7 @@ export default function ForgotPassword({ mode = "user" }) {
               disabled={loading}
               className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
             >
-              {loading ? 'Sending OTP...' : 'Send Verification Code'}
+              {loading ? "Sending OTP..." : "Send Verification Code"}
               {!loading && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
             </button>
           </form>
@@ -277,7 +272,7 @@ export default function ForgotPassword({ mode = "user" }) {
               disabled={loading}
               className="w-full py-6 bg-emerald-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-700 shadow-2xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
             >
-              {loading ? 'Updating...' : 'Update Password'}
+              {loading ? "Updating..." : "Update Password"}
               {!loading && <KeyRound size={18} className="group-hover:rotate-12 transition-transform duration-500" />}
             </button>
           </form>

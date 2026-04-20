@@ -96,9 +96,9 @@ export default function MedicalOfficerRegisterPage() {
 
       setShowOtp(false);
       navigate('/medical-officer/dashboard');
-    } catch (error) {
-      setError(error.message || 'System Enrollment Protocol Failure');
-      console.error('Medical officer registration error:', error);
+    } catch (err) {
+      setError(err.message || "System Enrollment Protocol Failure");
+      console.error("Medical officer registration error:", err);
       setShowOtp(false);
     } finally {
       setLoading(false);

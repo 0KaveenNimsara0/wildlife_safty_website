@@ -32,11 +32,13 @@ export default function AdminRegisterPage() {
     if (e) e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      return setError('Sync Error: Passwords do not match');
+      setError("Sync Error: Passwords do not match");
+      return;
     }
 
     if (formData.password.length < 6) {
-      return setError('Security Breach: Password too short (Min 6)');
+      setError("Security Breach: Password too short (Min 6)");
+      return;
     }
 
     try {
@@ -91,9 +93,9 @@ export default function AdminRegisterPage() {
 
       setShowOtp(false);
       navigate('/admin/dashboard');
-    } catch (error) {
-      setError(error.message || 'Enrollment Protocol Failure');
-      console.error('Admin registration error:', error);
+    } catch (err) {
+      setError(err.message || "Enrollment Protocol Failure");
+      console.error("Admin registration error:", err);
       setShowOtp(false);
     } finally {
       setLoading(false);
