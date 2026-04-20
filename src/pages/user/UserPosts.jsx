@@ -42,6 +42,7 @@ const UserPosts = () => {
       formData.append('experience', newPost.experience);
       formData.append('authorId', activeUser.uid);
       formData.append('authorName', activeUser.displayName || activeUser.email);
+      formData.append('authorAvatar', activeUser.photoURL || '');
       if (newPost.photo) formData.append('photo', newPost.photo);
 
       const response = await api.post('/posts', formData, {
@@ -187,8 +188,12 @@ const UserPosts = () => {
             <div key={post._id} className="card-premium p-0 overflow-hidden group hover:border-emerald-200 transition-all">
               <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-black text-sm">
-                    {post.animalName?.charAt(0) || 'S'}
+                  <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-black text-sm overflow-hidden">
+                    {post.authorAvatar ? (
+                      <img src={post.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                    ) : (
+                      post.animalName?.charAt(0) || 'S'
+                    )}
                   </div>
                   <div>
                     {editingPostId === post._id ? (

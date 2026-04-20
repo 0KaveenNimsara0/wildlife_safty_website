@@ -10,7 +10,7 @@ import {
 } from '../config/firebase';
 import { onAuthStateChanged, signOut, updateEmail, updatePassword } from 'firebase/auth';
 
-import { BASE_URL } from '../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../config/constants';
 
 const AuthContext = createContext();
 
@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
   const getActiveUser = () => {
     if (currentUser) {
       const isMongoUser = localStorage.getItem("mongoUser");
-      return {
+      const user = {
         uid: currentUser.uid || currentUser._id,
         displayName: currentUser.displayName || currentUser.name || currentUser.email,
         email: currentUser.email,
@@ -34,6 +34,12 @@ export function AuthProvider({ children }) {
         source: isMongoUser ? "mongodb" : "firebase",
         ...currentUser
       };
+
+      // Process photoURL if it's a relative path from our disk storage
+      if (user.photoURL && user.photoURL.startsWith('/uploads')) {
+        user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
+      }
+      return user;
     }
     const adminData = localStorage.getItem("adminData");
     if (adminData) {
@@ -221,6 +227,12 @@ export function AuthProvider({ children }) {
       }
 
       const data = await response.json();
+      
+      // Update local state and storage
+      const updatedUser = { ...currentUser, ...data };
+      localStorage.setItem('mongoUser', JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+      
       return data.photoURL;
     } catch (error) {
       console.error('Error uploading profile picture:', error);
@@ -470,7 +482,27 @@ export function AuthProvider({ children }) {
     // Check if we have a persisted MongoDB session
     const savedUser = localStorage.getItem('mongoUser');
     if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
+      try {
+        const parsedUser = JSON.parse(savedUser);
+        
+        // Safety: If the photoURL is a massive base64 string, clear it once to fix QuotaExceededError
+        if (parsedUser.photoURL && parsedUser.photoURL.length > 100000) {
+          console.warn('Wiping bloated profile storage asset...');
+          localStorage.removeItem('mongoUser');
+          setCurrentUser(null);
+          setLoading(false);
+          return;
+        }
+
+        // Process photoURL if it's a relative path from the disk storage
+        if (parsedUser.photoURL && parsedUser.photoURL.startsWith('/uploads')) {
+          parsedUser.photoURL = `${IMAGE_BASE_URL}${parsedUser.photoURL}`;
+        }
+        
+        setCurrentUser(parsedUser);
+      } catch (e) {
+        console.error('Failed to restore identity grid:', e);
+      }
       setLoading(false);
     }
 

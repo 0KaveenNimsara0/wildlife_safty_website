@@ -122,6 +122,7 @@ const CommunityFeed = () => {
         authorId: activeUser.uid,
         authorName: activeUser.displayName || activeUser.email,
         authorRole: activeUser.role || 'user',
+        authorAvatar: activeUser.photoURL || '',
         text: commentText
       });
 
@@ -361,8 +362,12 @@ const CommunityFeed = () => {
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 hidden sm:inline">
                   {activeUser.displayName || activeUser.email.split('@')[0]}
                 </span>
-                <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black shadow-lg">
-                  {activeUser.displayName?.charAt(0) || activeUser.email.charAt(0).toUpperCase()}
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black shadow-lg overflow-hidden">
+                  {activeUser.photoURL ? (
+                    <img src={activeUser.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    activeUser.displayName?.charAt(0) || activeUser.email.charAt(0).toUpperCase()
+                  )}
                 </div>
               </div>
             )}
@@ -399,8 +404,12 @@ const CommunityFeed = () => {
             <article key={post?._id || Math.random()} className="card-premium overflow-hidden group hover:border-emerald-200 transition-all">
               <header className="p-6 border-b border-slate-50 flex justify-between items-center group-hover:bg-slate-50/50 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-lg shadow-lg">
-                    {post.authorName?.charAt(0) || 'A'}
+                  <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-lg shadow-lg overflow-hidden">
+                    {post.authorAvatar ? (
+                      <img src={post.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                    ) : (
+                      post.authorName?.charAt(0) || 'A'
+                    )}
                   </div>
                   <div>
                     <h4 className="text-slate-900 font-black text-lg">{post.authorName}</h4>
@@ -666,8 +675,12 @@ const CommunityFeed = () => {
           <div className="relative w-full md:w-[750px] h-full bg-white shadow-2xl flex flex-col animate-slide-in-right">
             <header className="p-8 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0 z-10">
               <div className="flex items-center gap-4">
-                 <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg">
-                    {selectedPost.authorName?.charAt(0) || 'A'}
+                 <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg overflow-hidden">
+                    {selectedPost.authorAvatar ? (
+                      <img src={selectedPost.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                    ) : (
+                      selectedPost.authorName?.charAt(0) || 'A'
+                    )}
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">{selectedPost.animalName}</h3>

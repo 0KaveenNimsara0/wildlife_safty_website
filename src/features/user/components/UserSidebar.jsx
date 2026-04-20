@@ -100,8 +100,12 @@ const UserSidebar = ({
           {/* User Profile Footer */}
           <div className="p-6 border-t border-slate-50 bg-slate-50/30">
             <div className="flex items-center gap-4 p-3 rounded-2xl bg-white border border-slate-100 mb-4 shadow-sm">
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black shadow-lg">
-                {activeUser?.displayName?.charAt(0) || activeUser?.email?.charAt(0).toUpperCase() || 'A'}
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-black shadow-lg overflow-hidden">
+                {activeUser?.photoURL ? (
+                  <img src={activeUser.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  activeUser?.displayName?.charAt(0) || activeUser?.email?.charAt(0).toUpperCase() || 'A'
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-black text-slate-900 truncate tracking-tight">

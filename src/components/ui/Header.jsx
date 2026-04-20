@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { IMAGE_BASE_URL } from '../../config/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function Header() {
@@ -97,11 +98,15 @@ export default function Header() {
 
     // Get user profile picture or default icon
     const getUserAvatar = () => {
-        // First check if user has a profile picture (Google users typically do)
-        if (currentUser?.photoURL) {
+        let photoURL = currentUser?.photoURL;
+        if (photoURL && photoURL.startsWith('/uploads')) {
+            photoURL = `${IMAGE_BASE_URL}${photoURL}`;
+        }
+
+        if (photoURL) {
             return (
                 <img 
-                    src={currentUser.photoURL} 
+                    src={photoURL} 
                     alt="Profile" 
                     className="w-8 h-8 rounded-full object-cover border-2 border-white"
                 />

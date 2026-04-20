@@ -4,6 +4,7 @@ import { FaEnvelope } from 'react-icons/fa';
 import ImageUploader from '../../../components/form/ImageUploader';
 
 import OtpVerificationModal from "../../../components/ui/OtpVerificationModal";
+import ProfilePhotoModal from "../../../components/ui/ProfilePhotoModal";
 
 const ProfileSection = ({ 
   activeUser, 
@@ -17,7 +18,8 @@ const ProfileSection = ({
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState(activeUser?.displayName || "");
   const [newEmail, setNewEmail] = useState(activeUser?.email || "");
-  const [showProfileUpload, setShowProfileUpload] = useState(false);
+  const [showProfileUpload, setShowProfileUpload] = useState(false); // Legacy, will remove usages
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
 
@@ -67,19 +69,14 @@ const ProfileSection = ({
     }
   };
 
-  const handleProfilePhotoUpdate = async (file, previewUrl) => {
+  const handleProfilePhotoUpdate = async (file) => {
     try {
-      setError('');
-      setSuccess('');
       setSuccess('Uploading profile assets to central intelligence...');
-      const photoURL = await uploadProfilePicture(file);
+      await uploadProfilePicture(file);
       setSuccess('Intelligence asset profile picture updated.');
-      setShowProfileUpload(false);
-      // We might need a better way to refresh the parent than window.location.reload()
-      // but keeping consistency with existing logic for now.
-      setTimeout(() => window.location.reload(), 1500);
     } catch (err) {
       setError(err.message || 'Asset synchronization failed.');
+      throw err; // Re-throw to show error in modal
     }
   };
 
@@ -87,30 +84,20 @@ const ProfileSection = ({
     <div className="space-y-10">
       <div className="flex items-center gap-8 pb-10 border-b border-slate-50">
         <div className="relative group">
-          {showProfileUpload ? (
-            <div className="w-24 h-24 rounded-[2rem] overflow-hidden">
-              <ImageUploader 
-                currentPhoto={activeUser?.photoURL}
-                onPhotoChange={handleProfilePhotoUpdate}
-              />
-            </div>
-          ) : (
-            <div className="w-24 h-24 rounded-[2rem] bg-emerald-600 flex items-center justify-center text-white font-black text-4xl shadow-xl ring-8 ring-emerald-50 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-              {activeUser?.photoURL ? (
-                <img src={activeUser.photoURL} alt="Profile Asset" className="w-full h-full object-cover" />
-              ) : (
-                displayName?.charAt(0) || activeUser?.email?.charAt(0).toUpperCase()
-              )}
-            </div>
-          )}
-          {!showProfileUpload && (
-            <button 
-              onClick={() => setShowProfileUpload(true)}
-              className="absolute -bottom-2 -right-2 p-3 bg-white rounded-xl shadow-lg border border-slate-100 text-emerald-600 hover:scale-110 transition-transform"
-            >
-              <Camera size={16} />
-            </button>
-          )}
+          <div className="w-24 h-24 rounded-[2rem] bg-emerald-600 flex items-center justify-center text-white font-black text-4xl shadow-xl ring-8 ring-emerald-50 group-hover:scale-105 transition-transform duration-500 overflow-hidden relative z-10">
+            {activeUser?.photoURL ? (
+              <img src={activeUser.photoURL} alt="Profile Asset" className="w-full h-full object-cover" />
+            ) : (
+              displayName?.charAt(0) || activeUser?.email?.charAt(0).toUpperCase()
+            )}
+          </div>
+          <button 
+            type="button"
+            onClick={() => setIsPhotoModalOpen(true)}
+            className="absolute -bottom-2 -right-2 p-3 bg-white rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.1)] border border-slate-100 text-emerald-600 hover:scale-110 transition-all z-20 hover:bg-emerald-50 active:scale-95"
+          >
+            <Camera size={16} />
+          </button>
         </div>
         <div>
           <h3 className="text-3xl font-black text-slate-900 tracking-tight">{displayName || 'Agent Unnamed'}</h3>
@@ -160,6 +147,12 @@ const ProfileSection = ({
           </button>
         </div>
       </form>
+      <ProfilePhotoModal
+        isOpen={isPhotoModalOpen}
+        onClose={() => setIsPhotoModalOpen(false)}
+        currentPhoto={activeUser?.photoURL}
+        onUpload={handleProfilePhotoUpdate}
+      />
       <OtpVerificationModal
         isOpen={showOtpModal}
         onClose={() => setShowOtpModal(false)}

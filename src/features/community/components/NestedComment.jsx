@@ -71,6 +71,7 @@ const NestedComment = ({
         authorId: activeUser.uid,
         authorName: activeUser.displayName || activeUser.email,
         authorRole: activeUser.role || 'user',
+        authorAvatar: activeUser.photoURL || '',
         text: replyText
       });
       
@@ -145,10 +146,14 @@ const NestedComment = ({
       }`}>
         {/* Comment Header */}
         <div className="flex items-start gap-3">
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium shadow-sm ${
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium shadow-sm overflow-hidden ${
             isPostAuthor ? 'bg-green-600' : comment.authorRole === 'medicalOfficer' ? 'bg-emerald-600 ring-2 ring-emerald-100 ring-offset-2' : 'bg-blue-600'
           }`}>
-            {comment.authorName?.charAt(0)?.toUpperCase() || 'U'}
+            {comment.authorAvatar ? (
+              <img src={comment.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+            ) : (
+              comment.authorName?.charAt(0)?.toUpperCase() || 'U'
+            )}
           </div>
           
           <div className="flex-1 min-w-0">
