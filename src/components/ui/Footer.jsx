@@ -136,10 +136,20 @@ export default function Footer() {
                     </div>
                 </div>
 
+                <div className="grid lg:grid-cols-12 gap-12 mb-20">
+                    <div className="lg:col-span-4 space-y-6">
+                        <h4 className="text-sm font-black uppercase tracking-widest text-slate-500">If you are a medical officer</h4>
+                        <p className="text-slate-400 leading-relaxed text-base font-medium">
+                            If you are a medical officer, you can login to the medical officer dashboard to provide medical assistance to people who have been bitten by snakes.
+                            <a href="/medical-officer/login" className="text-emerald-400 hover:text-emerald-500 transition-colors">Login here</a>
+                        </p>
+                    </div>
+                </div>
+
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-slate-500 text-sm font-medium">
-                        © 2025 WildLife Safety Sri Lanka. Licensed AI Technology.
+                        © 2026 WildLife Safety Sri Lanka. Licensed AI Technology.
                     </p>
                     <div className="flex items-center space-x-6 text-slate-500 text-sm font-medium">
                         <a href="#" className="hover:text-emerald-400 transition-colors">Privacy</a>
