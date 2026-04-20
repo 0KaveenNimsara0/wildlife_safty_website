@@ -8,7 +8,9 @@ import {
   FileText, 
   Shield, 
   LogOut, 
-  X 
+  X,
+  ShieldCheck,
+  History
 } from 'lucide-react';
 
 export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
@@ -33,7 +35,8 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'Overview', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'User Control', icon: Users, path: '/admin/users' },
     { name: 'Medical Users', icon: UserCheck, path: '/admin/medical-officers' },
-    { name: 'Identification Oversight', icon: Shield, path: '/admin/predictions' },
+    { name: 'Oversight Hub', icon: ShieldCheck, path: '/admin/predictions' },
+    { name: 'System Audit Logs', icon: History, path: '/admin/audit' },
     { name: 'Communications', icon: MessageSquare, path: '/admin/chat' },
     { name: 'Medical Officer Articles', icon: FileText, path: '/admin/articles' },
     { name: 'Personnel Profile', icon: Shield, path: '/admin/profile' },
