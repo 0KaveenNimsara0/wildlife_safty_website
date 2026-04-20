@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Award } from 'lucide-react';
+import { Menu, Award, ArrowLeft, Globe } from 'lucide-react';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 
 // User Feature Components
@@ -72,9 +72,18 @@ const Dashboard = () => {
               </h2>
             </div>
           </div>
+
+          <button 
+            onClick={() => navigate('/home')}
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all duration-300 group shadow-xl shadow-slate-900/10"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Return to Site</span>
+            <Globe size={14} className="opacity-50 ml-1" />
+          </button>
         </header>
 
-        <main className="flex-1 p-6 lg:p-12 max-w-7xl lg:mx-auto w-full">
+        <main className="flex-1 p-6 lg:px-12 lg:pt-8 lg:pb-12 max-w-7xl lg:mx-auto w-full">
           <div className="space-y-8">
             {error && (
               <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-sm font-bold animate-shake">

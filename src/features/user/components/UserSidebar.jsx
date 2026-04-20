@@ -68,6 +68,7 @@ const UserSidebar = ({
       {/* Sidebar Container */}
       <aside className={`
         fixed inset-y-0 left-0 z-[110] w-72 bg-white border-r border-slate-100 transform transition-transform duration-500 ease-in-out lg:relative lg:translate-x-0
+        lg:sticky lg:top-0 lg:h-screen
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full">

@@ -66,10 +66,11 @@ export default function AppRoutes() {
         <Route path="/my-posts" element={<UserPosts />} />
         <Route path="/chat" element={<Chat />} />
         
-        {/* Protected User Dashboard */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
+      </Route>
+      
+      {/* Protected User Dashboard - Now standalone (no main header/footer) */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
       </Route>
 
       {/* Authentication Layer - All Auth types use their own internal AuthLayout component */}
