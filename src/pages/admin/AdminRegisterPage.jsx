@@ -10,7 +10,8 @@ export default function AdminRegisterPage() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    securityKey: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -74,7 +75,8 @@ export default function AdminRegisterPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          otp: otpValue
+          otp: otpValue,
+          securityKey: formData.securityKey
         }),
       });
 
@@ -132,6 +134,24 @@ export default function AdminRegisterPage() {
                   onChange={handleChange}
                   className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
                   placeholder="OFFICER FULL NAME"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                Terminal Security Key
+              </label>
+              <div className="relative">
+                <Fingerprint className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <input
+                  name="securityKey"
+                  type="password"
+                  required
+                  value={formData.securityKey}
+                  onChange={handleChange}
+                  className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                  placeholder="ENTER AUTHORIZATION KEY"
                 />
               </div>
             </div>
