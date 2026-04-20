@@ -87,12 +87,28 @@ export default function ForgotPassword({ mode = "user" }) {
     }
   };
 
-  const handleOtpVerified = (otpValue) => {
-    setVerifiedOtp(otpValue);
-    setShowOtp(false);
-    setStep(2); // Proceed to the new password setup interface
-  };
+  const handleOtpVerified = async (otpValue) => {
+    try {
+      const response = await fetch(`${BASE_URL}/shared-auth/forgot-password/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otpValue })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Invalid validation code');
+      }
 
+      setVerifiedOtp(otpValue);
+      setShowOtp(false);
+      setStep(2); // Proceed to the new password setup interface
+    } catch (err) {
+      // Re-throw to be caught by the Modal's internal attempt handler
+      throw err;
+    }
+  };
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
