@@ -32,6 +32,7 @@ export function AuthProvider({ children }) {
         emailVerified: currentUser.emailVerified ?? false,
         role: "user",
         source: isMongoUser ? "mongodb" : "firebase",
+        createdAt: currentUser.createdAt || currentUser.metadata?.creationTime || new Date().toISOString(),
         ...currentUser
       };
 
@@ -199,14 +200,49 @@ export function AuthProvider({ children }) {
 
     // Update local state if verified
     if (data.success && data.user) {
-      if (role === "admin") localStorage.setItem("adminData", JSON.stringify(data.user));
-      else if (role === "medicalOfficer") localStorage.setItem("medicalOfficerData", JSON.stringify(data.user));
-      else {
+      if (role === "admin") {
+        localStorage.setItem("adminData", JSON.stringify(data.user));
+      } else if (role === "medicalOfficer") {
+        localStorage.setItem("medicalOfficerData", JSON.stringify(data.user));
+      } else {
         localStorage.setItem("mongoUser", JSON.stringify(data.user));
         setCurrentUser(data.user);
       }
+      
+      // Post-verification protocol: Force hard sync from backend to update flags
+      await refreshUser();
     }
     return data;
+  }
+
+  async function refreshUser() {
+    try {
+      const active = getActiveUser();
+      if (!active || !active.uid) return;
+
+      let endpoint = `/users/${active.uid}`;
+      if (active.role === 'admin') endpoint = `/admin/users/${active.uid}`;
+      else if (active.role === 'medicalOfficer') endpoint = `/medical-officer/auth/profile`; // Generic profile uses token
+
+      const response = await fetch(`${BASE_URL}${endpoint}`);
+      if (!response.ok) throw new Error('Identity synchronization failed');
+      
+      const data = await response.json();
+      const updatedData = data.user || data;
+
+      if (active.role === "admin") {
+        localStorage.setItem("adminData", JSON.stringify(updatedData));
+      } else if (active.role === "medicalOfficer") {
+        localStorage.setItem("medicalOfficerData", JSON.stringify(updatedData));
+      } else {
+        localStorage.setItem("mongoUser", JSON.stringify(updatedData));
+        setCurrentUser(updatedData);
+      }
+      
+      return updatedData;
+    } catch (error) {
+      console.error('Deep-sync synchronization error:', error);
+    }
   }
 
   // Upload profile picture to MongoDB
@@ -538,6 +574,7 @@ export function AuthProvider({ children }) {
     uploadProfilePicture,
     updateUserProfile,
     getUserProfile,
+    refreshUser,
     // Admin functions
     adminLogin,
     adminRegister,

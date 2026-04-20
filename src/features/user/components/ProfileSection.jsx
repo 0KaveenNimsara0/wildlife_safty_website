@@ -12,6 +12,7 @@ const ProfileSection = ({
   sendEmailVerification, 
   verifyEmail,
   uploadProfilePicture,
+  refreshUser,
   setSuccess,
   setError
 }) => {
@@ -32,7 +33,10 @@ const ProfileSection = ({
       if (newEmail !== activeUser.email) {
         await updateEmail(newEmail);
       }
-      setSuccess("Personnel profile updated successfully.");
+      
+      setSuccess("Intelligence synchronization initiated...");
+      await refreshUser();
+      setSuccess("Personnel profile and verification status synchronized.");
     } catch (err) {
       setError(err.message || "System rejected profile update.");
     } finally {

@@ -32,7 +32,7 @@ export default function UserManagementSection() {
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${BASE_URL}/admin/users/firebase-users?limit=10&pageToken=`, {
+      const response = await fetch(`${BASE_URL}/admin/users/unified?page=${currentPage}&limit=20`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -44,7 +44,7 @@ export default function UserManagementSection() {
 
       const data = await response.json();
       setUsers(data.users);
-      setTotalPages(1);
+      setTotalPages(data.pagination?.totalPages || 1);
       setError('');
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -207,12 +207,17 @@ export default function UserManagementSection() {
                     <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-8 py-6 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-900 border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform">
+                          <div className={`w-12 h-12 rounded-2xl ${user.source === 'firebase' ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative`}>
                             {(user.displayName || user.email || '?').charAt(0).toUpperCase()}
+                            <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg ${user.source === 'firebase' ? 'bg-amber-600' : 'bg-emerald-600'}`}>
+                              {user.source === 'firebase' ? 'F' : 'M'}
+                            </div>
                           </div>
                           <div>
                             <div className="text-sm font-black text-slate-900 tracking-tight">{user.displayName || 'Anonymous User'}</div>
-                            <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">Verified Access</div>
+                            <div className={`text-[9px] font-bold ${user.source === 'firebase' ? 'text-amber-500' : 'text-emerald-500'} uppercase tracking-widest mt-0.5`}>
+                              {user.source === 'firebase' ? 'Firebase Identity' : 'Verified Protocol'}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -232,7 +237,7 @@ export default function UserManagementSection() {
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
                           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                            {user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                            {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', {
                                year: 'numeric', month: 'short', day: 'numeric'
                             }) : 'UNKNOWN'}
                           </span>

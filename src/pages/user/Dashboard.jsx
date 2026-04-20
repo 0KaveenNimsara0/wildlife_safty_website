@@ -13,7 +13,17 @@ import NotificationSection from '../../features/user/components/NotificationSect
 import UserSidebar from '../../features/user/components/UserSidebar';
 
 const Dashboard = () => {
-  const { currentUser, activeUser, logout, updateEmail, updatePassword, sendEmailVerification, verifyEmail, uploadProfilePicture } = useAuth();
+  const { 
+    currentUser, 
+    activeUser, 
+    logout, 
+    updateEmail, 
+    updatePassword, 
+    sendEmailVerification, 
+    verifyEmail, 
+    uploadProfilePicture, 
+    refreshUser 
+  } = useAuth();
   const navigate = useNavigate();
 
   const [error, setError] = useState('');
@@ -85,6 +95,7 @@ const Dashboard = () => {
                   sendEmailVerification={sendEmailVerification}
                   verifyEmail={verifyEmail}
                   uploadProfilePicture={uploadProfilePicture}
+                  refreshUser={refreshUser}
                   setSuccess={setSuccess}
                   setError={setError}
                 />
