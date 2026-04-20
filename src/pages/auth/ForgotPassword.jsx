@@ -3,14 +3,17 @@ import { useNavigate } from "react-router-dom";
 import {
   Mail,
   Lock,
-  ShieldAlert,
   ArrowLeft,
   KeyRound,
-  AlertCircle,
+  Info,
   Fingerprint,
+  CheckCircle,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { BASE_URL } from "../../config/constants";
 import OtpVerificationModal from "../../components/ui/OtpVerificationModal";
+import AuthLayout from "../../components/auth/AuthLayout";
 
 export default function ForgotPassword({ mode = "user" }) {
   const [step, setStep] = useState(1); // 1 = Email, 2 = New Password
@@ -22,31 +25,36 @@ export default function ForgotPassword({ mode = "user" }) {
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [verifiedOtp, setVerifiedOtp] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
   // Dynamic configuration based on the user mode navigating here
   const config = {
     user: {
-      title: "Member Password Reset",
-      subtitle: "Wildlife Safety Network",
+      title: "Member",
+      subtitle: "Recovery",
       backLink: "/login",
-      accent: "emerald",
-      bgGrad: "from-emerald-500/10",
+      roleId: "user",
+      quote: "The best way to predict the future is to create it.",
+      author: "Peter Drucker"
     },
     admin: {
-      title: "Admin Override Protocol",
-      subtitle: "System Control Password Reset",
+      title: "Admin",
+      subtitle: "Override",
       backLink: "/admin/login",
-      accent: "rose",
-      bgGrad: "from-rose-500/10",
+      roleId: "admin",
+      quote: "Management is doing things right; leadership is doing the right things.",
+      author: "Peter Drucker"
     },
     medicalOfficer: {
-      title: "Medical Cipher Restructure",
-      subtitle: "Verified Officer Secure Protocol",
+      title: "Officer",
+      subtitle: "Cipher",
       backLink: "/medical-officer/login",
-      accent: "indigo",
-      bgGrad: "from-indigo-500/10",
+      roleId: "medicalOfficer",
+      quote: "Medicine is a science of uncertainty and an art of probability.",
+      author: "William Osler"
     },
   }[mode];
 
@@ -109,6 +117,7 @@ export default function ForgotPassword({ mode = "user" }) {
       throw err;
     }
   };
+
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
@@ -157,202 +166,122 @@ export default function ForgotPassword({ mode = "user" }) {
     }
   };
 
-  const accentColorMap = {
-    emerald:
-      "text-emerald-400 border-emerald-500/20 shadow-emerald-500/10 focus:ring-emerald-500/10 focus:border-emerald-500/50 hover:bg-emerald-500 bg-emerald-600 shadow-emerald-900/40 text-emerald-500/60",
-    rose: "text-rose-400 border-rose-500/20 shadow-rose-500/10 focus:ring-rose-500/10 focus:border-rose-500/50 hover:bg-rose-500 bg-rose-600 shadow-rose-900/40 text-rose-500/60",
-    indigo:
-      "text-indigo-400 border-indigo-500/20 shadow-indigo-500/10 focus:ring-indigo-500/10 focus:border-indigo-500/50 hover:bg-indigo-500 bg-indigo-600 shadow-indigo-900/40 text-indigo-500/60",
-  };
-
-  const aColor = config.accent;
-
-  // Dynamic color classes based on the active mode mapped above
-  const textColor = `text-${aColor}-400`;
-  const bgAccent = `bg-${aColor}-600`;
-  const hoverBgAccent = `hover:bg-${aColor}-500`;
-  const focusRing = `focus:ring-${aColor}-500/10 focus:border-${aColor}-500/50`;
-  const sectionBorderLabel = `text-${aColor}-500/60`;
-
   return (
-    <div className="min-h-screen bg-[#0a0f18] flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      {/* Immersive Background Elements */}
-      <div
-        className={`absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-bl ${config.bgGrad} to-transparent rounded-full blur-[120px] -mr-64 -mt-64 animate-pulse`}
-      />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/10 rounded-full blur-[120px] -ml-64 -mb-64" />
+    <AuthLayout 
+      title={config.title} 
+      subtitle={config.subtitle} 
+      quote={config.quote}
+      author={config.author}
+      role={config.roleId}
+    >
+      <div className="space-y-8 animate-fade-in-up">
+        <button
+          onClick={() => navigate(config.backLink)}
+          className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors group"
+        >
+          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+          Back to Terminal
+        </button>
 
-      <div className="max-w-md w-full relative z-10">
-        <div className="text-center mb-10 space-y-4 animate-fade-in">
-          <div
-            className={`inline-flex p-4 rounded-3xl bg-${aColor}-500/10 border border-${aColor}-500/20 shadow-2xl shadow-${aColor}-500/10 mb-2`}
-          >
-            {mode === "admin" ? (
-              <ShieldAlert className={`h-10 w-10 ${textColor}`} />
-            ) : (
-              <KeyRound className={`h-10 w-10 ${textColor}`} />
-            )}
+        {error && (
+          <div className="flex items-start gap-4 p-5 bg-rose-50 border border-rose-100 rounded-3xl text-rose-700 animate-shake">
+            <Info className="flex-shrink-0 mt-0.5" size={18} />
+            <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">
+              {error}
+            </span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight uppercase italic">
-            {config.title.split(" ").map((word, i) =>
-              i === config.title.split(" ").length - 1 ? (
-                <span key={i} className={`text-${aColor}-500 not-italic`}>
-                  {" "}
-                  {word}
-                </span>
-              ) : (
-                word + " "
-              ),
-            )}
-          </h1>
-          <div className="flex items-center justify-center gap-2">
-            <div
-              className={`w-1.5 h-1.5 rounded-full bg-${aColor}-500 animate-pulse`}
-            />
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">
-              {config.subtitle}
-            </p>
-          </div>
-        </div>
+        )}
 
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl shadow-black/50 overflow-hidden relative group">
-          {/* Scanline Effect */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent h-24 -translate-y-full group-hover:translate-y-[500%] transition-transform duration-[3s] ease-linear pointer-events-none opacity-20" />
-
-          <button
-            onClick={() => navigate(config.backLink)}
-            className={`absolute top-8 left-8 text-slate-500 hover:${textColor} transition-colors p-2 -ml-2 rounded-xl hover:bg-white/5`}
-          >
-            <ArrowLeft size={20} />
-          </button>
-
-          {error && (
-            <div className="flex items-center gap-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-6 py-4 rounded-2xl mb-8 mt-4 animate-shake">
-              <AlertCircle size={18} className="flex-shrink-0" />
-              <span className="text-[10px] font-black uppercase tracking-widest">
-                {error}
-              </span>
+        {step === 1 ? (
+          <form className="space-y-8" onSubmit={handleSendRequest}>
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                Authorized Email ID
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                  placeholder="agent@wildsafe.gov"
+                />
+              </div>
             </div>
-          )}
 
-          {step === 1 && (
-            <form onSubmit={handleSendRequest} className="space-y-8 mt-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Network Email ID
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading ? 'Transmitting OTP...' : 'Initiate Recovery Protocol'}
+              {!loading && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
+            </button>
+          </form>
+        ) : (
+          <form className="space-y-6" onSubmit={handleUpdatePassword}>
+            <div className="space-y-5">
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  New Security Pass-Cipher
                 </label>
-                <div className="relative group/field">
-                  <div
-                    className={`absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:${textColor} transition-colors`}
-                  >
-                    <Mail size={18} />
-                  </div>
+                <div className="relative group">
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
-                    type="email"
+                    type={showPassword ? "text" : "password"}
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={`w-full pl-14 pr-6 py-5 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-700 focus:outline-none focus:ring-4 ${focusRing} transition-all uppercase tracking-wide`}
-                    placeholder={`USER@${mode === "user" ? "WILDSAFE" : mode.toUpperCase()}.NET`}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full pl-16 pr-14 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.3em]"
+                    placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full flex justify-center items-center py-5 px-6 ${bgAccent} ${hoverBgAccent} text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-${aColor}-900/40 active:scale-[0.98] transition-all disabled:opacity-50 group/btn overflow-hidden relative`}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                {loading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Verifying System Record...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Fingerprint size={16} />
-                    <span>Initiate Secure Protocol</span>
-                  </div>
-                )}
-              </button>
-            </form>
-          )}
-
-          {step === 2 && (
-            <form onSubmit={handleUpdatePassword} className="space-y-8 mt-6">
-              <div className="space-y-6">
-                <p
-                  className={`text-[10px] font-black uppercase tracking-widest ${sectionBorderLabel} pb-2 border-b border-white/5`}
-                >
-                  Secure Identity Verified
-                </p>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    New Security Pass-Cipher
-                  </label>
-                  <div className="relative group/field">
-                    <div
-                      className={`absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:${textColor} transition-colors`}
-                    >
-                      <Lock size={18} />
-                    </div>
-                    <input
-                      type="password"
-                      required
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className={`w-full pl-14 pr-6 py-5 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-700 focus:outline-none focus:ring-4 ${focusRing} transition-all uppercase tracking-[0.4em]`}
-                      placeholder="••••••••"
-                      minLength={6}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    Validate Pass-Cipher
-                  </label>
-                  <div className="relative group/field">
-                    <div
-                      className={`absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:${textColor} transition-colors`}
-                    >
-                      <KeyRound size={18} />
-                    </div>
-                    <input
-                      type="password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className={`w-full pl-14 pr-6 py-5 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-700 focus:outline-none focus:ring-4 ${focusRing} transition-all uppercase tracking-[0.4em]`}
-                      placeholder="••••••••"
-                      minLength={6}
-                    />
-                  </div>
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  Validate Pass-Cipher
+                </label>
+                <div className="relative group">
+                  <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full pl-16 pr-14 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.3em]"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                  >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
               </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className={`w-full flex justify-center items-center py-5 px-6 ${bgAccent} ${hoverBgAccent} text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-${aColor}-900/40 active:scale-[0.98] transition-all disabled:opacity-50 group/btn overflow-hidden relative`}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-                {loading ? (
-                  <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Writing Security Key...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Lock size={16} />
-                    <span>Deploy Structural Override</span>
-                  </div>
-                )}
-              </button>
-            </form>
-          )}
-        </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-6 bg-emerald-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-700 shadow-2xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+            >
+              {loading ? 'Deploying Changes...' : 'Deploy Structural Override'}
+              {!loading && <KeyRound size={18} className="group-hover:rotate-12 transition-transform duration-500" />}
+            </button>
+          </form>
+        )}
       </div>
 
       <OtpVerificationModal
@@ -364,6 +293,6 @@ export default function ForgotPassword({ mode = "user" }) {
         onResend={handleSendRequest}
         mode="reset-password"
       />
-    </div>
+    </AuthLayout>
   );
 }

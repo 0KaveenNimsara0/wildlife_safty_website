@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, Shield, ArrowRight, Chrome, Github, Twitter } from 'lucide-react';
+import { Mail, Lock, LogIn, Shield, ArrowRight, Chrome, Github, Twitter, Info, Eye, EyeOff } from 'lucide-react';
 import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
+import AuthLayout from '../../components/auth/AuthLayout';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login, googleSignIn } = useAuth();
   const navigate = useNavigate();
@@ -65,112 +67,116 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 animate-fade-in relative overflow-hidden">
-      {/* Decorative Orbs */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-sky-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
+    <AuthLayout 
+      title="Welcome" 
+      subtitle="Back" 
+      quote="The more clearly we can focus our attention on the wonders and realities of the universe about us, the less taste we shall have for destruction."
+      author="Rachel Carson"
+    >
+      <div className="space-y-8 animate-fade-in-up">
+        {error && (
+          <div className="flex items-start gap-4 p-5 bg-rose-50 border border-rose-100 rounded-3xl text-rose-700 animate-shake">
+            <Info className="flex-shrink-0 mt-0.5" size={18} />
+            <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">
+              {error}
+            </span>
+          </div>
+        )}
 
-      <div className="max-w-md w-full space-y-8 relative">
-        <div className="text-center space-y-2">
-          <div className="mx-auto w-24 h-24 relative group">
-            <div className="absolute inset-0 bg-emerald-500/20 rounded-[28px] blur-2xl group-hover:bg-emerald-500/30 transition-all duration-500" />
-            <div className="relative bg-white rounded-[28px] shadow-2xl shadow-emerald-500/10 flex items-center justify-center p-4 border border-slate-100 rotate-3 group-hover:rotate-0 transition-all duration-500 overflow-hidden">
-               <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-transparent" />
-               <img 
-                 src="/src/assets/logo.png" 
-                 alt="WildLife Safety Logo" 
-                 className="w-full h-full object-contain relative z-10"
-               />
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-5">
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                Personnel Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                  placeholder="agent@wildsafe.gov"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 group">
+              <div className="flex items-center justify-between px-5">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-focus-within:text-emerald-600 transition-colors">
+                  Secure Password
+                </label>
+                <Link to="/forgot-password" size="sm" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors">
+                  Forgot?
+                </Link>
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-16 pr-14 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.3em]"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
           </div>
-          <h2 className="mt-6 text-4xl font-black text-slate-900 tracking-tighter">
-            User <span className="text-emerald-600">Login</span>
-          </h2>
-          <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
-            Identity verification required
+
+          <div className="flex items-center gap-3 px-2">
+             <input type="checkbox" id="remember" className="w-4 h-4 rounded-md border-2 border-slate-200 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+             <label htmlFor="remember" className="text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">Remember my terminal session</label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+          >
+            {loading ? 'Decrypting Access...' : 'Authenticate Login'}
+            {!loading && <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform duration-500" />}
+          </button>
+        </form>
+
+        <div className="space-y-6">
+          <div className="flex items-center gap-5">
+            <div className="flex-1 h-[1px] bg-slate-100" />
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 whitespace-nowrap">External Handshake</span>
+            <div className="flex-1 h-[1px] bg-slate-100" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <button 
+              onClick={handleGoogleSignIn} 
+              className="py-4 flex items-center justify-center gap-3 bg-white border-2 border-slate-50 rounded-[1.5rem] hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/5 transition-all active:scale-95 group"
+            >
+              <Chrome size={20} className="text-slate-400 group-hover:text-emerald-600 transition-colors" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-emerald-600 transition-colors">Google</span>
+            </button>
+            <button className="py-4 flex items-center justify-center gap-3 bg-white border-2 border-slate-50 rounded-[1.5rem] hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-500/5 transition-all active:scale-95 group">
+              <Github size={20} className="text-slate-400 group-hover:text-emerald-600 transition-colors" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-emerald-600 transition-colors">Github</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="pt-4 text-center">
+          <p className="text-slate-400 font-bold text-sm">
+            Not yet authorized? {' '}
+            <Link to="/register" className="text-emerald-600 font-black uppercase tracking-[0.2em] hover:text-emerald-700 underline underline-offset-4 decoration-emerald-500/30 hover:decoration-emerald-500 transition-all text-xs">
+              Establish Account
+            </Link>
           </p>
         </div>
-
-        <div className="glass p-8 rounded-[2.5rem] shadow-2xl border-white/40 ring-1 ring-slate-900/5">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && (
-              <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl text-rose-700 text-xs font-black uppercase tracking-widest text-center animate-shake">
-                {error}
-              </div>
-            )}
-            
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Email</label>
-                <div className="relative group">
-                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
-                    placeholder="agent@wildsafe.gov"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between ml-4">
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Password</label>
-                  <Link to="/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700">Forgot Password?</Link>
-                </div>
-                <div className="relative group">
-                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-600 transition-colors" size={18} />
-                  <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-14 pr-6 py-4 bg-white/50 border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
-                    placeholder="••••••••"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-600 shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 group active:scale-95"
-            >
-              {loading ? 'Authorizing...' : 'Login'}
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-          </form>
-
-          <div className="mt-8 pt-8 border-t border-slate-100 space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-px bg-slate-100" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300 whitespace-nowrap">Login with</span>
-              <div className="flex-1 h-px bg-slate-100" />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <button onClick={handleGoogleSignIn} className="py-3 flex items-center justify-center bg-white border-2 border-slate-50 rounded-xl text-slate-400 hover:border-emerald-200 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95">
-                <Chrome size={18} />
-              </button>
-              <button className="py-3 flex items-center justify-center bg-white border-2 border-slate-50 rounded-xl text-slate-400 hover:border-emerald-200 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95">
-                <Github size={18} />
-              </button>
-              <button className="py-3 flex items-center justify-center bg-white border-2 border-slate-50 rounded-xl text-slate-400 hover:border-emerald-200 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95">
-                <Twitter size={18} />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-center text-slate-500 font-medium text-sm">
-          Don't have an account? {' '}
-          <Link to="/register" className="text-emerald-600 font-black uppercase tracking-widest hover:underline text-xs">
-            Register
-          </Link>
-        </p>
       </div>
 
       <OtpVerificationModal
@@ -182,6 +188,6 @@ export default function LoginPage() {
         onResend={() => handleSubmit()}
         mode="login"
       />
-    </div>
+    </AuthLayout>
   );
 }

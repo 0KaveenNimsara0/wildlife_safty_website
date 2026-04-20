@@ -67,15 +67,13 @@ export default function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+      </Route>
 
-        {/* Authentication Routes - Now inside UserLayout for Header visibility */}
+      {/* Authentication Layer - All Auth types use their own internal AuthLayout component */}
+      <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword mode="user" />} />
-      </Route>
-
-      {/* Authentication Layer - Other Auth types can stay here or move */}
-      <Route element={<AuthLayout />}>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />
         <Route path="/admin/forgot-password" element={<ForgotPassword mode="admin" />} />

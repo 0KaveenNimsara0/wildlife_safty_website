@@ -563,7 +563,7 @@ const CommunityFeed = () => {
                Your contributions are reviewed by experts to ensure high-quality safety guidance and valid species insights for the community.
              </p>
              <button onClick={() => setShowMyPosts(true)} className="w-full py-4 bg-slate-900 rounded-2xl flex items-center justify-center gap-3 text-white font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg hover:shadow-emerald-200">
-                View My Dashboard
+                View My Verified Posts
                 <ChevronRight size={14} />
              </button>
           </div>

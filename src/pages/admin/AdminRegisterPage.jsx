@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AlertCircle, User, Mail, Lock, UserPlus, Fingerprint } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { User, Mail, Lock, UserPlus, Fingerprint, Info, CheckCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
 import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
+import AuthLayout from '../../components/auth/AuthLayout';
 
 export default function AdminRegisterPage() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ export default function AdminRegisterPage() {
   const [loading, setLoading] = useState(false);
   const [otpSending, setOtpSending] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -96,141 +99,130 @@ export default function AdminRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c14] flex items-center justify-center p-6 relative overflow-hidden font-sans">
-      {/* Immersive Background Elements */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] -ml-64 -mt-64 animate-pulse" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-900/10 rounded-full blur-[120px] -mr-64 -mb-64" />
-      
-      <div className="max-w-md w-full relative z-10">
-        <div className="text-center mb-10 space-y-4 animate-fade-in">
-          <div className="inline-flex p-4 rounded-3xl bg-emerald-500/10 border border-emerald-500/20 shadow-2xl shadow-emerald-500/10 mb-2">
-            <UserPlus className="h-10 w-10 text-emerald-500" />
+    <AuthLayout 
+      title="Enroll" 
+      subtitle="Officer" 
+      quote="Leadership and learning are indispensable to each other."
+      author="John F. Kennedy"
+      role="admin"
+    >
+      <div className="space-y-8 animate-fade-in-up">
+        {error && (
+          <div className="flex items-start gap-4 p-5 bg-rose-50 border border-rose-100 rounded-3xl text-rose-700 animate-shake">
+            <Info className="flex-shrink-0 mt-0.5" size={18} />
+            <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">
+              {error}
+            </span>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tight uppercase italic text-center">
-            Enroll <span className="text-emerald-500 not-italic">Officer</span>
-          </h1>
-          <div className="flex items-center justify-center gap-2">
-             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-             <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Command Registration Protocol</p>
-          </div>
-        </div>
+        )}
 
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 p-10 rounded-[2.5rem] shadow-2xl shadow-black/50 overflow-hidden relative group">
-          {/* Scanline Effect */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent h-24 -translate-y-full group-hover:translate-y-[500%] transition-transform duration-[3.s] ease-linear pointer-events-none opacity-20" />
-          
-          {error && (
-            <div className="flex items-center gap-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 px-6 py-4 rounded-2xl mb-8 animate-shake">
-              <AlertCircle size={18} />
-              <span className="text-[10px] font-black uppercase tracking-widest">{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSendOtp} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Name</label>
-              <div className="relative group/field">
-                <div className="absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
-                  <User size={18} />
-                </div>
+        <form className="space-y-6" onSubmit={handleSendOtp}>
+          <div className="space-y-5">
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                Personnel Identity
+              </label>
+              <div className="relative">
+                <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
                 <input
                   name="name"
                   type="text"
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full pl-14 pr-6 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-wide"
+                  className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
                   placeholder="OFFICER FULL NAME"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Network Email</label>
-              <div className="relative group/field">
-                <div className="absolute inset-y-0 left-5 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
-                  <Mail size={18} />
-                </div>
+            <div className="space-y-2 group">
+              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                Network Command Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
                 <input
                   name="email"
                   type="email"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full pl-14 pr-6 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-wide"
+                  className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
                   placeholder="UPLINK@WS.ACCESS"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Cipher</label>
-                <div className="relative group/field">
-                  <div className="absolute inset-y-0 left-4 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
-                    <Lock size={16} />
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  Cipher
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
                   <input
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-[0.2em]"
-                    placeholder="••••"
+                    className="w-full pl-14 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.2em]"
+                    placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Confirm</label>
-                <div className="relative group/field">
-                  <div className="absolute inset-y-0 left-4 flex items-center text-slate-500 group-focus-within/field:text-emerald-500 transition-colors">
-                    <Lock size={16} />
-                  </div>
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  Confirm
+                </label>
+                <div className="relative group">
+                  <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
                   <input
                     name="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-4 py-4 bg-black/40 border border-white/5 rounded-2xl text-white text-sm font-bold placeholder:text-slate-600 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500/50 transition-all uppercase tracking-[0.2em]"
-                    placeholder="••••"
+                    className="w-full pl-14 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.2em]"
+                    placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
             </div>
-
-            <button
-              type="submit"
-              disabled={otpSending || loading}
-              className="w-full flex justify-center items-center py-5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/20 active:scale-[0.98] transition-all disabled:opacity-50 group/btn overflow-hidden relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-              {otpSending ? (
-                 <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Verifying...</span>
-                 </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Fingerprint size={16} />
-                  <span>Execute Registry Entry</span>
-                </div>
-              )}
-            </button>
-          </form>
-
-          <div className="mt-8 pt-6 border-t border-white/5 text-center">
-            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-              Already Operational?{' '}
-              <button
-                onClick={() => navigate('/admin/login')}
-                className="text-emerald-500 hover:text-emerald-400 transition-colors ml-2"
-              >
-                Access Terminal
-              </button>
-            </p>
           </div>
+
+          <button
+            type="submit"
+            disabled={otpSending || loading}
+            className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+          >
+            {otpSending ? 'Processing Uplink...' : 'Execute Registry Entry'}
+            {!otpSending && <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform duration-500" />}
+          </button>
+        </form>
+
+        <div className="pt-4 text-center">
+          <p className="text-slate-400 font-bold text-sm">
+            Operational already? {' '}
+            <Link to="/admin/login" className="text-emerald-600 font-black uppercase tracking-[0.2em] hover:text-emerald-700 underline underline-offset-4 decoration-emerald-500/30 hover:decoration-emerald-500 transition-all text-xs">
+              Access Terminal
+            </Link>
+          </p>
         </div>
       </div>
 
@@ -243,6 +235,6 @@ export default function AdminRegisterPage() {
         onResend={() => handleSendOtp()}
         mode="register"
       />
-    </div>
+    </AuthLayout>
   );
 }
