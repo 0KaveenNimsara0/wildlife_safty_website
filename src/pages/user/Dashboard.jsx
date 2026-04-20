@@ -13,7 +13,7 @@ import NotificationSection from '../../features/user/components/NotificationSect
 import UserSidebar from '../../features/user/components/UserSidebar';
 
 const Dashboard = () => {
-  const { currentUser, logout, updateEmail, updatePassword, sendEmailVerification, uploadProfilePicture } = useAuth();
+  const { currentUser, activeUser, logout, updateEmail, updatePassword, sendEmailVerification, verifyEmail, uploadProfilePicture } = useAuth();
   const navigate = useNavigate();
 
   const [error, setError] = useState('');
@@ -35,7 +35,7 @@ const Dashboard = () => {
       <UserSidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        currentUser={currentUser} 
+        activeUser={activeUser} 
         handleLogout={handleLogout}
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
@@ -80,9 +80,10 @@ const Dashboard = () => {
               
               {activeTab === 'profile' && (
                 <ProfileSection 
-                  currentUser={currentUser}
+                  activeUser={activeUser}
                   updateEmail={updateEmail}
                   sendEmailVerification={sendEmailVerification}
+                  verifyEmail={verifyEmail}
                   uploadProfilePicture={uploadProfilePicture}
                   setSuccess={setSuccess}
                   setError={setError}

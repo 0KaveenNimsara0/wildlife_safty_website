@@ -24,15 +24,18 @@ export function AuthProvider({ children }) {
 
   const getActiveUser = () => {
     if (currentUser) {
+      const isMongoUser = localStorage.getItem("mongoUser");
       return {
         uid: currentUser.uid || currentUser._id,
         displayName: currentUser.displayName || currentUser.name || currentUser.email,
         email: currentUser.email,
-        role: 'user',
+        emailVerified: currentUser.emailVerified ?? false,
+        role: "user",
+        source: isMongoUser ? "mongodb" : "firebase",
         ...currentUser
       };
     }
-    const adminData = localStorage.getItem('adminData');
+    const adminData = localStorage.getItem("adminData");
     if (adminData) {
       try {
         const parsed = JSON.parse(adminData);
@@ -40,12 +43,14 @@ export function AuthProvider({ children }) {
           uid: parsed._id || parsed.id,
           displayName: parsed.name,
           email: parsed.email,
-          role: 'admin',
+          emailVerified: parsed.emailVerified ?? false,
+          role: "admin",
+          source: "mongodb",
           ...parsed
         };
       } catch (e) {}
     }
-    const medicalData = localStorage.getItem('medicalOfficerData');
+    const medicalData = localStorage.getItem("medicalOfficerData");
     if (medicalData) {
       try {
         const parsed = JSON.parse(medicalData);
@@ -53,7 +58,9 @@ export function AuthProvider({ children }) {
           uid: parsed._id || parsed.id,
           displayName: parsed.name,
           email: parsed.email,
-          role: 'medicalOfficer',
+          emailVerified: parsed.emailVerified ?? false,
+          role: "medicalOfficer",
+          source: "mongodb",
           ...parsed
         };
       } catch (e) {}
@@ -155,7 +162,45 @@ export function AuthProvider({ children }) {
   }
 
   function sendEmailVerification(user) {
-    return firebaseSendEmailVerification(user || currentUser);
+    const targetUser = user || currentUser;
+    // Check if it's a Firebase user (Firebase users have getIdToken method)
+    if (targetUser && typeof targetUser.getIdToken === "function") {
+      return firebaseSendEmailVerification(targetUser);
+    }
+    // MongoDB User fallback
+    return mongoSendEmailVerification(targetUser?.email);
+  }
+
+  async function mongoSendEmailVerification(email) {
+    const response = await fetch(`${BASE_URL}/shared-auth/verify-email/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to send verification code");
+    return data;
+  }
+
+  async function verifyEmail(email, otp, role = "user") {
+    const response = await fetch(`${BASE_URL}/shared-auth/verify-email/verify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp, role })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Verification failed");
+
+    // Update local state if verified
+    if (data.success && data.user) {
+      if (role === "admin") localStorage.setItem("adminData", JSON.stringify(data.user));
+      else if (role === "medicalOfficer") localStorage.setItem("medicalOfficerData", JSON.stringify(data.user));
+      else {
+        localStorage.setItem("mongoUser", JSON.stringify(data.user));
+        setCurrentUser(data.user);
+      }
+    }
+    return data;
   }
 
   // Upload profile picture to MongoDB
@@ -457,6 +502,7 @@ export function AuthProvider({ children }) {
     updateEmail: updateUserEmail,
     updatePassword: updateUserPassword,
     sendEmailVerification,
+    verifyEmail,
     uploadProfilePicture,
     updateUserProfile,
     getUserProfile,

@@ -3,44 +3,67 @@ import { Camera, CheckCircle, XCircle, Mail } from 'lucide-react';
 import { FaEnvelope } from 'react-icons/fa';
 import ImageUploader from '../../../components/form/ImageUploader';
 
+import OtpVerificationModal from "../../../components/ui/OtpVerificationModal";
+
 const ProfileSection = ({ 
-  currentUser, 
+  activeUser, 
   updateEmail, 
   sendEmailVerification, 
+  verifyEmail,
   uploadProfilePicture,
   setSuccess,
   setError
 }) => {
   const [loading, setLoading] = useState(false);
-  const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
-  const [newEmail, setNewEmail] = useState(currentUser?.email || '');
+  const [displayName, setDisplayName] = useState(activeUser?.displayName || "");
+  const [newEmail, setNewEmail] = useState(activeUser?.email || "");
   const [showProfileUpload, setShowProfileUpload] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      setError('');
-      setSuccess('');
-      if (newEmail !== currentUser.email) {
+      setError("");
+      setSuccess("");
+      if (newEmail !== activeUser.email) {
         await updateEmail(newEmail);
       }
-      setSuccess('Personnel profile updated successfully.');
+      setSuccess("Personnel profile updated successfully.");
     } catch (err) {
-      setError(err.message || 'System rejected profile update.');
+      setError(err.message || "System rejected profile update.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyEmail = async () => {
+  const handleSendVerificationCode = async () => {
     try {
-      setError('');
-      setSuccess('');
+      setError("");
+      setSuccess("");
       await sendEmailVerification();
-      setSuccess('Verification email transmitted to your authorized frequency. Check your inbox.');
+      if (activeUser.source === "mongodb") {
+        setShowOtpModal(true);
+        setSuccess("Verification code sent to your authorized email address.");
+      } else {
+        setSuccess("Verification email transmitted to your authorized frequency. Check your inbox.");
+      }
     } catch (err) {
-      setError(err.message || 'Failed to transmit verification signal.');
+      setError(err.message || "Failed to transmit verification signal.");
+    }
+  };
+
+  const handleVerifyOtp = async (otp) => {
+    try {
+      setOtpLoading(true);
+      await verifyEmail(activeUser.email, otp, activeUser.role);
+      setSuccess("Email address verified successfully.");
+      setShowOtpModal(false);
+    } catch (err) {
+      throw err; // Let modal handle display
+    } finally {
+      setOtpLoading(false);
     }
   };
 
@@ -67,16 +90,16 @@ const ProfileSection = ({
           {showProfileUpload ? (
             <div className="w-24 h-24 rounded-[2rem] overflow-hidden">
               <ImageUploader 
-                currentPhoto={currentUser?.photoURL}
+                currentPhoto={activeUser?.photoURL}
                 onPhotoChange={handleProfilePhotoUpdate}
               />
             </div>
           ) : (
             <div className="w-24 h-24 rounded-[2rem] bg-emerald-600 flex items-center justify-center text-white font-black text-4xl shadow-xl ring-8 ring-emerald-50 group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-              {currentUser?.photoURL ? (
-                <img src={currentUser.photoURL} alt="Profile Asset" className="w-full h-full object-cover" />
+              {activeUser?.photoURL ? (
+                <img src={activeUser.photoURL} alt="Profile Asset" className="w-full h-full object-cover" />
               ) : (
-                displayName?.charAt(0) || currentUser?.email?.charAt(0).toUpperCase()
+                displayName?.charAt(0) || activeUser?.email?.charAt(0).toUpperCase()
               )}
             </div>
           )}
@@ -93,19 +116,21 @@ const ProfileSection = ({
           <h3 className="text-3xl font-black text-slate-900 tracking-tight">{displayName || 'Agent Unnamed'}</h3>
           <div className="space-y-1">
             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2 mt-1">
-              <FaEnvelope className="text-emerald-500" /> {currentUser?.email}
+              <FaEnvelope className="text-emerald-500" /> {activeUser?.email}
             </p>
             <div className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
-              {currentUser?.emailVerified ? (
+              {activeUser?.emailVerified ? (
                 <span className="text-emerald-600 flex items-center gap-1"><CheckCircle size={12} /> Verified Protocol</span>
               ) : (
                 <>
                   <span className="text-rose-500 flex items-center gap-1"><XCircle size={12} /> Unverified Frequency</span>
-                  <button onClick={handleVerifyEmail} className="text-emerald-600 hover:underline">Verify Frequency</button>
+                  <button type="button" onClick={handleSendVerificationCode} className="text-emerald-600 hover:scale-105 transition-transform font-black">Verify Frequency</button>
                 </>
               )}
             </div>
-            <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.2em]">Enlisted: {new Date(currentUser?.metadata?.creationTime).toLocaleDateString()}</p>
+            <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.2em]">
+              Enlisted: {new Date(activeUser?.createdAt || activeUser?.metadata?.creationTime).toLocaleDateString()}
+            </p>
           </div>
         </div>
       </div>
@@ -135,6 +160,15 @@ const ProfileSection = ({
           </button>
         </div>
       </form>
+      <OtpVerificationModal
+        isOpen={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        email={activeUser?.email}
+        loading={otpLoading}
+        onVerify={handleVerifyOtp}
+        onResend={handleSendVerificationCode}
+        mode="verification"
+      />
     </div>
   );
 };

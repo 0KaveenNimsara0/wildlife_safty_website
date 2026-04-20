@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ShieldCheck, RefreshCw, AlertCircle, Info, ShieldAlert } from 'lucide-react';
 
 export default function OtpVerificationModal({ 
@@ -30,7 +31,14 @@ export default function OtpVerificationModal({
       setErrorText('');
       setAttempts(3);
       setTimer(30);
+      // Prevent scrolling on body when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
     }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
   }, [isOpen]);
 
   const handleChange = (index, value) => {
@@ -67,7 +75,7 @@ export default function OtpVerificationModal({
       setAttempts(remaining);
       
       if (remaining <= 0) {
-        setErrorText('Access Denied: Too many failed attempts.');
+        setErrorText('Verification Failed: Too many failed attempts.');
         setTimeout(() => {
           onClose();
           window.location.href = '/login';
@@ -84,11 +92,11 @@ export default function OtpVerificationModal({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-fade-in"
         onClick={onClose}
       />
       
@@ -114,7 +122,7 @@ export default function OtpVerificationModal({
               <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-4 border-white animate-pulse" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Two-Factor <span className="text-emerald-600">Verification</span></h2>
+              <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Email <span className="text-emerald-600">Verification</span></h2>
               <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest leading-relaxed">
                 Verification code sent to <br />
                 <span className="text-slate-900 px-3 py-1 bg-slate-50 rounded-xl inline-block mt-2 font-black lowercase tracking-widest">{email}</span>
@@ -162,7 +170,7 @@ export default function OtpVerificationModal({
               ) : (
                 <>
                   <ShieldAlert size={20} />
-                  <span>Verify Identity</span>
+                  <span>Verify Code</span>
                 </>
               )}
             </button>
@@ -195,10 +203,11 @@ export default function OtpVerificationModal({
            <div className="h-4 w-[1px] bg-slate-200" />
            <div className="flex items-center gap-2 opacity-50">
               <Info size={16} className="text-slate-400" />
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">2FA ENFORCED</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">SECURE VERIFICATION</span>
            </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
