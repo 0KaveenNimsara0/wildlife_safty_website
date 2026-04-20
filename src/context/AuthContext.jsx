@@ -32,6 +32,7 @@ export function AuthProvider({ children }) {
         emailVerified: currentUser.emailVerified ?? false,
         role: "user",
         source: isMongoUser ? "mongodb" : "firebase",
+        hasPassword: currentUser.hasPassword ?? false,
         createdAt: currentUser.createdAt || currentUser.metadata?.creationTime || new Date().toISOString(),
         ...currentUser
       };
@@ -186,8 +187,34 @@ export function AuthProvider({ children }) {
     return updateEmail(currentUser, email);
   }
 
-  function updateUserPassword(password) {
-    return updatePassword(currentUser, password);
+  async function updateUserPassword(newPassword, currentPassword, otp) {
+    if (!currentUser) throw new Error('No user logged in');
+    
+    // Determine if we need to use MongoDB or Firebase
+    const isMongoUser = localStorage.getItem("mongoUser");
+    
+    if (isMongoUser) {
+      const response = await fetch(`${BASE_URL}/auth/user/update-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+        },
+        body: JSON.stringify({
+          uid: currentUser.uid || currentUser._id,
+          currentPassword,
+          newPassword,
+          otp
+        })
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Failed to update password');
+      return data;
+    } else {
+      // Fallback for strict Firebase users
+      return updatePassword(currentUser, newPassword);
+    }
   }
 
   function sendEmailVerification(user) {

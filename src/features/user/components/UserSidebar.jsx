@@ -21,11 +21,11 @@ const UserSidebar = ({
   setSidebarOpen 
 }) => {
   const menuItems = [
-    { id: 'profile', label: 'Identity Grid', icon: User },
-    { id: 'security', label: 'Security Layer', icon: Shield },
+    { id: 'profile', label: 'Profile Settings', icon: User },
+    { id: 'security', label: 'Security & Password', icon: Shield },
     { id: 'articles', label: 'My Articles', icon: BookOpen },
-    { id: 'activity', label: 'Field History', icon: Activity },
-    { id: 'notifications', label: 'Inbound Comms', icon: Bell }
+    { id: 'activity', label: 'Activity Log', icon: Activity },
+    { id: 'notifications', label: 'Notifications', icon: Bell }
   ];
 
   return (
@@ -52,9 +52,9 @@ const UserSidebar = ({
               </div>
               <div>
                 <h1 className="text-xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-                  Sector <span className="text-emerald-600">HQ</span>
+                  User <span className="text-emerald-600">Portal</span>
                 </h1>
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">Observer Terminal</p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">Account Dashboard</p>
               </div>
             </div>
             <button 
@@ -68,7 +68,7 @@ const UserSidebar = ({
           {/* Navigation Items */}
           <nav className="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
             <div className="px-4 mb-6">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">Operations</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-300">Navigate</span>
             </div>
             
             {menuItems.map((item) => {
@@ -109,10 +109,10 @@ const UserSidebar = ({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-black text-slate-900 truncate tracking-tight">
-                  {activeUser?.displayName || 'Observer'}
+                  {activeUser?.displayName || 'User'}
                 </p>
                 <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                  Authenticated Level {activeUser?.emailVerified ? '2' : '1'}
+                  Account Status: {activeUser?.emailVerified ? 'Verified' : 'Unverified'}
                 </p>
               </div>
             </div>
@@ -122,7 +122,7 @@ const UserSidebar = ({
               className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all duration-300 font-black text-[10px] uppercase tracking-widest group shadow-sm"
             >
               <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" />
-              Terminate Session
+              Logout from System
             </button>
           </div>
         </div>

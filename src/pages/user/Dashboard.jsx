@@ -63,10 +63,10 @@ const Dashboard = () => {
             <div className="space-y-0.5">
               <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">
                 <Award size={12} />
-                <span>Sector Access Point</span>
+                <span>Account Overview</span>
               </div>
               <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                Member <span className="text-emerald-600">Dossier</span>
+                User <span className="text-emerald-600">Dashboard</span>
               </h2>
             </div>
           </div>
