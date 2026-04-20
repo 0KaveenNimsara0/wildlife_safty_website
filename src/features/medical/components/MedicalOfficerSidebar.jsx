@@ -17,6 +17,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard', icon: LayoutDashboard },
+    { name: 'Identification Oversight', path: '/medical-officer/predictions', icon: Activity },
     { name: 'Message Center', path: '/medical-officer/chat', icon: MessageSquare },
     { name: 'Medical Knowledge', path: '/medical-officer/articles', icon: FileText },
   ];

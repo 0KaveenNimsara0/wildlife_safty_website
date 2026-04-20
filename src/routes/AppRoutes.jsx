@@ -45,6 +45,7 @@ import MedicalArticleSection from '../features/medical/components/MedicalArticle
 import MedicalProfileSection from '../features/medical/components/MedicalProfileSection';
 import MedicalArticleCreate from '../features/medical/components/MedicalOfficerArticleCreatePage';
 import MedicalArticleEdit from '../features/medical/components/MedicalOfficerArticleEditPage';
+import MedicalPredictionOversight from '../features/medical/components/MedicalPredictionOversight';
 
 import ProtectedRoute from './ProtectedRoute';
 
@@ -100,6 +101,7 @@ export default function AppRoutes() {
       <Route path="/medical-officer" element={<MedicalOfficerLayout />}>
         <Route index element={<MedicalOverviewSection />} />
         <Route path="dashboard" element={<MedicalOverviewSection />} />
+        <Route path="predictions" element={<MedicalPredictionOversight />} />
         <Route path="chat" element={<ConsultationsSection />} />
         <Route path="profile" element={<MedicalProfileSection />} />
         <Route path="articles" element={<MedicalArticleSection />} />

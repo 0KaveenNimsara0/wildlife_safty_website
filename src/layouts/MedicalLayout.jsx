@@ -15,6 +15,7 @@ export default function MedicalOfficerLayout() {
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard' },
+    { name: 'Identification Oversight', path: '/medical-officer/predictions' },
     { name: 'Message Center', path: '/medical-officer/chat' },
     { name: 'Medical Knowledge', path: '/medical-officer/articles' },
   ];
