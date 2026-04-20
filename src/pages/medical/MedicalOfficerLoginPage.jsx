@@ -2,26 +2,30 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Stethoscope, AlertCircle, Mail, Lock, Fingerprint, Activity } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
+import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
 
 export default function MedicalOfficerLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLoginSubmit = async (e, otpValue = null) => {
+    if (e) e.preventDefault();
     try {
       setError('');
       setLoading(true);
+
+      const bodyData = otpValue ? { email, password, otp: otpValue } : { email, password };
 
       const response = await fetch(`${BASE_URL}/medical-officer/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(bodyData),
       });
 
       const data = await response.json();
@@ -30,13 +34,20 @@ export default function MedicalOfficerLoginPage() {
         throw new Error(data.message || 'Access Denied: Invalid Credentials');
       }
 
+      if (data.requiresOtp) {
+        setShowOtp(true);
+        return;
+      }
+
       localStorage.setItem('medicalOfficerToken', data.token);
       localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
 
+      setShowOtp(false);
       navigate('/medical-officer/dashboard');
     } catch (error) {
       setError(error.message || 'System Authentication Failure');
       console.error('Medical login error:', error);
+      setShowOtp(false);
     } finally {
       setLoading(false);
     }
@@ -73,7 +84,7 @@ export default function MedicalOfficerLoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleLoginSubmit} className="space-y-8">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Network Email ID</label>
               <div className="relative group/field">
@@ -146,6 +157,16 @@ export default function MedicalOfficerLoginPage() {
            <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.5em]">HIPAA Compliant System • Verified Source</p>
         </div>
       </div>
+
+      <OtpVerificationModal
+        isOpen={showOtp}
+        onClose={() => setShowOtp(false)}
+        email={email}
+        loading={loading}
+        onVerify={(otp) => handleLoginSubmit(null, otp)}
+        onResend={() => handleLoginSubmit(null)}
+        mode="login"
+      />
     </div>
   );
 }

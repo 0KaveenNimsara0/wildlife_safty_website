@@ -2,26 +2,30 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, AlertCircle, Mail, Lock, Fingerprint } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
+import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLoginSubmit = async (e, otpValue = null) => {
+    if (e) e.preventDefault();
     try {
       setError('');
       setLoading(true);
 
+      const bodyData = otpValue ? { email, password, otp: otpValue } : { email, password };
+      
       const response = await fetch(`${BASE_URL}/admin/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(bodyData),
       });
 
       const data = await response.json();
@@ -30,13 +34,20 @@ export default function AdminLoginPage() {
         throw new Error(data.message || 'Access Denied: Invalid Credentials');
       }
 
+      if (data.requiresOtp) {
+        setShowOtp(true);
+        return;
+      }
+
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('adminData', JSON.stringify(data.admin));
 
+      setShowOtp(false);
       navigate('/admin/dashboard');
     } catch (error) {
       setError(error.message || 'System Authentication Failure');
       console.error('Admin login error:', error);
+      setShowOtp(false);
     } finally {
       setLoading(false);
     }
@@ -73,7 +84,7 @@ export default function AdminLoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleLoginSubmit} className="space-y-8">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Command Uplink ID</label>
               <div className="relative group/field">
@@ -145,7 +156,16 @@ export default function AdminLoginPage() {
            <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.5em]">Classified Access Only • AES-256 Encrypted</p>
         </div>
       </div>
+
+      <OtpVerificationModal
+        isOpen={showOtp}
+        onClose={() => setShowOtp(false)}
+        email={email}
+        loading={loading}
+        onVerify={(otp) => handleLoginSubmit(null, otp)}
+        onResend={() => handleLoginSubmit(null)}
+        mode="login"
+      />
     </div>
   );
 }
-

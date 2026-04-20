@@ -61,16 +61,37 @@ export function AuthProvider({ children }) {
     return null;
   };
 
-  async function mongoLogin(email, password) {
+  async function sendRegistrationOtp(email) {
     try {
+      const response = await fetch(`${BASE_URL}/shared-auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Failed to send OTP');
+      return data;
+    } catch (error) {
+      console.error('Send OTP error:', error);
+      throw error;
+    }
+  }
+
+  async function mongoLogin(email, password, otp) {
+    try {
+      const bodyData = otp ? { email, password, otp } : { email, password };
       const response = await fetch(`${BASE_URL}/auth/user/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify(bodyData)
       });
       
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Login failed');
+
+      if (data.requiresOtp) {
+        return data;
+      }
 
       localStorage.setItem('userToken', data.token);
       localStorage.setItem('mongoUser', JSON.stringify(data.user));
@@ -82,12 +103,12 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function mongoSignup(email, password, displayName) {
+  async function mongoSignup(email, password, displayName, otp) {
     try {
       const response = await fetch(`${BASE_URL}/auth/user/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, displayName })
+        body: JSON.stringify({ email, password, displayName, otp })
       });
       
       const data = await response.json();
@@ -205,20 +226,25 @@ export function AuthProvider({ children }) {
   }
 
   // Admin authentication functions
-  async function adminLogin(email, password) {
+  async function adminLogin(email, password, otp) {
     try {
+      const bodyData = otp ? { email, password, otp } : { email, password };
       const response = await fetch(`${BASE_URL}/admin/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(bodyData),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || 'Admin login failed');
+      }
+
+      if (data.requiresOtp) {
+        return data;
       }
 
       // Store admin token and data
@@ -232,14 +258,14 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function adminRegister(name, email, password) {
+  async function adminRegister(name, email, password, otp) {
     try {
       const response = await fetch(`${BASE_URL}/admin/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, otp }),
       });
 
       const data = await response.json();
@@ -331,20 +357,25 @@ export function AuthProvider({ children }) {
   }
 
   // Medical Officer authentication functions
-  async function medicalOfficerLogin(email, password) {
+  async function medicalOfficerLogin(email, password, otp) {
     try {
+      const bodyData = otp ? { email, password, otp } : { email, password };
       const response = await fetch(`${BASE_URL}/medical-officer/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(bodyData),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || 'Medical officer login failed');
+      }
+
+      if (data.requiresOtp) {
+        return data;
       }
 
       // Store medical officer token and data
@@ -358,7 +389,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  async function medicalOfficerRegister(formData) {
+  async function medicalOfficerRegister(formData) { // formData will now include otp
     try {
       const response = await fetch(`${BASE_URL}/medical-officer/auth/register`, {
         method: 'POST',
@@ -439,7 +470,8 @@ export function AuthProvider({ children }) {
     // Medical Officer functions
     medicalOfficerLogin,
     medicalOfficerRegister,
-    medicalOfficerLogout
+    medicalOfficerLogout,
+    sendRegistrationOtp
   };
 
   return (

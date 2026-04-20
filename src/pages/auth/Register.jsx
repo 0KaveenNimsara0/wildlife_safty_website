@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, UserPlus, Shield, ArrowRight, Chrome, Github, Twitter, CheckCircle } from 'lucide-react';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -11,25 +11,44 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup, sendEmailVerification } = useAuth();
+  const [showOtp, setShowOtp] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  
+  const { signup, sendRegistrationOtp } = useAuth();
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSendOtp(e) {
+    if (e) e.preventDefault();
     if (password !== passwordConfirm) return setError('Encryption mismatch: Passwords do not align.');
+    
+    try {
+      setError('');
+      setOtpSending(true);
+      await sendRegistrationOtp(email);
+      setShowOtp(true);
+    } catch (err) {
+      console.error('OTP Send error:', err);
+      setError(err.message || 'Failed to send verification code.');
+    } finally {
+      setOtpSending(false);
+    }
+  }
+
+  async function handleVerifyOtp(otpValue) {
     try {
       setError('');
       setLoading(true);
       
-      // Use MongoDB registration
-      await signup(email, password, name);
+      // Use MongoDB registration with OTP
+      await signup(email, password, name, otpValue);
       
-      setError('');
+      setShowOtp(false);
       alert('Personnel record established successfully. You may now access the terminal.');
       navigate('/login');
     } catch (err) {
       console.error('Registration error:', err);
-      setError(err.message || 'Registration failed. Personnel record could not be established.');
+      setError(err.message || 'Registration failed. Check code or try again.');
+      setShowOtp(false);
     } finally {
       setLoading(false);
     }
@@ -37,7 +56,6 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 animate-fade-in relative overflow-hidden">
-      {/* Decorative Orbs */}
       <div className="absolute top-1/4 -right-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-sky-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
 
@@ -63,7 +81,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="glass p-8 rounded-[2.5rem] shadow-2xl border-white/40 ring-1 ring-slate-900/5">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSendOtp}>
             {error && (
               <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl text-rose-700 text-xs font-black uppercase tracking-widest text-center animate-shake">
                 {error}
@@ -134,11 +152,11 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={otpSending || loading}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-emerald-600 shadow-xl shadow-slate-200 transition-all flex items-center justify-center gap-3 group active:scale-95"
             >
-              {loading ? 'Initializing...' : 'Register'}
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              {otpSending ? 'Verifying...' : 'Register'}
+              {!otpSending && <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
             </button>
           </form>
 
@@ -166,6 +184,16 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
+
+      <OtpVerificationModal
+        isOpen={showOtp}
+        onClose={() => setShowOtp(false)}
+        email={email}
+        loading={loading}
+        onVerify={handleVerifyOtp}
+        onResend={() => handleSendOtp()}
+        mode="register"
+      />
     </div>
   );
 }

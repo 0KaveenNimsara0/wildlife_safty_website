@@ -2,25 +2,50 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, LogIn, Shield, ArrowRight, Chrome, Github, Twitter } from 'lucide-react';
+import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+
   const { login, googleSignIn } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     try {
       setError('');
       setLoading(true);
 
-      await login(email, password);
+      const data = await login(email, password);
+      
+      if (data && data.requiresOtp) {
+        setShowOtp(true);
+        return; // Do not navigate yet
+      }
+
       navigate('/home', { replace: true });
     } catch (err) {
       setError(err.message || 'Authorization failed. Please verify credentials.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleVerifyOtp(otpValue) {
+    try {
+      setError('');
+      setLoading(true);
+
+      await login(email, password, otpValue);
+      setShowOtp(false);
+      navigate('/home', { replace: true });
+    } catch (err) {
+      console.error('OTP Verification error:', err);
+      setError(err.message || 'Invalid or expired verification code.');
     } finally {
       setLoading(false);
     }
@@ -147,6 +172,16 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
+
+      <OtpVerificationModal
+        isOpen={showOtp}
+        onClose={() => setShowOtp(false)}
+        email={email}
+        loading={loading}
+        onVerify={handleVerifyOtp}
+        onResend={() => handleSubmit()}
+        mode="login"
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Stethoscope, AlertCircle, Mail, FileText, Phone, MapPin, Lock, UserPlus, User, Fingerprint } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
+import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
 
 export default function MedicalOfficerRegisterPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ export default function MedicalOfficerRegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,14 +28,37 @@ export default function MedicalOfficerRegisterPage() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSendOtp = async (e) => {
+    if (e) e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
       setError('Cipher mismatch detected');
       return;
     }
 
+    try {
+      setError('');
+      setOtpSending(true);
+
+      const response = await fetch(`${BASE_URL}/shared-auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email })
+      });
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || 'Failed to send OTP');
+      
+      setShowOtp(true);
+    } catch (err) {
+      console.error('Send OTP error:', err);
+      setError(err.message || 'Protocol failure while verifying email.');
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
+  const handleVerifyRegister = async (otpValue) => {
     try {
       setError('');
       setLoading(true);
@@ -49,7 +75,8 @@ export default function MedicalOfficerRegisterPage() {
           specialization: formData.specialization,
           licenseNumber: formData.licenseNumber,
           phoneNumber: formData.phoneNumber,
-          hospital: formData.hospital
+          hospital: formData.hospital,
+          otp: otpValue
         }),
       });
 
@@ -62,10 +89,12 @@ export default function MedicalOfficerRegisterPage() {
       localStorage.setItem('medicalOfficerToken', data.token);
       localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
 
+      setShowOtp(false);
       navigate('/medical-officer/dashboard');
     } catch (error) {
       setError(error.message || 'System Enrollment Protocol Failure');
       console.error('Medical officer registration error:', error);
+      setShowOtp(false);
     } finally {
       setLoading(false);
     }
@@ -102,7 +131,7 @@ export default function MedicalOfficerRegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSendOtp} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                {/* Personnel Core Data */}
                <div className="space-y-6">
@@ -233,14 +262,14 @@ export default function MedicalOfficerRegisterPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={otpSending || loading}
               className="w-full flex justify-center items-center py-6 px-10 bg-indigo-600 hover:bg-indigo-500 text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-indigo-900/40 active:scale-[0.98] transition-all disabled:opacity-50 group/btn overflow-hidden relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-              {loading ? (
+              {otpSending ? (
                  <div className="flex items-center gap-3">
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Processing Enrollment...</span>
+                    <span>Verifying...</span>
                  </div>
               ) : (
                 <div className="flex items-center gap-3">
@@ -268,6 +297,16 @@ export default function MedicalOfficerRegisterPage() {
            <p className="text-[10px] font-black text-slate-700 uppercase tracking-[0.5em] animate-pulse">Classified Information Access Required</p>
         </div>
       </div>
+
+      <OtpVerificationModal
+        isOpen={showOtp}
+        onClose={() => setShowOtp(false)}
+        email={formData.email}
+        loading={loading}
+        onVerify={handleVerifyRegister}
+        onResend={() => handleSendOtp()}
+        mode="register"
+      />
     </div>
   );
 }

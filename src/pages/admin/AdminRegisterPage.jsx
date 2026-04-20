@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, User, Mail, Lock, UserPlus, Fingerprint } from 'lucide-react';
 import { BASE_URL } from '../../config/constants';
+import OtpVerificationModal from '../../components/ui/OtpVerificationModal';
 
 export default function AdminRegisterPage() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ export default function AdminRegisterPage() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [otpSending, setOtpSending] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,8 +24,8 @@ export default function AdminRegisterPage() {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSendOtp = async (e) => {
+    if (e) e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
       return setError('Sync Error: Passwords do not match');
@@ -32,6 +35,29 @@ export default function AdminRegisterPage() {
       return setError('Security Breach: Password too short (Min 6)');
     }
 
+    try {
+      setError('');
+      setOtpSending(true);
+
+      const response = await fetch(`${BASE_URL}/shared-auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email })
+      });
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.message || 'Failed to send OTP');
+      
+      setShowOtp(true);
+    } catch (err) {
+      console.error('Send OTP error:', err);
+      setError(err.message || 'Protocol failure while verifying email.');
+    } finally {
+      setOtpSending(false);
+    }
+  };
+
+  const handleVerifyRegister = async (otpValue) => {
     try {
       setError('');
       setLoading(true);
@@ -44,7 +70,8 @@ export default function AdminRegisterPage() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          otp: otpValue
         }),
       });
 
@@ -57,11 +84,13 @@ export default function AdminRegisterPage() {
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('adminData', JSON.stringify(data.admin));
 
-      setLoading(false);
+      setShowOtp(false);
       navigate('/admin/dashboard');
     } catch (error) {
       setError(error.message || 'Enrollment Protocol Failure');
       console.error('Admin registration error:', error);
+      setShowOtp(false);
+    } finally {
       setLoading(false);
     }
   };
@@ -97,7 +126,7 @@ export default function AdminRegisterPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSendOtp} className="space-y-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Identity Name</label>
               <div className="relative group/field">
@@ -173,14 +202,14 @@ export default function AdminRegisterPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={otpSending || loading}
               className="w-full flex justify-center items-center py-5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-900/20 active:scale-[0.98] transition-all disabled:opacity-50 group/btn overflow-hidden relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-              {loading ? (
+              {otpSending ? (
                  <div className="flex items-center gap-3">
                     <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                    <span>Enrolling...</span>
+                    <span>Verifying...</span>
                  </div>
               ) : (
                 <div className="flex items-center gap-2">
@@ -204,7 +233,16 @@ export default function AdminRegisterPage() {
           </div>
         </div>
       </div>
+
+      <OtpVerificationModal
+        isOpen={showOtp}
+        onClose={() => setShowOtp(false)}
+        email={formData.email}
+        loading={loading}
+        onVerify={handleVerifyRegister}
+        onResend={() => handleSendOtp()}
+        mode="register"
+      />
     </div>
   );
 }
-
