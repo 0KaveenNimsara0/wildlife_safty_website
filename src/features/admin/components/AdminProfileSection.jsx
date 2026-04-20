@@ -93,7 +93,7 @@ export default function AdminProfileSection() {
       <div className="py-20 flex items-center justify-center bg-transparent">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-slate-500 font-black uppercase tracking-widest text-[10px]">Loading profile...</p>
+          <p className="mt-4 text-slate-500 font-black uppercase tracking-widest text-[10px]">Loading Profile...</p>
         </div>
       </div>
     );
@@ -120,16 +120,16 @@ export default function AdminProfileSection() {
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
                  <h1 className="text-4xl font-black tracking-tight uppercase text-white">{adminData?.name || 'Administrator'}</h1>
                  <div className="px-4 py-1.5 bg-emerald-500/20 rounded-full border border-emerald-500/30 backdrop-blur-md">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Master Authority</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Administrator</span>
                  </div>
               </div>
               <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{adminData?.email}</p>
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-                    <Fingerprint size={14} className="text-emerald-500" /> Identity Token: <span className="text-white">{adminData?.uid?.slice(0, 8) || 'ROOT_ACCESS_01'}</span>
+                    <Fingerprint size={14} className="text-emerald-500" /> User ID: <span className="text-white">{adminData?.uid?.slice(0, 8) || 'ADMIN_USER_01'}</span>
                  </div>
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-                    <ShieldCheck size={14} className="text-emerald-500" /> Permission Level: <span className="text-emerald-500">LEVEL 4 ROOT</span>
+                    <ShieldCheck size={14} className="text-emerald-500" /> Access Level: <span className="text-emerald-500">LEVEL 4 ROOT</span>
                  </div>
               </div>
            </div>
@@ -146,7 +146,7 @@ export default function AdminProfileSection() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
             <div>
               <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 mb-2">Account Administration</h3>
-              <p className="text-2xl font-black text-slate-900 tracking-tight uppercase">Identity Configuration <span className="text-slate-200">/</span> Metadata</p>
+              <p className="text-2xl font-black text-slate-900 tracking-tight uppercase">Admin Settings <span className="text-slate-200">/</span> Summary</p>
             </div>
             {!isEditing ? (
               <button
@@ -154,7 +154,7 @@ export default function AdminProfileSection() {
                 className="flex items-center gap-3 px-8 py-4 bg-slate-900 border border-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-emerald-600 hover:border-emerald-600 rounded-2xl shadow-xl shadow-slate-900/10 transition-all active:scale-95 transition-all"
               >
                 <Edit3 size={16} />
-                Modify Identity
+                Edit Profile
               </button>
             ) : (
               <div className="flex gap-4">
@@ -163,14 +163,14 @@ export default function AdminProfileSection() {
                   className="flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-emerald-900/20 active:scale-95 transition-all"
                 >
                   <Save size={16} />
-                  Overwrite Data
+                  Save Changes
                 </button>
                 <button
                   onClick={handleCancel}
                   className="flex items-center gap-3 px-8 py-4 bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-95"
                 >
                   <X size={16} />
-                  Abort
+                  Cancel
                 </button>
               </div>
             )}
@@ -180,8 +180,8 @@ export default function AdminProfileSection() {
             {/* Profile Details */}
             <div className="space-y-8">
               {[
-                { label: 'Tactical Name', name: 'name', icon: User, val: formData.name },
-                { label: 'Uplink Email', name: 'email', icon: Mail, val: formData.email }
+                { label: 'Full Name', name: 'name', icon: User, val: formData.name },
+                { label: 'Email Address', name: 'email', icon: Mail, val: formData.email }
               ].map((field) => (
                 <div key={field.name}>
                   <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
@@ -209,7 +209,7 @@ export default function AdminProfileSection() {
 
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
-                  System Permission Rank
+                  Access Level
                 </label>
                 {isEditing ? (
                    <div className="relative group">
@@ -237,8 +237,8 @@ export default function AdminProfileSection() {
             {/* Status Info */}
             <div className="space-y-8">
                {[
-                 { label: 'Commission Date', icon: Calendar, val: adminData?.createdAt ? new Date(adminData.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Operational Since 2024' },
-                 { label: 'Last Encryption Sync', icon: Key, val: `${new Date().toLocaleDateString()} @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` }
+                 { label: 'Join Date', icon: Calendar, val: adminData?.createdAt ? new Date(adminData.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Member since 2024' },
+                 { label: 'Last Update', icon: Key, val: `${new Date().toLocaleDateString()} @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` }
                ].map((item, idx) => (
                  <div key={idx}>
                     <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
@@ -253,11 +253,11 @@ export default function AdminProfileSection() {
 
                <div>
                 <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
-                  Infrastructure Connectivity
+                  Connection Status
                 </label>
                 <div className="flex items-center h-[64px] px-8 bg-slate-900 border border-slate-800 rounded-[20px] shadow-xl">
                   <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full mr-5 shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-pulse"></div>
-                  <span className="text-xs font-black text-white tracking-tight uppercase italic tracking-widest">ENCRYPTED_UP_LINK_NOMINAL</span>
+                  <span className="text-xs font-black text-white tracking-tight uppercase italic tracking-widest">SYSTEM ONLINE</span>
                 </div>
               </div>
             </div>
@@ -267,8 +267,8 @@ export default function AdminProfileSection() {
       {/* Security Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {[
-          { title: 'Access Cipher', sub: 'Rotate security credentials', icon: Key, action: 'Renew Multi-Pass', color: 'emerald' },
-          { title: 'Auth Relay', sub: 'Multi-factor identification', icon: Smartphone, action: 'Initialize MFA', color: 'slate' }
+          { title: 'Security Settings', sub: 'Update account password', icon: Key, action: 'Update Password', color: 'emerald' },
+          { title: '2FA Settings', sub: 'Multi-factor identification', icon: Smartphone, action: 'Manage 2FA', color: 'slate' }
         ].map((sec, idx) => (
           <div key={idx} className="bg-white border border-slate-100 p-10 flex flex-col justify-between rounded-[40px] shadow-2xl shadow-slate-200/40 hover:shadow-2xl transition-all group">
             <div className="flex items-start justify-between mb-10">

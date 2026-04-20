@@ -145,7 +145,7 @@ const UserChatPage = () => {
                 Access <span className="text-emerald-600">Restricted</span>
               </h2>
               <p className="text-slate-500 font-medium leading-relaxed">
-                Log in to establish a secure uplink with our medical professionals and receive real-time species guidance.
+                Log in to establish a secure connection with our medical professionals and receive real-time species guidance.
               </p>
             </div>
 
@@ -181,7 +181,7 @@ const UserChatPage = () => {
                 <h1 className="text-2xl text-white tracking-tight uppercase">Talk to <span className="text-emerald-400">Specialist</span></h1>
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500/80">
                   <Shield size={12} />
-                  <span>Secure Medical Uplink</span>
+                  <span>Medical Support Chat</span>
                 </div>
               </div>
             </div>

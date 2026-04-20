@@ -77,7 +77,7 @@ export default function RegisterPage() {
           <div className="space-y-5">
             <div className="space-y-2 group">
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                Personnel Name
+                Full Name
               </label>
               <div className="relative">
                 <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -94,7 +94,7 @@ export default function RegisterPage() {
 
             <div className="space-y-2 group">
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                Secure Email
+                Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -112,7 +112,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  Cipher
+                  Password
                 </label>
                  <div className="relative group">
                   <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
@@ -135,7 +135,7 @@ export default function RegisterPage() {
               </div>
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  Validate
+                  Confirm Password
                 </label>
                  <div className="relative group">
                   <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
@@ -164,7 +164,7 @@ export default function RegisterPage() {
             disabled={otpSending || loading}
             className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
           >
-            {otpSending ? 'Initiating Handshake...' : 'Establish Clearance'}
+            {otpSending ? 'Sending OTP...' : 'Register'}
             {!otpSending && <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform duration-500" />}
           </button>
         </form>
@@ -172,7 +172,7 @@ export default function RegisterPage() {
         <div className="space-y-6">
           <div className="flex items-center gap-5">
             <div className="flex-1 h-[1px] bg-slate-100" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 whitespace-nowrap">External Handshake</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 whitespace-nowrap">Or continue with</span>
             <div className="flex-1 h-[1px] bg-slate-100" />
           </div>
 

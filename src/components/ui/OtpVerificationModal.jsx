@@ -54,7 +54,7 @@ export default function OtpVerificationModal({
     if (e) e.preventDefault();
     const otpValue = otp.join('');
     if (otpValue.length !== 6) {
-      setErrorText('Digit count mismatch. 6-unit cipher required.');
+      setErrorText('Please enter a 6-digit code.');
       return;
     }
 
@@ -67,13 +67,13 @@ export default function OtpVerificationModal({
       setAttempts(remaining);
       
       if (remaining <= 0) {
-        setErrorText('SECURITY LOCKOUT: 3 failed attempts. Terminal session terminated.');
+        setErrorText('Access Denied: Too many failed attempts.');
         setTimeout(() => {
           onClose();
           window.location.href = '/login';
         }, 2000);
       } else {
-        setErrorText(`Validation failure. ${remaining} attempts authorized.`);
+        setErrorText(`Incorrect code. ${remaining} attempts remaining.`);
         setOtp(['', '', '', '', '', '']);
         inputRefs[0].current.focus();
       }
@@ -116,7 +116,7 @@ export default function OtpVerificationModal({
             <div className="space-y-2">
               <h2 className="text-4xl font-black text-slate-900 tracking-tighter">Two-Factor <span className="text-emerald-600">Verification</span></h2>
               <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest leading-relaxed">
-                Secure handshake sent to terminal <br />
+                Verification code sent to <br />
                 <span className="text-slate-900 px-3 py-1 bg-slate-50 rounded-xl inline-block mt-2 font-black lowercase tracking-widest">{email}</span>
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function OtpVerificationModal({
               {isVerifying ? (
                 <>
                   <RefreshCw size={20} className="animate-spin" />
-                  <span>Decrypting Cipher...</span>
+                  <span>Verifying...</span>
                 </>
               ) : (
                 <>
@@ -170,7 +170,7 @@ export default function OtpVerificationModal({
 
           <div className="pt-6 border-t border-slate-50 flex flex-col items-center gap-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">
-              Handshake not received?
+              Didn't receive a code?
             </p>
             <button
               onClick={() => {
@@ -181,7 +181,7 @@ export default function OtpVerificationModal({
               className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 hover:text-emerald-700 disabled:opacity-50 transition-colors flex items-center gap-3 group"
             >
               <RefreshCw size={16} className={timer > 0 ? '' : 'group-hover:rotate-180 transition-transform duration-500'} />
-              {timer > 0 ? `Retry authorized in ${timer}s` : 'Resend Verification Cipher'}
+              {timer > 0 ? `Resend in ${timer}s` : 'Resend Code'}
             </button>
           </div>
         </div>

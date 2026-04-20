@@ -36,7 +36,7 @@ export default function MedicalOfficerRegisterPage() {
     if (e) e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Cipher mismatch detected');
+      setError('Passwords do not match');
       return;
     }
 
@@ -131,7 +131,7 @@ export default function MedicalOfficerRegisterPage() {
               
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  Personnel Identity
+                  Full Name
                 </label>
                 <div className="relative">
                   <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -149,7 +149,7 @@ export default function MedicalOfficerRegisterPage() {
 
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  Medical Security Key
+                  Registration Key
                 </label>
                 <div className="relative">
                   <Fingerprint className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -167,7 +167,7 @@ export default function MedicalOfficerRegisterPage() {
 
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  Med-Link Email
+                  Email
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -186,7 +186,7 @@ export default function MedicalOfficerRegisterPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2 group">
                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                    Cipher
+                    Password
                   </label>
                   <div className="relative group">
                     <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
@@ -210,7 +210,7 @@ export default function MedicalOfficerRegisterPage() {
                 </div>
                 <div className="space-y-2 group">
                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                    Verify
+                    Confirm Password
                   </label>
                   <div className="relative group">
                     <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
@@ -324,7 +324,7 @@ export default function MedicalOfficerRegisterPage() {
             disabled={otpSending || loading}
             className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
           >
-            {otpSending ? 'Initiating Registry Handshake...' : 'Execute Personnel Enrollment'}
+            {otpSending ? 'Sending OTP...' : 'Register'}
             {!otpSending && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
           </button>
         </form>

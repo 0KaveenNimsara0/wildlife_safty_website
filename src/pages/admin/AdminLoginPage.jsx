@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
   return (
     <AuthLayout 
       title="Admin" 
-      subtitle="Terminal" 
+      subtitle="Login" 
       quote="Management is doing things right; leadership is doing the right things."
       author="Peter Drucker"
       role="admin"
@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
           <div className="space-y-5">
             <div className="space-y-2 group">
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                Command Uplink ID
+                Email ID
               </label>
               <div className="relative">
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -95,7 +95,7 @@ export default function AdminLoginPage() {
             <div className="space-y-2 group">
               <div className="flex items-center justify-between mx-5">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-focus-within:text-emerald-600 transition-colors">
-                  Access Pass-Cipher
+                  Password
                 </label>
                 <Link to="/admin/forgot-password" title="Initiate Recovery" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors">
                   Recovery
@@ -127,7 +127,7 @@ export default function AdminLoginPage() {
             disabled={loading}
             className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
           >
-            {loading ? 'Authorizing Uplink...' : 'Initiate Terminal Link'}
+            {loading ? 'Authenticating...' : 'Login'}
             {!loading && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
           </button>
         </form>

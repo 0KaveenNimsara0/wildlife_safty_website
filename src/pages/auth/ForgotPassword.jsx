@@ -50,7 +50,7 @@ export default function ForgotPassword({ mode = "user" }) {
     },
     medicalOfficer: {
       title: "Officer",
-      subtitle: "Cipher",
+      subtitle: "Reset",
       backLink: "/medical-officer/login",
       roleId: "medicalOfficer",
       quote: "Medicine is a science of uncertainty and an art of probability.",
@@ -61,7 +61,7 @@ export default function ForgotPassword({ mode = "user" }) {
   const handleSendRequest = async (e) => {
     if (e) e.preventDefault();
     if (!email) {
-      setError("Network Email ID is required");
+      setError('Email is required');
       return;
     }
 
@@ -121,12 +121,12 @@ export default function ForgotPassword({ mode = "user" }) {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setError("Security pass-ciphers do not match.");
+      setError("Passwords do not match.");
       return;
     }
 
     if (newPassword.length < 6) {
-      setError("Cipher complexity must exceed 6 alphanumeric units.");
+      setError("Password must be at least 6 characters.");
       return;
     }
 
@@ -160,7 +160,7 @@ export default function ForgotPassword({ mode = "user" }) {
       });
     } catch (err) {
       console.error("Password Update Error:", err);
-      setError(err.message || "System error during structural cipher update.");
+      setError(err.message || "Error updating password.");
     } finally {
       setLoading(false);
     }
@@ -180,7 +180,7 @@ export default function ForgotPassword({ mode = "user" }) {
           className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-          Back to Terminal
+          Back to Login
         </button>
 
         {error && (
@@ -196,7 +196,7 @@ export default function ForgotPassword({ mode = "user" }) {
           <form className="space-y-8" onSubmit={handleSendRequest}>
             <div className="space-y-2 group">
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                Authorized Email ID
+                Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -216,7 +216,7 @@ export default function ForgotPassword({ mode = "user" }) {
               disabled={loading}
               className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
             >
-              {loading ? 'Transmitting OTP...' : 'Initiate Recovery Protocol'}
+              {loading ? 'Sending OTP...' : 'Send Verification Code'}
               {!loading && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
             </button>
           </form>
@@ -225,7 +225,7 @@ export default function ForgotPassword({ mode = "user" }) {
             <div className="space-y-5">
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  New Security Pass-Cipher
+                  New Password
                 </label>
                 <div className="relative group">
                   <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -249,7 +249,7 @@ export default function ForgotPassword({ mode = "user" }) {
 
               <div className="space-y-2 group">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                  Validate Pass-Cipher
+                  Confirm Password
                 </label>
                 <div className="relative group">
                   <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -277,7 +277,7 @@ export default function ForgotPassword({ mode = "user" }) {
               disabled={loading}
               className="w-full py-6 bg-emerald-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-700 shadow-2xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
             >
-              {loading ? 'Deploying Changes...' : 'Deploy Structural Override'}
+              {loading ? 'Updating...' : 'Update Password'}
               {!loading && <KeyRound size={18} className="group-hover:rotate-12 transition-transform duration-500" />}
             </button>
           </form>

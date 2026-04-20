@@ -87,7 +87,7 @@ export default function LoginPage() {
           <div className="space-y-5">
             <div className="space-y-2 group">
               <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
-                Personnel Email
+                Email
               </label>
               <div className="relative">
                 <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
@@ -105,7 +105,7 @@ export default function LoginPage() {
             <div className="space-y-2 group">
               <div className="flex items-center justify-between px-5">
                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 group-focus-within:text-emerald-600 transition-colors">
-                  Secure Password
+                  Password
                 </label>
                 <Link to="/forgot-password" size="sm" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 transition-colors">
                   Forgot?
@@ -134,7 +134,7 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-3 px-2">
              <input type="checkbox" id="remember" className="w-4 h-4 rounded-md border-2 border-slate-200 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
-             <label htmlFor="remember" className="text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">Remember my terminal session</label>
+             <label htmlFor="remember" className="text-[10px] font-black uppercase tracking-widest text-slate-400 cursor-pointer hover:text-slate-600 transition-colors">Remember Me</label>
           </div>
 
           <button
@@ -142,7 +142,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
           >
-            {loading ? 'Decrypting Access...' : 'Authenticate Login'}
+            {loading ? 'Authenticating...' : 'Login'}
             {!loading && <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform duration-500" />}
           </button>
         </form>
@@ -150,7 +150,7 @@ export default function LoginPage() {
         <div className="space-y-6">
           <div className="flex items-center gap-5">
             <div className="flex-1 h-[1px] bg-slate-100" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 whitespace-nowrap">External Handshake</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300 whitespace-nowrap">Or continue with</span>
             <div className="flex-1 h-[1px] bg-slate-100" />
           </div>
 

@@ -108,7 +108,7 @@ export default function MedicalProfileSection() {
       <div className="py-20 flex items-center justify-center bg-transparent">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-slate-500 font-black uppercase tracking-widest text-[10px]">Loading Profile Metadata...</p>
+          <p className="mt-4 text-slate-500 font-black uppercase tracking-widest text-[10px]">Loading Profile...</p>
         </div>
       </div>
     );
@@ -135,14 +135,14 @@ export default function MedicalProfileSection() {
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
                  <h1 className="text-4xl font-black tracking-tight text-white uppercase">{officerData?.name || 'Medical Officer'}</h1>
                  <div className="px-4 py-1.5 bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">Verified Personnel</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">Verified Member</span>
                  </div>
               </div>
               <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{officerData?.specialization || 'General Practice Specialist'}</p>
               
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                    <FileText size={14} className="text-indigo-400" /> License: <span className="text-white">{officerData?.licenseNumber || 'PENDING_SCAN'}</span>
+                    <FileText size={14} className="text-indigo-400" /> License: <span className="text-white">{officerData?.licenseNumber || 'Pending'}</span>
                  </div>
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
                     <ShieldCheck size={14} className="text-emerald-400" /> Operational Status: <span className="text-emerald-400">ACTIVE</span>
@@ -163,7 +163,7 @@ export default function MedicalProfileSection() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
           <div>
             <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-indigo-600 mb-2">Account Administration</h3>
-            <p className="text-2xl font-black text-slate-900 tracking-tight uppercase">Personnel Profile <span className="text-slate-200">/</span> Metadata</p>
+            <p className="text-2xl font-black text-slate-900 tracking-tight uppercase">Personnel Profile <span className="text-slate-200">/</span> Summary</p>
           </div>
           {!isEditing ? (
             <button
@@ -171,7 +171,7 @@ export default function MedicalProfileSection() {
               className="flex items-center gap-3 px-8 py-4 bg-slate-900 border border-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-indigo-600 hover:border-indigo-600 rounded-2xl shadow-xl shadow-slate-900/10 transition-all active:scale-95 transition-all"
             >
               <Edit3 size={16} />
-              Modify Identity
+              Edit Profile
             </button>
           ) : (
             <div className="flex gap-4">
@@ -180,14 +180,14 @@ export default function MedicalProfileSection() {
                 className="flex items-center gap-3 px-8 py-4 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-indigo-600/20 active:scale-95 transition-all"
               >
                 <Save size={16} />
-                Overwrite Data
+                Save Profile
               </button>
               <button
                 onClick={handleCancel}
                 className="flex items-center gap-3 px-8 py-4 bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-95"
               >
                 <X size={16} />
-                Abort
+                Cancel
               </button>
             </div>
           )}
@@ -196,9 +196,9 @@ export default function MedicalProfileSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="space-y-8">
             {[
-              { label: 'Full Identity', name: 'name', icon: User, val: formData.name },
-              { label: 'Comm Link (Email)', name: 'email', icon: Mail, val: formData.email, type: 'email' },
-              { label: 'Tactical Number', name: 'phoneNumber', icon: Phone, val: formData.phoneNumber, type: 'tel' }
+              { label: 'Full Name', name: 'name', icon: User, val: formData.name },
+              { label: 'Email Address', name: 'email', icon: Mail, val: formData.email, type: 'email' },
+              { label: 'Phone Number', name: 'phoneNumber', icon: Phone, val: formData.phoneNumber, type: 'tel' }
             ].map((field) => (
               <div key={field.name}>
                 <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
@@ -227,9 +227,9 @@ export default function MedicalProfileSection() {
 
           <div className="space-y-8">
             {[
-              { label: 'Expert Optimization', name: 'specialization', icon: Stethoscope, val: formData.specialization },
-              { label: 'Operative License', name: 'licenseNumber', icon: FileText, val: formData.licenseNumber },
-              { label: 'Station / HQ Base', name: 'hospital', icon: MapPin, val: formData.hospital }
+              { label: 'Specialization', name: 'specialization', icon: Stethoscope, val: formData.specialization },
+              { label: 'License Number', name: 'licenseNumber', icon: FileText, val: formData.licenseNumber },
+              { label: 'Hospital / Clinic', name: 'hospital', icon: MapPin, val: formData.hospital }
             ].map((field) => (
               <div key={field.name}>
                 <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
@@ -261,8 +261,8 @@ export default function MedicalProfileSection() {
       {/* Security Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {[
-          { title: 'Security Cipher', sub: 'Rotate account credentials', icon: Key, action: 'Update Access', color: 'indigo' },
-          { title: 'Tactical Uplink', sub: 'Audit connection stability', icon: Smartphone, action: 'System Sync', color: 'slate' }
+          { title: 'Security Settings', sub: 'Update account password', icon: Key, action: 'Update Password', color: 'indigo' },
+          { title: 'System Status', sub: 'Audit connection stability', icon: Smartphone, action: 'Check Sync', color: 'slate' }
         ].map((sec, idx) => (
           <div key={idx} className="bg-white border border-slate-100 p-10 flex flex-col justify-between rounded-[40px] shadow-xl shadow-slate-200/40 hover:shadow-2xl transition-all group">
             <div className="flex items-start justify-between mb-10">
