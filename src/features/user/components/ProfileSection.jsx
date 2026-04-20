@@ -9,6 +9,7 @@ import ProfilePhotoModal from "../../../components/ui/ProfilePhotoModal";
 const ProfileSection = ({ 
   activeUser, 
   updateEmail, 
+  updateUserProfile,
   sendEmailVerification, 
   verifyEmail,
   uploadProfilePicture,
@@ -30,12 +31,15 @@ const ProfileSection = ({
       setLoading(true);
       setError("");
       setSuccess("");
-      if (newEmail !== activeUser.email) {
-        await updateEmail(newEmail);
-      }
       
       setSuccess("Intelligence synchronization initiated...");
-      await refreshUser();
+      
+      // Update both name and email using the unified updateUserProfile
+      await updateUserProfile({
+        displayName,
+        email: newEmail
+      });
+      
       setSuccess("Personnel profile and verification status synchronized.");
     } catch (err) {
       setError(err.message || "System rejected profile update.");
@@ -104,7 +108,7 @@ const ProfileSection = ({
           </button>
         </div>
         <div>
-          <h3 className="text-3xl font-black text-slate-900 tracking-tight">{displayName || 'Agent Unnamed'}</h3>
+          <h3 className="text-3xl font-black text-slate-900 tracking-tight">{activeUser?.displayName || 'Agent Unnamed'}</h3>
           <div className="space-y-1">
             <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2 mt-1">
               <FaEnvelope className="text-emerald-500" /> {activeUser?.email}

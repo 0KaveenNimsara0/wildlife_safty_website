@@ -334,15 +334,22 @@ export function AuthProvider({ children }) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('userToken')}`
         },
         body: JSON.stringify(profileData)
       });
-
+ 
       if (!response.ok) {
         throw new Error('Failed to update user profile');
       }
-
+ 
       const data = await response.json();
+      
+      // Synchronize with global state and local storage
+      const updatedUser = { ...currentUser, ...data.user };
+      localStorage.setItem('mongoUser', JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+      
       return data.user;
     } catch (error) {
       console.error('Error updating user profile:', error);

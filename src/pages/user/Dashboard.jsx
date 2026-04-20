@@ -23,6 +23,7 @@ const Dashboard = () => {
     sendEmailVerification, 
     verifyEmail, 
     uploadProfilePicture, 
+    updateUserProfile,
     refreshUser 
   } = useAuth();
   const navigate = useNavigate();
@@ -93,6 +94,7 @@ const Dashboard = () => {
                 <ProfileSection 
                   activeUser={activeUser}
                   updateEmail={updateEmail}
+                  updateUserProfile={updateUserProfile}
                   sendEmailVerification={sendEmailVerification}
                   verifyEmail={verifyEmail}
                   uploadProfilePicture={uploadProfilePicture}
