@@ -207,16 +207,26 @@ export default function UserManagementSection() {
                     <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-8 py-6 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-2xl ${user.source === 'firebase' ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative`}>
+                          <div className={`w-12 h-12 rounded-2xl ${user.sources.includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative`}>
                             {(user.displayName || user.email || '?').charAt(0).toUpperCase()}
-                            <div className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg ${user.source === 'firebase' ? 'bg-amber-600' : 'bg-emerald-600'}`}>
-                              {user.source === 'firebase' ? 'F' : 'M'}
+                            <div className="absolute -bottom-1 -right-1 flex gap-0.5">
+                              {user.sources.includes('firebase') && (
+                                <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-amber-600 text-white">G</div>
+                              )}
+                              {user.sources.includes('mongodb') && (
+                                <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-emerald-600 text-white">P</div>
+                              )}
                             </div>
                           </div>
                           <div>
                             <div className="text-sm font-black text-slate-900 tracking-tight">{user.displayName || 'Anonymous User'}</div>
-                            <div className={`text-[9px] font-bold ${user.source === 'firebase' ? 'text-amber-500' : 'text-emerald-500'} uppercase tracking-widest mt-0.5`}>
-                              {user.source === 'firebase' ? 'Firebase Identity' : 'Verified Protocol'}
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              {user.sources.includes('firebase') && (
+                                <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100">Social</div>
+                              )}
+                              {user.hasPassword && (
+                                <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">Protocol</div>
+                              )}
                             </div>
                           </div>
                         </div>

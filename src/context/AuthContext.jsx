@@ -148,7 +148,29 @@ export function AuthProvider({ children }) {
   async function googleSignIn() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      setCurrentUser(result.user);
+      const user = result.user;
+      
+      // Sync with MongoDB backend
+      const response = await fetch(`${BASE_URL}/auth/user/social-sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user.email,
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('userToken', data.token);
+        localStorage.setItem('mongoUser', JSON.stringify(data.user));
+        setCurrentUser(data.user);
+      } else {
+        setCurrentUser(user);
+      }
+      
       return result;
     } catch (error) {
       console.error("Google sign-in error:", error);
