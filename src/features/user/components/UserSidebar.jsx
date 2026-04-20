@@ -12,6 +12,7 @@ import {
   Settings,
   Search
 } from 'lucide-react';
+import { BASE_URL } from '../../../config/constants';
 
 const UserSidebar = ({ 
   activeTab, 
@@ -21,13 +22,37 @@ const UserSidebar = ({
   sidebarOpen, 
   setSidebarOpen 
 }) => {
+  const [unreadCount, setUnreadCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const token = localStorage.getItem('userToken');
+        const response = await fetch(`${BASE_URL}/notifications?uid=${activeUser?.uid}&limit=1`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          setUnreadCount(data.unreadCount);
+        }
+      } catch (e) {}
+    };
+
+    if (activeUser?.uid) {
+      fetchUnreadCount();
+      // Poll every 60 seconds
+      const interval = setInterval(fetchUnreadCount, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [activeUser]);
+
   const menuItems = [
     { id: 'profile', label: 'Profile Settings', icon: User },
     { id: 'security', label: 'Security & Password', icon: Shield },
     { id: 'history', label: 'Identification History', icon: Search },
     { id: 'articles', label: 'My Articles', icon: BookOpen },
     { id: 'activity', label: 'Activity Log', icon: Activity },
-    { id: 'notifications', label: 'Notifications', icon: Bell }
+    { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadCount }
   ];
 
   return (
@@ -92,6 +117,11 @@ const UserSidebar = ({
                   <div className="flex items-center gap-4">
                     <item.icon size={18} className={`${isActive ? 'text-emerald-500' : 'group-hover:text-emerald-600'} transition-colors`} />
                     <span className="text-[11px] font-black uppercase tracking-widest">{item.label}</span>
+                    {item.badge > 0 && (
+                      <span className="ml-auto px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black rounded-lg shadow-sm">
+                        {item.badge}
+                      </span>
+                    )}
                   </div>
                   <ChevronRight size={14} className={`transition-all duration-300 ${isActive ? 'translate-x-0 opacity-100' : '-translate-x-2 opacity-0'}`} />
                 </button>
