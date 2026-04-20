@@ -2,9 +2,11 @@ import React, { useState, useCallback } from 'react';
 import UploadArea from '../../features/prediction/components/UploadArea';
 import PredictionResults from '../../features/prediction/components/PredictionResults';
 import ErrorCard from '../../features/prediction/components/ErrorCard';
-import { predictSpecies } from '../../features/prediction/api';
+import { useAuth } from '../../context/AuthContext';
+import { predictSpecies, savePrediction } from '../../features/prediction/api';
 
 export default function Identifier() {
+    const { activeUser } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [imageURL, setImageURL] = useState(null);
     const [imageFile, setImageFile] = useState(null);
@@ -39,8 +41,18 @@ export default function Identifier() {
         setIsLoading(true);
 
         try {
+            // 1. Get ML Prediction
             const data = await predictSpecies(imageFile);
             setPrediction(data);
+
+            // 2. Save to History (Always - Logged in or Anonymous)
+            // We do this in a separate try/catch so a save failure doesn't break the UI
+            try {
+                await savePrediction(imageFile, data, activeUser?.uid || null);
+                console.log('Identification synced to cloud history.');
+            } catch (saveError) {
+                console.error('Persistence failed:', saveError);
+            }
         } catch (err) {
             setError(err.message || "Engine Connection Failed");
         } finally {

@@ -17,6 +17,7 @@ export default function AdminLayout() {
     { name: 'Overview', path: '/admin/dashboard' },
     { name: 'User Control', path: '/admin/users' },
     { name: 'Medical Users', path: '/admin/medical-officers' },
+    { name: 'Identification Oversight', path: '/admin/predictions' },
     { name: 'Communications', path: '/admin/chat' },
     { name: 'Medical Officer Articles', path: '/admin/articles' },
   ];

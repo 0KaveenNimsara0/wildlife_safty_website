@@ -7,6 +7,7 @@ import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 // User Feature Components
 import ProfileSection from '../../features/user/components/ProfileSection';
 import SecuritySection from '../../features/user/components/SecuritySection';
+import PredictionHistorySection from '../../features/user/components/PredictionHistorySection';
 import SavedArticlesSection from '../../features/user/components/SavedArticlesSection';
 import ActivitySection from '../../features/user/components/ActivitySection';
 import NotificationSection from '../../features/user/components/NotificationSection';
@@ -107,6 +108,10 @@ const Dashboard = () => {
                   setSuccess={setSuccess}
                   setError={setError}
                 />
+              )}
+
+              {activeTab === 'history' && (
+                <PredictionHistorySection />
               )}
 
               {activeTab === 'activity' && (

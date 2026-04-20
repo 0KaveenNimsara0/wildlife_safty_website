@@ -36,6 +36,7 @@ import AdminChatSection from '../features/admin/components/AdminChatSection';
 import AdminMedicalChatSection from '../features/admin/components/AdminMedicalChatSection';
 import AdminArticleSection from '../features/admin/components/AdminArticleSection';
 import AdminProfileSection from '../features/admin/components/AdminProfileSection';
+import AdminPredictionOversight from '../features/admin/components/AdminPredictionOversight';
 
 // Medical Officer Sections
 import MedicalOverviewSection from '../features/medical/components/MedicalOverviewSection';
@@ -88,6 +89,7 @@ export default function AppRoutes() {
         <Route path="dashboard" element={<AdminOverviewSection />} />
         <Route path="users" element={<UserManagementSection />} />
         <Route path="medical-officers" element={<MedicalOfficerManagementSection />} />
+        <Route path="predictions" element={<AdminPredictionOversight />} />
         <Route path="chat" element={<AdminChatSection />} />
         <Route path="chat/officer/:officerId" element={<AdminMedicalChatSection />} />
         <Route path="articles" element={<AdminArticleSection />} />

@@ -33,6 +33,7 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'Overview', icon: LayoutDashboard, path: '/admin/dashboard' },
     { name: 'User Control', icon: Users, path: '/admin/users' },
     { name: 'Medical Users', icon: UserCheck, path: '/admin/medical-officers' },
+    { name: 'Identification Oversight', icon: Shield, path: '/admin/predictions' },
     { name: 'Communications', icon: MessageSquare, path: '/admin/chat' },
     { name: 'Medical Officer Articles', icon: FileText, path: '/admin/articles' },
     { name: 'Personnel Profile', icon: Shield, path: '/admin/profile' },
