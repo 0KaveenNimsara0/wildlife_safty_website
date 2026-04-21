@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files
+.env.local
+.env.development
+.env.test
+.env.production
+.env
+
+
+#old pages
+/src/oldPages
