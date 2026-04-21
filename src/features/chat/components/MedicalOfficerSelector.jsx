@@ -91,7 +91,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
             onClick={fetchMedicalOfficers}
             className="text-white bg-rose-500 px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-lg shadow-rose-200"
           >
-            Retry Sync
+            Try Again
           </button>
         </div>
       )}
@@ -138,7 +138,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
         {!loading && medicalOfficers.length === 0 && (
           <div className="text-center py-12 space-y-3 opacity-30">
             <RefreshCcw size={32} className="mx-auto text-slate-200" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Offline Status</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No Specialists Available</p>
           </div>
         )}
       </div>

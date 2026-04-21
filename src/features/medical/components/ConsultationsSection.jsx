@@ -326,15 +326,15 @@ const ConsultationsSection = () => {
                           </h3>
                           <div className="flex items-center gap-2">
                               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                              <span className={`text-[10px] font-black uppercase tracking-widest ${currentConversation.admin ? 'text-slate-500 underline decoration-slate-200 underline-offset-4' : 'text-indigo-500'}`}>
-                                 {currentConversation.admin ? 'Operational HQ Command' : 'Active Field Inquiry'}
-                              </span>
+                               <span className={`text-[10px] font-black uppercase tracking-widest ${currentConversation.admin ? 'text-slate-500 underline decoration-slate-200 underline-offset-4' : 'text-indigo-500'}`}>
+                                  {currentConversation.admin ? 'Official System Support' : 'Support Conversation'}
+                               </span>
                           </div>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
                        <div className="hidden lg:flex flex-col items-end mr-4">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Transmission</p>
+                           <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Security</p>
                           <p className="text-[10px] font-black text-slate-900 uppercase tracking-tight">E2E Encrypted</p>
                        </div>
                        <button className="p-3 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-xl transition-all">
@@ -351,9 +351,9 @@ const ConsultationsSection = () => {
                         onClick={scrollToBottom}
                         className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-indigo-500/30 flex items-center gap-2 z-20 animate-bounce hover:bg-indigo-700 transition-all active:scale-95"
                       >
-                         <ChevronDown size={14} />
-                         {newMessagesCount} Intercepted Transmissions
-                      </button>
+                          <ChevronDown size={14} />
+                          {newMessagesCount} New Messages Available
+                       </button>
                     )}
 
                     <div 
@@ -366,9 +366,9 @@ const ConsultationsSection = () => {
                         <div className="w-20 h-20 rounded-[32px] bg-slate-100 flex items-center justify-center mb-6">
                            <MessageSquare size={32} className="text-slate-300" />
                         </div>
-                        <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2">Initialize Protocol</h3>
-                        <p className="text-[10px] font-bold text-slate-400 max-w-[200px] uppercase tracking-widest leading-relaxed">Awaiting identification of mission objectives.</p>
-                      </div>
+                         <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2">Select a Contact</h3>
+                         <p className="text-[10px] font-bold text-slate-400 max-w-[200px] uppercase tracking-widest leading-relaxed">Your encrypted message history will appear here.</p>
+                       </div>
                     )}
 
                     {messages.map((message, index) => {
@@ -397,11 +397,11 @@ const ConsultationsSection = () => {
                 </div>
 
                   <div className="p-6 bg-white border-t border-slate-50 relative z-10">
-                    <ChatInput 
-                      onSendMessage={onSendMessage} 
-                      loading={loading} 
-                      placeholder="Transmit operational directive..." 
-                    />
+                     <ChatInput 
+                       onSendMessage={onSendMessage} 
+                       loading={loading} 
+                       placeholder="Type your message here..." 
+                     />
                   </div>
                 </>
               ) : (
@@ -413,15 +413,15 @@ const ConsultationsSection = () => {
                       <div className="w-32 h-32 rounded-[40px] bg-white shadow-2xl flex items-center justify-center mb-10 border border-slate-100 animate-pulse">
                          <Activity size={54} className="text-indigo-600 opacity-20" />
                       </div>
-                      <h3 className="text-3xl font-black uppercase tracking-tight text-slate-800 mb-4">Command Select Required</h3>
-                      <p className="text-xs font-bold text-slate-400 max-w-sm mx-auto leading-relaxed uppercase tracking-widest">
-                         Initialize a tactical link with field personnel or HQ authorities from the mission log to begin encrypted communication.
-                      </p>
+                       <h3 className="text-3xl font-black uppercase tracking-tight text-slate-800 mb-4">Select a Conversation</h3>
+                       <p className="text-xs font-bold text-slate-400 max-w-sm mx-auto leading-relaxed uppercase tracking-widest">
+                          Choose a user or support staff member from the list to begin messaging.
+                       </p>
                       
                       <div className="mt-12 group">
                          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-2xl border border-slate-100 text-slate-500 shadow-sm opacity-60">
                             <div className="w-2 h-2 rounded-full bg-slate-200 animate-ping" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Operational Standing: READY</span>
+                             <span className="text-[10px] font-black uppercase tracking-[0.2em]">Status: Ready to Message</span>
                          </div>
                       </div>
                    </div>
