@@ -230,18 +230,18 @@ const ConsultationsSection = () => {
                       onClick={() => setActiveTab('users')}
                       className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === 'users' ? 'bg-white text-slate-900 shadow-md border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                     >
-                       Civilians
+                       Users
                     </button>
                     <button 
                       onClick={() => setActiveTab('admins')}
                       className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === 'admins' ? 'bg-white text-slate-900 shadow-md border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                     >
-                       HQ Link
+                       Admin Chat
                     </button>
                  </div>
                 <div className="flex items-center justify-between">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">
-                     {activeTab === 'users' ? 'Active Inquiries' : 'Support Channels'}
+                     {activeTab === 'users' ? 'All Conversations' : 'Support Channels'}
                   </h3>
                   <button
                     onClick={() => fetchConversations(medicalOfficerId)}
@@ -271,7 +271,7 @@ const ConsultationsSection = () => {
                                {conversation.user?.displayName || conversation.user?.email?.split('@')[0] || 'Field Node'}
                             </p>
                             <p className="text-[10px] text-slate-400 truncate mt-1 italic font-medium">
-                               {conversation.lastMessage?.message || 'Signal initialized...'}
+                               {conversation.lastMessage?.message || 'Start typing...'}
                             </p>
                           </div>
                           {conversation.unreadCount > 0 && (
@@ -296,7 +296,7 @@ const ConsultationsSection = () => {
                                 </div>
                                 <div className="min-w-0">
                                    <p className="text-xs font-black uppercase tracking-tight truncate">{admin.name}</p>
-                                   <p className={`text-[9px] font-bold uppercase tracking-widest ${currentConversation?.admin?._id === admin._id ? 'text-indigo-200' : 'text-slate-400'}`}>Command Authority</p>
+                                   <p className={`text-[9px] font-bold uppercase tracking-widest ${currentConversation?.admin?._id === admin._id ? 'text-indigo-200' : 'text-slate-400'}`}>Official Support</p>
                                  </div>
                              </div>
                          </button>

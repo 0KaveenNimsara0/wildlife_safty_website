@@ -51,7 +51,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 <ShieldCheck className="text-white" size={20} />
               </div>
               <div>
-                <h1 className="text-sm font-bold tracking-wider uppercase">Medical Portal</h1>
+                <h1 className="text-sm font-bold text-white tracking-wider uppercase">Medical Portal</h1>
                 <p className="text-[9px] font-medium text-slate-400 uppercase tracking-widest mt-0.5">Account Dashboard</p>
               </div>
             </div>
