@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import { 
   Plus, 
   Search, 
@@ -140,8 +140,16 @@ export default function MedicalArticleSection() {
                    
                    <div className="flex items-center justify-between pt-8 border-t border-slate-50">
                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-black">
-                            {article.author?.name?.charAt(0).toUpperCase()}
+                         <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-black overflow-hidden shadow-sm">
+                            {article.author?.photoURL ? (
+                              <img 
+                                src={article.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${article.author.photoURL}` : article.author.photoURL} 
+                                alt="" 
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              article.author?.name?.charAt(0).toUpperCase()
+                            )}
                          </div>
                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{article.author?.name}</span>
                       </div>

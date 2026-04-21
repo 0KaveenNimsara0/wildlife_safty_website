@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Outlet, Link } from 'react-router-dom';
+import { useLocation, Outlet, Link, useNavigate } from 'react-router-dom';
 import { 
   Menu, 
   Activity,
@@ -8,11 +8,14 @@ import {
   Scan
 } from 'lucide-react';
 import MedicalOfficerSidebar from '../features/medical/components/MedicalOfficerSidebar';
-import { BASE_URL } from '../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../config/constants';
 import NotificationDropdown from '../components/notifications/NotificationDropdown';
 
 export default function MedicalOfficerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [officerData, setOfficerData] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard' },
@@ -22,6 +25,24 @@ export default function MedicalOfficerLayout() {
     { name: 'Intelligence', path: '/medical-officer/notifications' },
     { name: 'Profile Settings', path: '/medical-officer/profile' },
   ];
+
+  useEffect(() => {
+    const data = localStorage.getItem('medicalOfficerData');
+    if (data) {
+      setOfficerData(JSON.parse(data));
+    }
+
+    // Listen for storage changes (for photo updates)
+    const handleStorageChange = () => {
+      const updatedData = localStorage.getItem('medicalOfficerData');
+      if (updatedData) {
+        setOfficerData(JSON.parse(updatedData));
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const activeItem = menuItems.find(item => location.pathname === item.path) || menuItems[0];
 
@@ -61,13 +82,20 @@ export default function MedicalOfficerLayout() {
                   
                   <div className="h-8 w-px bg-slate-200 mx-2" />
                   
-                  <button className="flex items-center gap-3 pl-2 pr-1 rounded-xl hover:bg-slate-50 transition-all group">
+                  <button 
+                    onClick={() => navigate('/medical-officer/profile')}
+                    className="flex items-center gap-3 pl-2 pr-1 rounded-xl hover:bg-slate-50 transition-all group"
+                  >
                      <div className="text-right hidden sm:block">
-                        <p className="text-[10px] font-bold text-slate-900 leading-none">Medical Officer</p>
+                        <p className="text-[10px] font-bold text-slate-900 leading-none">{officerData?.name || 'Medical Officer'}</p>
                         <p className="text-[9px] font-medium text-slate-400 mt-1">Status: Active</p>
                      </div>
-                     <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform">
-                        MO
+                     <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-indigo-600/20 group-hover:scale-105 transition-transform overflow-hidden">
+                        {officerData?.photoURL ? (
+                          <img src={officerData.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${officerData.photoURL}` : officerData.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          officerData?.name?.charAt(0).toUpperCase() || 'M'
+                        )}
                      </div>
                   </button>
                </div>

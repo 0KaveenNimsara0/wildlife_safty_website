@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaHeart, FaRegHeart, FaReply, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../services/api';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 
 const NestedComment = ({ 
   comment, 
@@ -150,7 +150,7 @@ const NestedComment = ({
             isPostAuthor ? 'bg-green-600' : comment.authorRole === 'medicalOfficer' ? 'bg-emerald-600 ring-2 ring-emerald-100 ring-offset-2' : 'bg-blue-600'
           }`}>
             {comment.authorAvatar ? (
-              <img src={comment.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+              <img src={comment.authorAvatar.startsWith('/uploads') ? `${IMAGE_BASE_URL}${comment.authorAvatar}` : comment.authorAvatar} alt="Author" className="w-full h-full object-cover" />
             ) : (
               comment.authorName?.charAt(0)?.toUpperCase() || 'U'
             )}

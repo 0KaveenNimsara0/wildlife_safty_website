@@ -23,6 +23,47 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const getActiveUser = () => {
+    // 1. Check for Admin persistence
+    const adminData = localStorage.getItem("adminData");
+    if (adminData) {
+      try {
+        const parsed = JSON.parse(adminData);
+        const user = {
+          uid: parsed._id || parsed.id || parsed.uid,
+          displayName: parsed.name || parsed.displayName,
+          email: parsed.email,
+          role: "admin",
+          source: "mongodb",
+          ...parsed
+        };
+        if (user.photoURL && user.photoURL.startsWith('/uploads')) {
+          user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
+        }
+        return user;
+      } catch (e) {}
+    }
+
+    // 2. Check for Medical Officer persistence
+    const medicalData = localStorage.getItem("medicalOfficerData");
+    if (medicalData) {
+      try {
+        const parsed = JSON.parse(medicalData);
+        const user = {
+          uid: parsed._id || parsed.id || parsed.uid,
+          displayName: parsed.name || parsed.displayName,
+          email: parsed.email,
+          role: "medicalOfficer",
+          source: "mongodb",
+          ...parsed
+        };
+        if (user.photoURL && user.photoURL.startsWith('/uploads')) {
+          user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
+        }
+        return user;
+      } catch (e) {}
+    }
+
+    // 3. Fallback to standard User session
     if (currentUser) {
       const isMongoUser = localStorage.getItem("mongoUser");
       const user = {
@@ -30,49 +71,18 @@ export function AuthProvider({ children }) {
         displayName: currentUser.displayName || currentUser.name || currentUser.email,
         email: currentUser.email,
         emailVerified: currentUser.emailVerified ?? false,
-        role: "user",
+        role: currentUser.role || "user",
         source: isMongoUser ? "mongodb" : "firebase",
         hasPassword: currentUser.hasPassword ?? false,
-        createdAt: currentUser.createdAt || currentUser.metadata?.creationTime || new Date().toISOString(),
         ...currentUser
       };
 
-      // Process photoURL if it's a relative path from our disk storage
       if (user.photoURL && user.photoURL.startsWith('/uploads')) {
         user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
       }
       return user;
     }
-    const adminData = localStorage.getItem("adminData");
-    if (adminData) {
-      try {
-        const parsed = JSON.parse(adminData);
-        return {
-          uid: parsed._id || parsed.id,
-          displayName: parsed.name,
-          email: parsed.email,
-          emailVerified: parsed.emailVerified ?? false,
-          role: "admin",
-          source: "mongodb",
-          ...parsed
-        };
-      } catch (e) {}
-    }
-    const medicalData = localStorage.getItem("medicalOfficerData");
-    if (medicalData) {
-      try {
-        const parsed = JSON.parse(medicalData);
-        return {
-          uid: parsed._id || parsed.id,
-          displayName: parsed.name,
-          email: parsed.email,
-          emailVerified: parsed.emailVerified ?? false,
-          role: "medicalOfficer",
-          source: "mongodb",
-          ...parsed
-        };
-      } catch (e) {}
-    }
+
     return null;
   };
 
@@ -371,6 +381,49 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error('Error fetching user profile:', error);
       throw error;
+    }
+  }
+
+  // Identity Synchronization Utility
+  async function refreshUser() {
+    try {
+      const adminToken = localStorage.getItem('adminToken');
+      const medicalToken = localStorage.getItem('medicalOfficerToken');
+      const userToken = localStorage.getItem('userToken');
+
+      if (adminToken) {
+        const response = await fetch(`${BASE_URL}/admin/auth/profile`, {
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          const updatedAdmin = { ...data.admin, role: 'admin' };
+          localStorage.setItem('adminData', JSON.stringify(updatedAdmin));
+          setCurrentUser(updatedAdmin);
+        }
+      } else if (medicalToken) {
+        const response = await fetch(`${BASE_URL}/medical-officer/auth/profile`, {
+          headers: { 'Authorization': `Bearer ${medicalToken}` }
+        });
+        const data = await response.json();
+        if (data.success) {
+          const updatedMO = { ...data.medicalOfficer, role: 'medicalOfficer' };
+          localStorage.setItem('medicalOfficerData', JSON.stringify(updatedMO));
+          setCurrentUser(updatedMO);
+        }
+      } else if (userToken && localStorage.getItem('mongoUser')) {
+        const user = JSON.parse(localStorage.getItem('mongoUser'));
+        const response = await fetch(`${BASE_URL}/users/${user.uid || user._id}`);
+        const data = await response.json();
+        if (data) {
+          localStorage.setItem('mongoUser', JSON.stringify(data));
+          setCurrentUser(data);
+        }
+      }
+      return true;
+    } catch (error) {
+      console.error('Identity sync failure:', error);
+      return false;
     }
   }
 

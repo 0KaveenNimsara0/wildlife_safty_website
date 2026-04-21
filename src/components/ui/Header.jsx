@@ -8,7 +8,7 @@ import NotificationDropdown from '../notifications/NotificationDropdown';
 export default function Header() {
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { currentUser, logout, googleSignIn, adminLogout, medicalOfficerLogout } = useAuth();
+    const { currentUser, activeUser, logout, googleSignIn, adminLogout, medicalOfficerLogout } = useAuth();
     const navigate = useNavigate();
 
     const navigation = [
@@ -38,28 +38,17 @@ export default function Header() {
 
     // Get user display info and dashboard path
     const getUserInfo = () => {
-        if (currentUser) {
-            return {
-                name: currentUser.displayName || (currentUser.email && currentUser.email.includes('@') ? currentUser.email.split('@')[0] : 'User'),
-                dashboardPath: '/dashboard',
-                avatar: getUserAvatar()
-            };
-        } else if (isAdminLoggedIn()) {
-            const adminData = getAdminData();
-            return {
-                name: adminData?.name || 'Admin',
-                dashboardPath: '/admin/dashboard',
-                avatar: <Shield className="w-4 h-4 text-white" />
-            };
-        } else if (isMedicalOfficerLoggedIn()) {
-            const moData = getMedicalOfficerData();
-            return {
-                name: moData?.name || 'Medical Officer',
-                dashboardPath: '/medical-officer/dashboard',
-                avatar: <User className="w-4 h-4 text-white" />
-            };
-        }
-        return null;
+        if (!activeUser) return null;
+
+        let dashboardPath = '/dashboard';
+        if (activeUser.role === 'admin') dashboardPath = '/admin/dashboard';
+        if (activeUser.role === 'medical_officer') dashboardPath = '/medical-officer/dashboard';
+
+        return {
+            name: activeUser.displayName || activeUser.name || 'Agent',
+            dashboardPath,
+            avatar: getUserAvatar()
+        };
     };
 
     const handleAuth = () => {
@@ -99,45 +88,32 @@ export default function Header() {
 
     // Get user profile picture or default icon
     const getUserAvatar = () => {
-        let photoURL = currentUser?.photoURL;
-        if (photoURL && photoURL.startsWith('/uploads')) {
-            photoURL = `${IMAGE_BASE_URL}${photoURL}`;
-        }
+        if (!activeUser) return <User className="w-4 h-4 text-white" />;
+
+        const photoURL = activeUser.photoURL;
 
         if (photoURL) {
             return (
                 <img 
                     src={photoURL} 
                     alt="Profile" 
-                    className="w-8 h-8 rounded-full object-cover border-2 border-white"
+                    className="w-full h-full object-cover"
                 />
             );
         }
         
-        // Check if user signed in with Google (providerId check)
-        const isGoogleUser = currentUser?.providerData?.some(provider => provider.providerId === 'google.com');
-        
-        if (isGoogleUser) {
-            // Show Google logo for Google-authenticated users without profile pictures
-            return (
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border-2 border-white">
-                    <img 
-                        src="/src/assets/google-icon-logo-svgrepo-com.svg" 
-                        alt="Google" 
-                        className="w-5 h-5"
-                    />
-                </div>
-            );
-        } else if (currentUser?.email) {
-            // Create avatar with user initials
-            const initials = currentUser.email.charAt(0).toUpperCase();
-            return (
-                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold border-2 border-white">
-                    {initials}
-                </div>
-            );
-        }
-        return <User className="w-4 h-4 text-white" />;
+        // Handle Professional Role Icons as fallback
+        if (activeUser.role === 'admin') return <Shield className="w-4 h-4 text-white" />;
+        if (activeUser.role === 'medical_officer') return <User className="w-4 h-4 text-white" />;
+
+        // Create avatar with user initials
+        const name = activeUser.displayName || activeUser.name || activeUser.email || 'U';
+        const initials = name.charAt(0).toUpperCase();
+        return (
+            <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                {initials}
+            </div>
+        );
     };
 
     return (

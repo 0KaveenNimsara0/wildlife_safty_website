@@ -406,7 +406,7 @@ const CommunityFeed = () => {
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-lg shadow-lg overflow-hidden">
                     {post.authorAvatar ? (
-                      <img src={post.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                      <img src={post.authorAvatar.startsWith('/uploads') ? `${IMAGE_BASE_URL}${post.authorAvatar}` : post.authorAvatar} alt="Author" className="w-full h-full object-cover" />
                     ) : (
                       post.authorName?.charAt(0) || 'A'
                     )}
@@ -618,7 +618,20 @@ const CommunityFeed = () => {
                   <Award size={14} />
                   <span>Topic: {popupArticle.category}</span>
                 </div>
-                <h2 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-tight">{popupArticle.title}</h2>
+                <h2 className="text-4xl font-black text-slate-900 tracking-tight uppercase leading-tight mt-2">{popupArticle.title}</h2>
+                <div className="flex items-center gap-4 mt-6">
+                   <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-lg overflow-hidden border-2 border-white shadow-indigo-200">
+                      {popupArticle.author?.photoURL ? (
+                        <img src={popupArticle.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${popupArticle.author.photoURL}` : popupArticle.author.photoURL} alt="Author" className="w-full h-full object-cover" />
+                      ) : (
+                        popupArticle.author?.name?.charAt(0) || 'E'
+                      )}
+                   </div>
+                   <div className="flex flex-col">
+                      <span className="text-sm font-black text-slate-900 uppercase tracking-tight">{popupArticle.author?.name}</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{popupArticle.author?.type?.replace('_', ' ')}</span>
+                   </div>
+                </div>
               </div>
               <button 
                 onClick={closeArticlePopup}
@@ -677,7 +690,7 @@ const CommunityFeed = () => {
               <div className="flex items-center gap-4">
                  <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg overflow-hidden">
                     {selectedPost.authorAvatar ? (
-                      <img src={selectedPost.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                      <img src={selectedPost.authorAvatar.startsWith('/uploads') ? `${IMAGE_BASE_URL}${selectedPost.authorAvatar}` : selectedPost.authorAvatar} alt="Author" className="w-full h-full object-cover" />
                     ) : (
                       selectedPost.authorName?.charAt(0) || 'A'
                     )}

@@ -2,9 +2,16 @@ import React from 'react';
 import { Check } from 'lucide-react';
 import { formatTime } from '../../../utils/formatters';
 
-const MessageBubble = ({ message, isMe, showStatus = true }) => {
+const MessageBubble = ({ message, isMe, avatar, showStatus = true }) => {
   return (
-    <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} group mb-2`}>
+    <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} items-end gap-3 group mb-2`}>
+      {!isMe && (
+        <div className="w-8 h-8 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden shadow-sm border border-slate-50 flex items-center justify-center text-[10px] font-black text-slate-400">
+           {avatar ? (
+             <img src={avatar} alt="Sender" className="w-full h-full object-cover" />
+           ) : 'U'}
+        </div>
+      )}
       <div className={`max-w-[80%] lg:max-w-md relative`}>
         <div className={`px-6 py-4 rounded-3xl shadow-sm text-sm font-medium leading-relaxed ${
           isMe

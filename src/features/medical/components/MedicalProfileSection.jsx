@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../../config/constants';
+import { useAuth } from '../../../context/AuthContext';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import {
   Shield,
   User,
@@ -19,25 +20,29 @@ import {
   Lock,
   RefreshCw,
   CheckCircle2,
-  ArrowLeft
+  ArrowLeft,
+  Camera,
+  Upload
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
 export default function MedicalProfileSection() {
-  const [officerData, setOfficerData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { activeUser, refreshUser } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [securityStep, setSecurityStep] = useState(1); // 1: Request OTP, 2: Perform Change
   const [securityLoading, setSecurityLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
   
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    specialization: '',
-    licenseNumber: '',
-    phoneNumber: '',
-    hospital: ''
+    name: activeUser?.name || activeUser?.displayName || '',
+    email: activeUser?.email || '',
+    specialization: activeUser?.specialization || '',
+    licenseNumber: activeUser?.licenseNumber || '',
+    phoneNumber: activeUser?.phoneNumber || '',
+    hospital: activeUser?.hospital || ''
   });
 
   const [securityFormData, setSecurityFormData] = useState({
@@ -51,41 +56,19 @@ export default function MedicalProfileSection() {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  const fetchProfile = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem('medicalOfficerToken');
-      const response = await fetch(`${BASE_URL}/medical-officer/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
+  // Keep form data in sync with activeUser when mount or activeUser changes
+  React.useEffect(() => {
+    if (activeUser) {
+      setFormData({
+        name: activeUser.name || activeUser.displayName || '',
+        email: activeUser.email || '',
+        specialization: activeUser.specialization || '',
+        licenseNumber: activeUser.licenseNumber || '',
+        phoneNumber: activeUser.phoneNumber || '',
+        hospital: activeUser.hospital || ''
       });
-      
-      if (response.ok) {
-        const data = await response.json();
-        const profile = data.medicalOfficer;
-        setOfficerData(profile);
-        setFormData({
-          name: profile.name || '',
-          email: profile.email || '',
-          specialization: profile.specialization || '',
-          licenseNumber: profile.licenseNumber || '',
-          phoneNumber: profile.phoneNumber || '',
-          hospital: profile.hospital || ''
-        });
-        // Sync localStorage
-        localStorage.setItem('medicalOfficerData', JSON.stringify(profile));
-      } else {
-        setError('Session expired or identity rejected.');
-      }
-    } catch (err) {
-      setError('Communication failure with Medical Terminal');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [activeUser]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -130,8 +113,7 @@ export default function MedicalProfileSection() {
 
       const data = await response.json();
       if (data.success) {
-        setOfficerData(data.medicalOfficer);
-        localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
+        await refreshUser();
         setIsEditing(false);
         setSuccess('Personnel File updated and synchronized successfully');
         setTimeout(() => setSuccess(''), 4000);
@@ -149,6 +131,51 @@ export default function MedicalProfileSection() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload
+    try {
+      setUploading(true);
+      setError('');
+      const token = localStorage.getItem('medicalOfficerToken');
+      const formData = new FormData();
+      formData.append('profilePicture', file);
+
+      const response = await fetch(`${BASE_URL}/medical-officer/auth/profile-picture`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        await refreshUser();
+        setSuccess('Professional avatar synchronized with central terminal.');
+        setTimeout(() => setSuccess(''), 4000);
+        setPreviewUrl(null);
+      } else {
+        setError(data.message || 'Upload failed');
+        setPreviewUrl(null);
+      }
+    } catch (err) {
+      setError('Communication link failure during file transmission');
+      setPreviewUrl(null);
+    } finally {
+      setUploading(false);
+    }
   };
 
   // --- Password Change Logic ---
@@ -238,28 +265,48 @@ export default function MedicalProfileSection() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
            <div className="relative group">
-              <div className="w-32 h-32 rounded-[32px] bg-indigo-600 border-4 border-slate-800 flex items-center justify-center text-4xl font-black shadow-2xl overflow-hidden shadow-indigo-600/20">
-                 {officerData?.name?.charAt(0).toUpperCase() || 'D'}
+              <div className="w-32 h-32 rounded-[32px] bg-indigo-600 border-4 border-slate-800 flex items-center justify-center text-4xl font-black shadow-2xl overflow-hidden shadow-indigo-600/20 relative">
+                 {previewUrl || (activeUser?.photoURL) ? (
+                   <img 
+                    src={previewUrl || activeUser.photoURL} 
+                    alt="Profile" 
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${uploading ? 'opacity-40' : 'opacity-100'}`}
+                   />
+                 ) : (
+                   activeUser?.name?.charAt(0).toUpperCase() || 'D'
+                 )}
+                 {uploading && (
+                   <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40">
+                      <RefreshCw size={24} className="text-white animate-spin" />
+                   </div>
+                 )}
               </div>
-              <div className="absolute -bottom-2 -right-2 p-2.5 bg-indigo-500 rounded-2xl border-4 border-slate-900 shadow-lg">
-                 <Stethoscope size={16} className="text-white" />
-              </div>
+              <label className="absolute -bottom-2 -right-2 p-2.5 bg-indigo-500 rounded-2xl border-4 border-slate-900 shadow-lg cursor-pointer hover:bg-slate-900 hover:scale-110 transition-all active:scale-95 group-hover:shadow-indigo-500/40">
+                 <Camera size={16} className="text-white" />
+                 <input 
+                  type="file" 
+                  className="hidden" 
+                  accept="image/*" 
+                  onChange={handleFileUpload}
+                  disabled={uploading}
+                 />
+              </label>
            </div>
-           <div className="text-center md:text-left">
+            <div className="text-center md:text-left">
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-                 <h1 className="text-4xl font-black tracking-tight text-white uppercase">{officerData?.name || 'Medical Officer'}</h1>
+                 <h1 className="text-4xl font-black tracking-tight text-white uppercase">{activeUser?.name || activeUser?.displayName || 'Medical Officer'}</h1>
                  <div className="px-4 py-1.5 bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">Verified Member</span>
                  </div>
               </div>
-              <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{officerData?.specialization || 'General Practice Specialist'}</p>
+              <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{activeUser?.specialization || 'General Practice Specialist'}</p>
               
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                    <FileText size={14} className="text-indigo-400" /> License: <span className="text-white">{officerData?.licenseNumber || 'Pending'}</span>
+                    <FileText size={14} className="text-indigo-400" /> License: <span className="text-white">{activeUser?.licenseNumber || 'Pending'}</span>
                  </div>
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                    <ShieldCheck size={14} className="text-emerald-400" /> Operational Status: <span className="text-emerald-400 uppercase">{officerData?.isApproved ? 'ACTIVE' : 'PENDING'}</span>
+                    <ShieldCheck size={14} className="text-emerald-400" /> Operational Status: <span className="text-emerald-400 uppercase">{activeUser?.isApproved ? 'ACTIVE' : 'PENDING'}</span>
                  </div>
               </div>
            </div>
@@ -297,7 +344,17 @@ export default function MedicalProfileSection() {
                 Save Changes
               </button>
               <button
-                onClick={handleCancel}
+                onClick={() => {
+                  setIsEditing(false);
+                  setFormData({
+                    name: activeUser?.name || activeUser?.displayName || '',
+                    email: activeUser?.email || '',
+                    specialization: activeUser?.specialization || '',
+                    licenseNumber: activeUser?.licenseNumber || '',
+                    phoneNumber: activeUser?.phoneNumber || '',
+                    hospital: activeUser?.hospital || ''
+                  });
+                }}
                 className="flex items-center gap-3 px-8 py-4 bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-95"
               >
                 <X size={16} />

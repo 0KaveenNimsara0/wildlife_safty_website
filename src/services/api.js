@@ -52,4 +52,13 @@ export const notificationApi = {
   deleteNotification: (id) => api.delete(`/notifications/${id}`),
 };
 
+// Medical Officer API
+export const medicalOfficerApi = {
+  getProfile: () => api.get('/medical-officer/profile'),
+  updateProfile: (data) => api.put('/medical-officer/profile', data),
+  uploadProfilePicture: (formData) => api.post('/medical-officer/profile-picture', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+};
+
 export default api;
