@@ -9,7 +9,8 @@ import {
   Activity,
   User,
   Settings,
-  X
+  X,
+  Bell
 } from 'lucide-react';
 
 const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
@@ -20,6 +21,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Check Discoveries', path: '/medical-officer/predictions', icon: Activity },
     { name: 'Messages', path: '/medical-officer/chat', icon: MessageSquare },
     { name: 'Articles', path: '/medical-officer/articles', icon: FileText },
+    { name: 'Notifications', path: '/medical-officer/notifications', icon: Bell },
   ];
 
   const handleLogout = () => {
