@@ -42,7 +42,7 @@ export default function Header() {
 
         let dashboardPath = '/dashboard';
         if (activeUser.role === 'admin') dashboardPath = '/admin/dashboard';
-        if (activeUser.role === 'medical_officer') dashboardPath = '/medical-officer/dashboard';
+        if (activeUser.role === 'medicalOfficer') dashboardPath = '/medical-officer/dashboard';
 
         return {
             name: activeUser.displayName || activeUser.name || 'Agent',
@@ -104,7 +104,7 @@ export default function Header() {
         
         // Handle Professional Role Icons as fallback
         if (activeUser.role === 'admin') return <Shield className="w-4 h-4 text-white" />;
-        if (activeUser.role === 'medical_officer') return <User className="w-4 h-4 text-white" />;
+        if (activeUser.role === 'medicalOfficer') return <User className="w-4 h-4 text-white" />;
 
         // Create avatar with user initials
         const name = activeUser.displayName || activeUser.name || activeUser.email || 'U';

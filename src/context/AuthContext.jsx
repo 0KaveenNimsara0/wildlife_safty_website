@@ -21,6 +21,40 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeUser, setActiveUser] = useState(() => {
+    // Eagerly read from localStorage on first render so profile photos
+    // are available immediately for medical officers and admins
+    const applyPhotoURL = (parsed) => {
+      if (parsed?.photoURL && parsed.photoURL.startsWith('/uploads')) {
+        parsed.photoURL = `${IMAGE_BASE_URL}${parsed.photoURL}`;
+      }
+      return parsed;
+    };
+    try {
+      const adminData = localStorage.getItem('adminData');
+      if (adminData) {
+        const parsed = JSON.parse(adminData);
+        parsed.uid = parsed._id || parsed.id || parsed.uid;
+        parsed.role = 'admin';
+        return applyPhotoURL(parsed);
+      }
+      const medicalData = localStorage.getItem('medicalOfficerData');
+      if (medicalData) {
+        const parsed = JSON.parse(medicalData);
+        parsed.uid = parsed._id || parsed.id || parsed.uid;
+        parsed.displayName = parsed.name || parsed.displayName;
+        parsed.role = 'medicalOfficer';
+        return applyPhotoURL(parsed);
+      }
+      const mongoUser = localStorage.getItem('mongoUser');
+      if (mongoUser) {
+        const parsed = JSON.parse(mongoUser);
+        parsed.uid = parsed._id || parsed.id || parsed.uid;
+        return applyPhotoURL(parsed);
+      }
+    } catch (e) {}
+    return null;
+  });
 
   const getActiveUser = () => {
     // 1. Check for Admin persistence
@@ -280,14 +314,34 @@ export function AuthProvider({ children }) {
       if (!active || !active.uid) return;
 
       let endpoint = `/users/${active.uid}`;
-      if (active.role === 'admin') endpoint = `/admin/users/${active.uid}`;
-      else if (active.role === 'medicalOfficer') endpoint = `/medical-officer/auth/profile`; // Generic profile uses token
+      let headers = {};
 
-      const response = await fetch(`${BASE_URL}${endpoint}`);
+      if (active.role === 'admin') {
+        endpoint = `/admin/users/${active.uid}`;
+        const token = localStorage.getItem('adminToken');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      } else if (active.role === 'medicalOfficer') {
+        endpoint = `/medical-officer/auth/profile`;
+        const token = localStorage.getItem('medicalOfficerToken');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      } else {
+        const token = localStorage.getItem('userToken');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${BASE_URL}${endpoint}`, { headers });
       if (!response.ok) throw new Error('Identity synchronization failed');
       
       const data = await response.json();
-      const updatedData = data.user || data;
+      // Extract the actual user data based on the response shape of each endpoint
+      let updatedData;
+      if (active.role === 'medicalOfficer') {
+        updatedData = data.medicalOfficer || data.user || data;
+      } else if (active.role === 'admin') {
+        updatedData = data.admin || data.user || data;
+      } else {
+        updatedData = data.user || data;
+      }
 
       if (active.role === "admin") {
         localStorage.setItem("adminData", JSON.stringify(updatedData));
@@ -297,6 +351,9 @@ export function AuthProvider({ children }) {
         localStorage.setItem("mongoUser", JSON.stringify(updatedData));
         setCurrentUser(updatedData);
       }
+
+      // Trigger activeUser sync
+      syncActiveUser();
       
       return updatedData;
     } catch (error) {
@@ -452,6 +509,7 @@ export function AuthProvider({ children }) {
       // Store admin token and data
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('adminData', JSON.stringify(data.admin));
+      setTimeout(() => syncActiveUser(), 0);
 
       return data;
     } catch (error) {
@@ -583,6 +641,8 @@ export function AuthProvider({ children }) {
       // Store medical officer token and data
       localStorage.setItem('medicalOfficerToken', data.token);
       localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
+      // Trigger reactive activeUser update
+      setTimeout(() => syncActiveUser(), 0);
 
       return data;
     } catch (error) {
@@ -621,6 +681,7 @@ export function AuthProvider({ children }) {
   async function medicalOfficerLogout() {
     localStorage.removeItem('medicalOfficerToken');
     localStorage.removeItem('medicalOfficerData');
+    setTimeout(() => syncActiveUser(), 0);
   }
 
   useEffect(() => {
@@ -666,9 +727,25 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
+  // Sync activeUser reactively whenever currentUser or localStorage changes
+  const syncActiveUser = () => {
+    setActiveUser(getActiveUser());
+  };
+
+  useEffect(() => {
+    syncActiveUser();
+  }, [currentUser]);
+
+  // Listen for localStorage changes from other tabs or explicit updates
+  useEffect(() => {
+    const handleStorage = () => syncActiveUser();
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
   const value = {
     currentUser,
-    activeUser: getActiveUser(),
+    activeUser,
     login: mongoLogin,
     signup: mongoSignup,
     logout,
@@ -704,4 +781,6 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+
 

@@ -406,7 +406,12 @@ const CommunityFeed = () => {
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-lg shadow-lg overflow-hidden">
                     {post.authorAvatar ? (
-                      <img src={post.authorAvatar.startsWith('/uploads') ? `${IMAGE_BASE_URL}${post.authorAvatar}` : post.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                      <img 
+                        src={post.authorAvatar.startsWith('http') ? post.authorAvatar : `${IMAGE_BASE_URL}${post.authorAvatar}`} 
+                        alt={post.authorName?.charAt(0) || 'A'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display='none'; e.target.parentNode.innerText = post.authorName?.charAt(0) || 'A'; }}
+                      />
                     ) : (
                       post.authorName?.charAt(0) || 'A'
                     )}
@@ -690,7 +695,12 @@ const CommunityFeed = () => {
               <div className="flex items-center gap-4">
                  <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg overflow-hidden">
                     {selectedPost.authorAvatar ? (
-                      <img src={selectedPost.authorAvatar.startsWith('/uploads') ? `${IMAGE_BASE_URL}${selectedPost.authorAvatar}` : selectedPost.authorAvatar} alt="Author" className="w-full h-full object-cover" />
+                      <img 
+                        src={selectedPost.authorAvatar.startsWith('http') ? selectedPost.authorAvatar : `${IMAGE_BASE_URL}${selectedPost.authorAvatar}`} 
+                        alt={selectedPost.authorName?.charAt(0) || 'A'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.style.display='none'; e.target.parentNode.innerText = selectedPost.authorName?.charAt(0) || 'A'; }}
+                      />
                     ) : (
                       selectedPost.authorName?.charAt(0) || 'A'
                     )}
