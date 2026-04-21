@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Outlet, Link } from 'react-router-dom';
 import { 
   Menu, 
   Activity,
@@ -8,16 +8,49 @@ import {
   Scan
 } from 'lucide-react';
 import MedicalOfficerSidebar from '../features/medical/components/MedicalOfficerSidebar';
+import { BASE_URL } from '../config/constants';
 
 export default function MedicalOfficerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const location = useLocation();
+
+  const fetchUnreadCount = async () => {
+    try {
+      const token = localStorage.getItem('medicalOfficerToken');
+      if (!token) return;
+
+      const response = await fetch(`${BASE_URL}/medical-officer/notifications/unread-count`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUnreadCount(data.unreadCount);
+      }
+    } catch (err) {
+      console.error('Failed to sync notification tally:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnreadCount();
+    // Refresh every 2 minutes
+    const interval = setInterval(fetchUnreadCount, 120000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Refresh when navigating (to sync if read on another page)
+  useEffect(() => {
+    fetchUnreadCount();
+  }, [location.pathname]);
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard' },
     { name: 'Identification Oversight', path: '/medical-officer/predictions' },
     { name: 'Message Center', path: '/medical-officer/chat' },
     { name: 'Medical Knowledge', path: '/medical-officer/articles' },
+    { name: 'Intelligence', path: '/medical-officer/notifications' },
+    { name: 'Profile Settings', path: '/medical-officer/profile' },
   ];
 
   const activeItem = menuItems.find(item => location.pathname === item.path) || menuItems[0];
@@ -54,10 +87,17 @@ export default function MedicalOfficerLayout() {
                </div>
 
                <div className="flex items-center gap-3">
-                  <button className="p-2.5 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all relative">
+                  <Link 
+                    to="/medical-officer/notifications"
+                    className="p-2.5 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all relative"
+                  >
                      <Bell size={18} />
-                     <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 border-2 border-white" />
-                  </button>
+                     {unreadCount > 0 && (
+                       <div className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-rose-500 border-2 border-white text-[9px] font-black text-white px-1 shadow-sm">
+                         {unreadCount > 9 ? '9+' : unreadCount}
+                       </div>
+                     )}
+                  </Link>
                   
                   <div className="h-8 w-px bg-slate-200 mx-2" />
                   

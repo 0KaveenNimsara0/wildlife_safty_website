@@ -54,7 +54,7 @@ const PredictionHistorySection = () => {
         return (
             <div className="flex flex-col items-center justify-center py-20 space-y-4">
                 <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Accessing Archives...</p>
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Loading History...</p>
             </div>
         );
     }
@@ -150,7 +150,7 @@ const PredictionHistorySection = () => {
                                         className="flex-1 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
                                     >
                                         <Eye size={14} />
-                                        Full Report
+                                        View Report
                                     </button>
                                     <button 
                                         onClick={() => handleDelete(item._id)}
@@ -194,7 +194,7 @@ const PredictionHistorySection = () => {
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-8 lg:p-16 space-y-10">
                             <div className="hidden lg:block space-y-2">
                                 <div className="flex flex-col">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-2">Detailed Biometric Profile</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-2">Animal Details</span>
                                     <h2 className="text-5xl font-black text-slate-900 tracking-tighter leading-tight">{selectedPrediction.commonName}</h2>
                                 </div>
                                 <p className="text-xl font-bold text-emerald-600/70 italic">{selectedPrediction.scientificName}</p>
@@ -228,7 +228,7 @@ const PredictionHistorySection = () => {
                             <div className="space-y-6">
                                 <div className="flex items-center gap-3 text-slate-900 font-bold uppercase tracking-widest text-[11px] pb-4 border-b border-slate-100">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
-                                    <span>Ecological Insight</span>
+                                    <span>About this Animal</span>
                                 </div>
                                 <div className="relative">
                                     <p className="text-slate-600 leading-relaxed font-semibold italic text-lg pr-4">
@@ -253,7 +253,7 @@ const PredictionHistorySection = () => {
                                             <div className="absolute inset-0 bg-white/20 animate-pulse" />
                                         </div>
                                     </div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6 opacity-60">Result verified via Neural Network Core V2.0</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-6 opacity-60">System Accuracy Score</p>
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { Menu, Award, ArrowLeft, Globe } from 'lucide-react';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 
@@ -32,6 +32,8 @@ const Dashboard = () => {
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const isArticleView = location.pathname.includes('/dashboard/articles/');
 
   const handleLogout = async () => {
     try {
@@ -99,42 +101,48 @@ const Dashboard = () => {
             <div className="card-premium p-10 bg-white shadow-2xl relative overflow-hidden min-h-[600px]">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full opacity-50 -mr-16 -mt-16" />
               
-              {activeTab === 'profile' && (
-                <ProfileSection 
-                  activeUser={activeUser}
-                  updateEmail={updateEmail}
-                  updateUserProfile={updateUserProfile}
-                  sendEmailVerification={sendEmailVerification}
-                  verifyEmail={verifyEmail}
-                  uploadProfilePicture={uploadProfilePicture}
-                  refreshUser={refreshUser}
-                  setSuccess={setSuccess}
-                  setError={setError}
-                />
-              )}
+              {isArticleView ? (
+                <Outlet />
+              ) : (
+                <>
+                  {activeTab === 'profile' && (
+                    <ProfileSection 
+                      activeUser={activeUser}
+                      updateEmail={updateEmail}
+                      updateUserProfile={updateUserProfile}
+                      sendEmailVerification={sendEmailVerification}
+                      verifyEmail={verifyEmail}
+                      uploadProfilePicture={uploadProfilePicture}
+                      refreshUser={refreshUser}
+                      setSuccess={setSuccess}
+                      setError={setError}
+                    />
+                  )}
 
-              {activeTab === 'security' && (
-                <SecuritySection 
-                  updatePassword={updatePassword}
-                  setSuccess={setSuccess}
-                  setError={setError}
-                />
-              )}
+                  {activeTab === 'security' && (
+                    <SecuritySection 
+                      updatePassword={updatePassword}
+                      setSuccess={setSuccess}
+                      setError={setError}
+                    />
+                  )}
 
-              {activeTab === 'history' && (
-                <PredictionHistorySection />
-              )}
+                  {activeTab === 'history' && (
+                    <PredictionHistorySection />
+                  )}
 
-              {activeTab === 'activity' && (
-                <ActivitySection userId={currentUser?.uid} />
-              )}
+                  {activeTab === 'activity' && (
+                    <ActivitySection userId={currentUser?.uid} />
+                  )}
 
-              {activeTab === 'articles' && (
-                <SavedArticlesSection />
-              )}
+                  {activeTab === 'articles' && (
+                    <SavedArticlesSection />
+                  )}
 
-              {activeTab === 'notifications' && (
-                <NotificationSection />
+                  {activeTab === 'notifications' && (
+                    <NotificationSection />
+                  )}
+                </>
               )}
             </div>
           </div>

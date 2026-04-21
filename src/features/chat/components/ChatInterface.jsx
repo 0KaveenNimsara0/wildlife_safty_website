@@ -98,7 +98,7 @@ const ChatInterface = ({
         <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center gap-3 overflow-x-auto no-scrollbar">
            <div className="flex items-center gap-1.5 mr-2">
               <div className="w-1 h-1 rounded-full bg-slate-300" />
-              <p className="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap">Admin Nodes</p>
+              <p className="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap">Admin Support</p>
            </div>
            {admins.filter(a => a && a._id).map(admin => (
              <button
@@ -135,16 +135,16 @@ const ChatInterface = ({
               {participant?.name || 'Awaiting Selection...'}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
-               <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border italic ${participant ? 'text-indigo-600 bg-indigo-50 border-indigo-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
-                  {participant ? (selectedAdminId ? 'Admin Node' : 'Active Connection') : 'Standby Mode'}
-               </span>
+                <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border italic ${participant ? 'text-indigo-600 bg-indigo-50 border-indigo-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
+                   {participant ? (selectedAdminId ? 'Admin Support' : 'Messaging') : 'Selecting Contact...'}
+                </span>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex flex-col items-end mr-2">
-             <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Secured Channel</p>
-             <p className="text-[8px] font-bold text-slate-400 uppercase">Latency: <span className="text-emerald-400">Low</span></p>
+             <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Privacy Protected</p>
+             <p className="text-[8px] font-bold text-slate-400 uppercase">Connection: <span className="text-emerald-400">Stable</span></p>
           </div>
           <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-indigo-500 transition-colors cursor-pointer border border-slate-100">
              <Shield size={18} />
@@ -191,8 +191,8 @@ const ChatInterface = ({
           <div className="h-full flex flex-col items-center justify-center opacity-30 space-y-4">
             <MessageSquare size={64} className="text-slate-200" />
             <div className="text-center">
-               <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Encrypted Channel Established</h3>
-               <p className="text-[8px] font-bold text-slate-300 uppercase mt-2">Waiting for data transmission...</p>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Conversation Active</h3>
+                <p className="text-[8px] font-bold text-slate-300 uppercase mt-2">Type a message to start the conversation.</p>
             </div>
           </div>
         )}
@@ -231,12 +231,13 @@ const ChatInterface = ({
       <ChatInput 
         onSendMessage={onSendMessage} 
         loading={loading} 
-        placeholder={`Transmission: ${participant?.name?.split(' ')[0] || 'Node'}...`} 
+        placeholder={`Message: ${participant?.name?.split(' ')[0] || 'User'}...`} 
       />
     </div>
   );
 };
 
 export default ChatInterface;
+
 
 

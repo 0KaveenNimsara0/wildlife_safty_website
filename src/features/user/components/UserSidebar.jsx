@@ -47,10 +47,10 @@ const UserSidebar = ({
   }, [activeUser]);
 
   const menuItems = [
-    { id: 'profile', label: 'Profile Settings', icon: User },
-    { id: 'security', label: 'Security & Password', icon: Shield },
-    { id: 'history', label: 'Identification History', icon: Search },
-    { id: 'articles', label: 'My Articles', icon: BookOpen },
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'history', label: 'My History', icon: Search },
+    { id: 'articles', label: 'Saved Articles', icon: BookOpen },
     { id: 'activity', label: 'Activity Log', icon: Activity },
     { id: 'notifications', label: 'Notifications', icon: Bell, badge: unreadCount }
   ];

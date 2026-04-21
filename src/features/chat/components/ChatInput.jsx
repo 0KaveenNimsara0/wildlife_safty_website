@@ -37,7 +37,7 @@ const ChatInput = ({ onSendMessage, loading, placeholder = "Type a message..." }
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
             <>
-              <span>Send Intel</span>
+              <span>Send Message</span>
               <Send size={14} />
             </>
           )}
