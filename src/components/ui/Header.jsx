@@ -3,6 +3,7 @@ import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, 
 import { useAuth } from '../../context/AuthContext';
 import { IMAGE_BASE_URL } from '../../config/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
+import NotificationDropdown from '../notifications/NotificationDropdown';
 
 export default function Header() {
     const location = useLocation();
@@ -198,8 +199,14 @@ export default function Header() {
                     </div>
 
                     {/* Action Section */}
-                    <div className="hidden md:flex items-center space-x-4">
-                        <div className="h-8 w-[1px] bg-slate-200/60 mx-2" />
+                    <div class="hidden md:flex items-center space-x-4">
+                        <div class="h-8 w-[1px] bg-slate-200/60 mx-2" />
+                        
+                        {isAnyUserLoggedIn() && (
+                            <NotificationDropdown 
+                                role={isAdminLoggedIn() ? 'admin' : (isMedicalOfficerLoggedIn() ? 'medical' : 'user')} 
+                            />
+                        )}
                         
                         {isAnyUserLoggedIn() ? (
                             <div className="flex items-center space-x-3">

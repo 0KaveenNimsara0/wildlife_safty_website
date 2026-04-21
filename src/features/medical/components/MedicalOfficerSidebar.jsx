@@ -117,7 +117,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden group">
               <div className="relative z-10 text-center">
                 <p className="text-[10px] font-bold text-slate-300 mb-1">System Version</p>
-                <p className="text-[9px] font-medium text-slate-500">Node Release 4.2.0v</p>
+                <p className="text-[9px] font-medium text-slate-500">Node Release 0.0.1v</p>
               </div>
             </div>
           </div>

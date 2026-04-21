@@ -9,40 +9,10 @@ import {
 } from 'lucide-react';
 import MedicalOfficerSidebar from '../features/medical/components/MedicalOfficerSidebar';
 import { BASE_URL } from '../config/constants';
+import NotificationDropdown from '../components/notifications/NotificationDropdown';
 
 export default function MedicalOfficerLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const location = useLocation();
-
-  const fetchUnreadCount = async () => {
-    try {
-      const token = localStorage.getItem('medicalOfficerToken');
-      if (!token) return;
-
-      const response = await fetch(`${BASE_URL}/medical-officer/notifications/unread-count`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await response.json();
-      if (data.success) {
-        setUnreadCount(data.unreadCount);
-      }
-    } catch (err) {
-      console.error('Failed to sync notification tally:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchUnreadCount();
-    // Refresh every 2 minutes
-    const interval = setInterval(fetchUnreadCount, 120000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Refresh when navigating (to sync if read on another page)
-  useEffect(() => {
-    fetchUnreadCount();
-  }, [location.pathname]);
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard' },
@@ -56,11 +26,11 @@ export default function MedicalOfficerLayout() {
   const activeItem = menuItems.find(item => location.pathname === item.path) || menuItems[0];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 flex h-screen overflow-hidden">
       <MedicalOfficerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col lg:pl-0">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Clean Professional Header */}
         <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between z-30 flex-shrink-0">
            <div className="flex items-center gap-6">
@@ -86,18 +56,8 @@ export default function MedicalOfficerLayout() {
                   </div>
                </div>
 
-               <div className="flex items-center gap-3">
-                  <Link 
-                    to="/medical-officer/notifications"
-                    className="p-2.5 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all relative"
-                  >
-                     <Bell size={18} />
-                     {unreadCount > 0 && (
-                       <div className="absolute top-1.5 right-1.5 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-rose-500 border-2 border-white text-[9px] font-black text-white px-1 shadow-sm">
-                         {unreadCount > 9 ? '9+' : unreadCount}
-                       </div>
-                     )}
-                  </Link>
+                <div className="flex items-center gap-3">
+                   <NotificationDropdown role="medical" />
                   
                   <div className="h-8 w-px bg-slate-200 mx-2" />
                   

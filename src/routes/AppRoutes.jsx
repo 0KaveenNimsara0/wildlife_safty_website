@@ -18,6 +18,7 @@ import CommunityFeed from '../pages/user/CommunityFeed';
 import ArticleSelection from '../pages/user/ArticleSelection';
 import UserPosts from '../pages/user/UserPosts';
 import Chat from '../pages/user/Chat';
+import NotificationsPage from '../pages/NotificationsPage';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -44,7 +45,6 @@ import MedicalOverviewSection from '../features/medical/components/MedicalOvervi
 import ConsultationsSection from '../features/medical/components/ConsultationsSection';
 import MedicalArticleSection from '../features/medical/components/MedicalArticleSection';
 import MedicalProfileSection from '../features/medical/components/MedicalProfileSection';
-import MedicalNotificationSection from '../features/medical/components/MedicalNotificationSection';
 import MedicalArticleCreate from '../features/medical/components/MedicalOfficerArticleCreatePage';
 import MedicalArticleEdit from '../features/medical/components/MedicalOfficerArticleEditPage';
 import MedicalPredictionOversight from '../features/medical/components/MedicalPredictionOversight';
@@ -68,6 +68,7 @@ export default function AppRoutes() {
         <Route path="/article-selection" element={<ArticleSelection />} />
         <Route path="/my-posts" element={<UserPosts />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         
       </Route>
       
@@ -101,6 +102,7 @@ export default function AppRoutes() {
         <Route path="chat/officer/:officerId" element={<AdminMedicalChatSection />} />
         <Route path="articles" element={<AdminArticleSection />} />
         <Route path="profile" element={<AdminProfileSection />} />
+        <Route path="notifications" element={<NotificationsPage />} />
       </Route>
 
       {/* Medical Officer Portal Layer - Wrapped in MedicalOfficerLayout */}
@@ -110,7 +112,7 @@ export default function AppRoutes() {
         <Route path="predictions" element={<MedicalPredictionOversight />} />
         <Route path="chat" element={<ConsultationsSection />} />
         <Route path="profile" element={<MedicalProfileSection />} />
-        <Route path="notifications" element={<MedicalNotificationSection />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route path="articles" element={<MedicalArticleSection />} />
         <Route path="articles/:articleId" element={<MedicalOfficerArticleViewPage />} />
         <Route path="articles/create" element={<MedicalArticleCreate />} />

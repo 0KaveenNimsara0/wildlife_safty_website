@@ -10,7 +10,8 @@ import {
   LogOut, 
   X,
   ShieldCheck,
-  History
+  History,
+  Bell
 } from 'lucide-react';
 
 export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
@@ -39,6 +40,7 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'System Audit Logs', icon: History, path: '/admin/audit' },
     { name: 'Communications', icon: MessageSquare, path: '/admin/chat' },
     { name: 'Medical Officer Articles', icon: FileText, path: '/admin/articles' },
+    { name: 'Intelligence Grid', icon: Bell, path: '/admin/notifications' },
     { name: 'Personnel Profile', icon: Shield, path: '/admin/profile' },
   ];
 

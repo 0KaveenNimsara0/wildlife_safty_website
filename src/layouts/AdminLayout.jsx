@@ -8,6 +8,7 @@ import {
   Search
 } from 'lucide-react';
 import AdminSidebar from '../features/admin/components/AdminSidebar';
+import NotificationDropdown from '../components/notifications/NotificationDropdown';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,9 +58,7 @@ export default function AdminLayout() {
                </div>
 
                <div className="flex items-center gap-2">
-                  <button className="p-2.5 rounded-xl bg-white text-slate-400 hover:text-emerald-500 border border-slate-100 shadow-sm transition-all active:scale-90">
-                     <Bell size={18} />
-                  </button>
+                  <NotificationDropdown role="admin" />
                   <button className="p-2.5 rounded-xl bg-slate-900 text-white shadow-lg shadow-emerald-900/20 transition-all active:scale-95 flex items-center gap-2">
                      <Search size={18} />
                      <span className="hidden lg:inline text-[9px] font-black tracking-widest uppercase px-1">Global Scan</span>
