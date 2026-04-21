@@ -44,7 +44,7 @@ export default function MedicalArticleSection() {
         setArticles(data.articles || []);
       }
     } catch (err) {
-      setError('Failed to sync intelligence database');
+      setError('Failed to load articles');
     } finally {
       setLoading(false);
     }
@@ -59,15 +59,15 @@ export default function MedicalArticleSection() {
     <div className="space-y-10 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-           <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">Intel <span className="text-indigo-600">Hub</span></h1>
-           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-1">Field Research & Medical Guidelines</p>
+           <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">Article <span className="text-indigo-600">Hub</span></h1>
+           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-1">Medical Research & Help Guides</p>
         </div>
 
         <div className="flex items-center gap-4">
            <div className="flex bg-slate-100 p-1.5 rounded-2xl shadow-inner border border-slate-200">
               {[
-                { id: 'all', label: 'Global Feed' },
-                { id: 'my', label: 'My Research' }
+                { id: 'all', label: 'All Articles' },
+                { id: 'my', label: 'My Articles' }
               ].map(tab => (
                 <button
                    key={tab.id}
@@ -84,7 +84,7 @@ export default function MedicalArticleSection() {
              className="px-6 py-4 bg-indigo-600 text-white rounded-2xl flex items-center gap-3 shadow-xl shadow-indigo-900/10 hover:bg-indigo-500 transition-all active:scale-95 group"
            >
              <Plus size={18} />
-             <span className="text-[10px] font-black uppercase tracking-widest">New Intel</span>
+             <span className="text-[10px] font-black uppercase tracking-widest">Add Article</span>
            </button>
         </div>
       </div>
@@ -92,7 +92,7 @@ export default function MedicalArticleSection() {
       {loading ? (
         <div className="py-32 flex flex-col items-center justify-center space-y-4 opacity-30">
            <div className="w-10 h-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
-           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Scanning Secured Nodes...</p>
+           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Loading Articles...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -106,20 +106,29 @@ export default function MedicalArticleSection() {
                         <FileText size={48} className="text-white opacity-20" />
                      </div>
                    )}
-                   <div className="absolute top-5 left-5">
-                      <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-900 shadow-sm border border-white/20">
-                         {article.category || 'GUIDELINE'}
-                      </span>
-                   </div>
+                    <div className="absolute top-5 left-5">
+                       <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-900 shadow-sm border border-white/20">
+                          {article.category || 'GUIDELINE'}
+                       </span>
+                    </div>
                 </div>
                 
                 <div className="p-8">
-                   <div className="flex items-center gap-2 mb-4">
-                      <Clock size={12} className="text-slate-300" />
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                         {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                      </span>
-                   </div>
+                    <div className="flex items-center justify-between mb-4">
+                       <div className="flex items-center gap-2">
+                          <Clock size={12} className="text-slate-300" />
+                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                             {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </span>
+                       </div>
+                       <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${
+                         article.status === 'published' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                         article.status === 'pending_review' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
+                         article.status === 'draft' ? 'bg-slate-50 text-slate-500 border border-slate-100' : 'bg-rose-50 text-rose-600 border border-rose-100'
+                       }`}>
+                         {article.status?.replace('_', ' ')}
+                       </span>
+                    </div>
                    
                    <h3 className="text-lg font-black text-slate-900 leading-tight mb-4 group-hover:text-indigo-600 transition-colors line-clamp-2 uppercase">
                       {article.title}
@@ -161,8 +170,8 @@ export default function MedicalArticleSection() {
            {articles.length === 0 && (
              <div className="col-span-full py-32 text-center opacity-30 select-none">
                 <ShieldAlert size={64} className="mx-auto mb-6 text-slate-300" />
-                <h3 className="text-2xl font-black uppercase tracking-tight text-slate-800">No Intelligence Logged</h3>
-                <p className="text-xs font-bold uppercase tracking-widest mt-2">{activeTab === 'my' ? 'Initiate your first research mission' : 'Awaiting data synchronization from field nodes'}</p>
+                <h3 className="text-2xl font-black uppercase tracking-tight text-slate-800">No Articles Found</h3>
+                <p className="text-xs font-bold uppercase tracking-widest mt-2">{activeTab === 'my' ? 'Write your first article to share knowledge' : 'There are no published articles to show right now'}</p>
              </div>
            )}
         </div>
@@ -174,11 +183,11 @@ export default function MedicalArticleSection() {
         onClose={() => setIsPreviewOpen(false)}
         actionButton={
           <button 
-            onClick={() => window.open(`/articles/${selectedArticle?._id}`, '_blank')}
+            onClick={() => { setIsPreviewOpen(false); navigate(`/medical-officer/articles/${selectedArticle?._id}`); }}
             className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
           >
             <ExternalLink size={14} />
-            Study Publication
+            Read Full Article
           </button>
         }
       />

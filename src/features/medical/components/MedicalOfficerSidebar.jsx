@@ -17,9 +17,9 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard', icon: LayoutDashboard },
-    { name: 'Identification Oversight', path: '/medical-officer/predictions', icon: Activity },
-    { name: 'Message Center', path: '/medical-officer/chat', icon: MessageSquare },
-    { name: 'Medical Knowledge', path: '/medical-officer/articles', icon: FileText },
+    { name: 'Check Discoveries', path: '/medical-officer/predictions', icon: Activity },
+    { name: 'Messages', path: '/medical-officer/chat', icon: MessageSquare },
+    { name: 'Articles', path: '/medical-officer/articles', icon: FileText },
   ];
 
   const handleLogout = () => {
@@ -52,7 +52,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </div>
               <div>
                 <h1 className="text-sm font-bold tracking-wider uppercase">Medical Portal</h1>
-                <p className="text-[9px] font-medium text-slate-400 uppercase tracking-widest mt-0.5">Professional Suite</p>
+                <p className="text-[9px] font-medium text-slate-400 uppercase tracking-widest mt-0.5">Account Dashboard</p>
               </div>
             </div>
             <button 
@@ -98,7 +98,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
               `}
             >
               <User size={18} />
-              <span className="text-xs font-semibold">My Profile</span>
+              <span className="text-xs font-semibold">Profile</span>
             </NavLink>
 
             <button
@@ -106,7 +106,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                className="w-full flex items-center gap-4 px-5 py-3.5 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/5 transition-all duration-200 mt-auto"
             >
                <LogOut size={18} />
-               <span className="text-xs font-semibold">Sign Out</span>
+               <span className="text-xs font-semibold">Logout</span>
             </button>
           </nav>
 
