@@ -223,22 +223,43 @@ export default function AdminArticleSection() {
                  </div>
               </div>
 
-              <div className="prose prose-slate max-w-none">
-                 <p className="text-2xl text-slate-500 font-medium leading-relaxed italic border-l-4 border-emerald-500 pl-10 py-4 bg-slate-50/50 rounded-r-3xl">
-                    "{selectedArticle.excerpt || selectedArticle.content?.substring(0, 200)}..."
-                 </p>
-                 
-                 {selectedArticle.image_url && (
-                    <div className="my-16 rounded-[2.5rem] overflow-hidden border-8 border-slate-50 shadow-2xl">
-                       <img src={selectedArticle.image_url} alt="" className="w-full h-auto" />
+                 <div className="prose prose-slate max-w-none">
+                    <p className="text-2xl text-slate-500 font-medium leading-relaxed italic border-l-4 border-emerald-500 pl-10 py-4 bg-slate-50/50 rounded-r-3xl">
+                       "{selectedArticle.excerpt || selectedArticle.content?.substring(0, 200)}..."
+                    </p>
+                    
+                    {/* Image Gallery */}
+                    <div className="my-16 space-y-8">
+                       {selectedArticle.image_url && !selectedArticle.images?.length && (
+                          <div className="rounded-[2.5rem] overflow-hidden border-8 border-slate-50 shadow-2xl bg-slate-100">
+                             <img 
+                               src={selectedArticle.image_url.startsWith('http') ? selectedArticle.image_url : `${IMAGE_BASE_URL}${selectedArticle.image_url}`} 
+                               alt="" 
+                               className="w-full h-auto" 
+                             />
+                          </div>
+                       )}
+                       {selectedArticle.images?.map((img, idx) => (
+                          <div key={idx} className="rounded-[2.5rem] overflow-hidden border-8 border-slate-50 shadow-2xl bg-slate-100">
+                             <img 
+                               src={(typeof img === 'string' ? img : img.url).startsWith('http') ? (typeof img === 'string' ? img : img.url) : `${IMAGE_BASE_URL}${typeof img === 'string' ? img : img.url}`} 
+                               alt={img.alt || ''} 
+                               className="w-full h-auto" 
+                             />
+                             {img.caption && (
+                               <div className="p-6 bg-white border-t border-slate-50">
+                                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">{img.caption}</p>
+                               </div>
+                             )}
+                          </div>
+                       ))}
                     </div>
-                 )}
 
-                 <div 
-                    className="text-slate-800 text-xl leading-[2.2] font-medium whitespace-pre-wrap font-serif mt-12"
-                    dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
-                 />
-              </div>
+                    <div 
+                       className="text-slate-800 text-xl leading-[2.2] font-medium whitespace-pre-wrap font-serif"
+                       dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+                    />
+                 </div>
            </div>
         </div>
       </div>
