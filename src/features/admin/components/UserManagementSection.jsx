@@ -9,8 +9,7 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
-  Filter,
-  MoreVertical
+  Filter
 } from 'lucide-react';
 
 export default function UserManagementSection() {
@@ -22,20 +21,10 @@ export default function UserManagementSection() {
   const [totalPages, setTotalPages] = useState(1);
   const [editingUser, setEditingUser] = useState(null);
   const [editForm, setEditForm] = useState({ email: '', displayName: '' });
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
-    
-    // Global click listener to close dropdowns
-    const handleClickOutside = (e) => {
-      if (!e.target.closest('.dropdown-container')) {
-        setActiveDropdown(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [currentPage]);
 
   const fetchUsers = async () => {
@@ -283,26 +272,6 @@ export default function UserManagementSection() {
                              <button onClick={() => handleDelete(user.uid)} className="p-2.5 bg-white border border-slate-100 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl shadow-sm transition-all active:scale-95" title="Purge Identity">
                                 <Trash2 size={16} />
                              </button>
-                             <div className="relative dropdown-container">
-                               <button 
-                                 onClick={(e) => {
-                                   e.stopPropagation();
-                                   setActiveDropdown(activeDropdown === user.uid ? null : user.uid);
-                                 }}
-                                 className={`p-2.5 bg-white border border-slate-100 rounded-xl transition-all ${activeDropdown === user.uid ? 'text-indigo-600 border-indigo-100 shadow-lg' : 'text-slate-300 hover:text-slate-900'}`}
-                               >
-                                  <MoreVertical size={16} />
-                               </button>
-                               
-                               {activeDropdown === user.uid && (
-                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 py-3 animate-slide-up">
-                                   <button onClick={() => { navigate(`/admin/chat?user=${user.uid}`); setActiveDropdown(null); }} className="w-full px-6 py-2.5 text-left text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors">Initiate Comms</button>
-                                   <button onClick={() => { setActiveDropdown(null); alert("Identity audit log generation in progress..."); }} className="w-full px-6 py-2.5 text-left text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors">Request Audit</button>
-                                   <div className="my-2 border-t border-slate-50" />
-                                   <button onClick={() => { handleDelete(user.uid); setActiveDropdown(null); }} className="w-full px-6 py-2.5 text-left text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-colors">Purge Node</button>
-                                 </div>
-                               )}
-                             </div>
                           </div>
                         )}
                       </td>
