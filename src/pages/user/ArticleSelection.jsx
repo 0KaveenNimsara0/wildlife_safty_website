@@ -52,20 +52,39 @@ const ArticleSelection = () => {
     setPopupArticle(null);
   };
 
-  const handleReviewLater = (article) => {
+  const handleReviewLater = async (article) => {
     if (!article) return;
-    const currentSaved = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
-    if (!currentSaved.find(a => a._id === article._id)) {
-      const newItem = {
-        _id: article._id,
+    try {
+      const response = await api.post('/saved-articles', {
+        articleId: article._id,
         title: article.title,
         category: article.category || selectedCategory,
-        excerpt: article.excerpt,
-        savedAt: new Date().toISOString()
-      };
-      localStorage.setItem('wildsafe_review_later', JSON.stringify([newItem, ...currentSaved]));
+        excerpt: article.excerpt
+      });
+      
+      if (response.data.success) {
+        alert('Article archived in your mission library.');
+      }
+      closeArticlePopup();
+    } catch (err) {
+      console.error('Save failed:', err);
+      // Fallback to local storage if API fails
+      const currentSaved = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
+      if (!currentSaved.find(a => a._id === article._id)) {
+        const newItem = {
+          _id: article._id,
+          title: article.title,
+          category: article.category || selectedCategory,
+          excerpt: article.excerpt,
+          savedAt: new Date().toISOString()
+        };
+        localStorage.setItem('wildsafe_review_later', JSON.stringify([newItem, ...currentSaved]));
+        alert('Saved to local storage (Offline mode).');
+      } else {
+        alert('Article is already in your library.');
+      }
+      closeArticlePopup();
     }
-    closeArticlePopup();
   };
 
   return (
