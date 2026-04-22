@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Shield, MessageSquare, AlertCircle, XCircle, ChevronDown } from 'lucide-react';
 import { formatDate } from '../../../utils/formatters';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
+import { IMAGE_BASE_URL } from '../../../config/constants';
 
 const ChatInterface = ({ 
   participant, 
@@ -106,11 +107,20 @@ const ChatInterface = ({
                onClick={() => onAdminSelect(admin)}
                className={`relative shrink-0 transition-all duration-300 ${selectedAdminId === admin._id ? 'scale-110' : 'opacity-40 hover:opacity-100 scale-90'}`}
              >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border-2 transition-all ${
-                  selectedAdminId === admin._id ? 'bg-slate-900 text-white border-indigo-500 shadow-lg shadow-indigo-500/20' : 'bg-white text-slate-400 border-slate-100'
-                }`}>
-                   {admin.name.charAt(0).toUpperCase()}
-                </div>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs border-2 transition-all overflow-hidden ${
+                   selectedAdminId === admin._id ? 'bg-slate-900 text-white border-indigo-500 shadow-lg shadow-indigo-500/20' : 'bg-white text-slate-400 border-slate-100'
+                 }`}>
+                   {admin.photoURL ? (
+                     <img
+                       src={admin.photoURL.startsWith('http') ? admin.photoURL : `${IMAGE_BASE_URL}${admin.photoURL}`}
+                       alt={admin.name?.charAt(0) || 'A'}
+                       className="w-full h-full object-cover"
+                       onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = admin.name?.charAt(0) || 'A'; }}
+                     />
+                   ) : (
+                     admin.name.charAt(0).toUpperCase()
+                   )}
+                 </div>
                 {selectedAdminId === admin._id && (
                   <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,1)]" />
                 )}
@@ -123,8 +133,17 @@ const ChatInterface = ({
       <div className="px-8 py-5 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/90">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl translate-y-[-2px] transition-all duration-500 ${participant ? 'bg-indigo-600' : 'bg-slate-300 animate-pulse'}`}>
-              {participant?.name?.charAt(0).toUpperCase() || '?'}
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-xl translate-y-[-2px] transition-all duration-500 overflow-hidden ${participant ? 'bg-indigo-600' : 'bg-slate-300 animate-pulse'}`}>
+              {participant?.photoURL ? (
+                <img
+                  src={participant.photoURL.startsWith('http') ? participant.photoURL : `${IMAGE_BASE_URL}${participant.photoURL}`}
+                  alt={participant.name?.charAt(0) || '?'}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = participant.name?.charAt(0) || '?'; }}
+                />
+              ) : (
+                participant?.name?.charAt(0).toUpperCase() || '?'
+              )}
             </div>
             {participant && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-indigo-500 rounded-full border-4 border-white shadow-sm" />
@@ -238,6 +257,7 @@ const ChatInterface = ({
 };
 
 export default ChatInterface;
+
 
 
 
