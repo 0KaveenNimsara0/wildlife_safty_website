@@ -3,9 +3,10 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, activeUser } = useAuth();
 
-  return currentUser ? <Outlet /> : <Navigate to="/login" />;
+  // Allow access if either a Firebase session or a MongoDB-based activeUser exists
+  return (currentUser || activeUser) ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

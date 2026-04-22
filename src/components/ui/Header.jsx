@@ -38,17 +38,27 @@ export default function Header() {
 
     // Get user display info and dashboard path
     const getUserInfo = () => {
-        if (!activeUser) return null;
+        // High priority: Use activeUser from context
+        if (activeUser) {
+            let dashboardPath = '/dashboard';
+            if (activeUser.role === 'admin') dashboardPath = '/admin/dashboard';
+            if (activeUser.role === 'medicalOfficer') dashboardPath = '/medical-officer/dashboard';
 
-        let dashboardPath = '/dashboard';
-        if (activeUser.role === 'admin') dashboardPath = '/admin/dashboard';
-        if (activeUser.role === 'medicalOfficer') dashboardPath = '/medical-officer/dashboard';
+            return {
+                name: activeUser.displayName || activeUser.name || 'Agent',
+                dashboardPath,
+                avatar: getUserAvatar()
+            };
+        }
 
-        return {
-            name: activeUser.displayName || activeUser.name || 'Agent',
-            dashboardPath,
-            avatar: getUserAvatar()
-        };
+        // Low priority: Fallback to localStorage if state is lagging
+        const admin = getAdminData();
+        if (admin) return { name: admin.name || 'Admin', dashboardPath: '/admin/dashboard', avatar: <Shield className="w-4 h-4 text-white" /> };
+
+        const medical = getMedicalOfficerData();
+        if (medical) return { name: medical.name || 'Officer', dashboardPath: '/medical-officer/dashboard', avatar: <User className="w-4 h-4 text-white" /> };
+
+        return null;
     };
 
     const handleAuth = () => {
@@ -62,7 +72,7 @@ export default function Header() {
             medicalOfficerLogout();
             navigate('/');
         } else {
-            setAuthPage('login');
+            navigate('/login');
         }
     };
 

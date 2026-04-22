@@ -8,7 +8,7 @@ import api from '../../services/api';
 import { IMAGE_BASE_URL } from '../../config/constants';
 
 const UserChatPage = () => {
-  const { currentUser } = useAuth();
+  const { activeUser: currentUser } = useAuth();
   const [selectedMedicalOfficer, setSelectedMedicalOfficer] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [currentConversation, setCurrentConversation] = useState(null);

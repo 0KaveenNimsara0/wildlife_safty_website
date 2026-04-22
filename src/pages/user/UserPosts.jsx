@@ -35,8 +35,16 @@ const UserPosts = () => {
   const handlePostSubmit = async (e) => {
     e.preventDefault();
     if (!newPost.animalName.trim() && !newPost.experience.trim() && !newPost.photo) return;
+    
+    // Client-side validation for image size (Limit to 5MB to prevent PayloadTooLarge errors)
+    if (newPost.photo && newPost.photo.size > 5 * 1024 * 1024) {
+      setError('Evidence asset too large. Please select an image under 5MB.');
+      return;
+    }
+
     try {
       setLoading(true);
+      setError(''); // Clear previous errors
       const formData = new FormData();
       formData.append('animalName', newPost.animalName);
       formData.append('experience', newPost.experience);
@@ -51,7 +59,13 @@ const UserPosts = () => {
       setUserPosts([response.data, ...userPosts]);
       setNewPost({ animalName: '', experience: '', photo: null });
     } catch (err) {
-      setError('Log entry failed.');
+      console.error('Post transmission failed:', err);
+      const serverMessage = err.response?.data?.message;
+      if (err.response?.status === 413) {
+        setError('Transmission rejected: Image file size exceeds system limits.');
+      } else {
+        setError(serverMessage || 'Log entry failed. Ensure your connection is stable and the image is valid.');
+      }
     } finally {
       setLoading(false);
     }

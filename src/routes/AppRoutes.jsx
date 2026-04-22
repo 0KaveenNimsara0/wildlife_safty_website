@@ -72,9 +72,11 @@ export default function AppRoutes() {
         
       </Route>
       
-      {/* Protected User Dashboard - Now standalone (no main header/footer) */}
+      {/* Protected User Dashboard */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />}>
+           <Route path="articles/:articleId" element={<UserArticleViewPage />} />
+        </Route>
       </Route>
 
       {/* Authentication Layer - All Auth types use their own internal AuthLayout component */}
@@ -117,11 +119,6 @@ export default function AppRoutes() {
         <Route path="articles/:articleId" element={<MedicalOfficerArticleViewPage />} />
         <Route path="articles/create" element={<MedicalArticleCreate />} />
         <Route path="articles/edit/:articleId" element={<MedicalArticleEdit />} />
-      </Route>
-
-      {/* User Dashboard Routes */}
-      <Route path="/dashboard" element={<Dashboard />}>
-        <Route path="articles/:articleId" element={<UserArticleViewPage />} />
       </Route>
 
       {/* Fallback */}

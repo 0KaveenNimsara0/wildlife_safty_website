@@ -5,7 +5,9 @@ import {
   Activity,
   Bell,
   Search,
-  Scan
+  Scan,
+  LogIn,
+  Home
 } from 'lucide-react';
 import MedicalOfficerSidebar from '../features/medical/components/MedicalOfficerSidebar';
 import { BASE_URL, IMAGE_BASE_URL } from '../config/constants';
@@ -76,6 +78,15 @@ export default function MedicalOfficerLayout() {
                      <span className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">System Online</span>
                   </div>
                </div>
+               <div className="hidden sm:flex items-center gap-3">
+                <Link 
+                  to="/" 
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 hover:bg-emerald-50 text-slate-700 border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 font-bold transition-all duration-300 shadow-sm group"
+                >
+                  <Home size={16} className="group-hover:scale-110 transition-transform" />
+                  <span className="text-xs uppercase tracking-wider">Return to Site</span>
+                </Link>
+              </div>
 
                 <div className="flex items-center gap-3">
                    <NotificationDropdown role="medical" />

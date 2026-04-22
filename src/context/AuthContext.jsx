@@ -57,23 +57,28 @@ export function AuthProvider({ children }) {
   });
 
   const getActiveUser = useCallback(() => {
+    // Helper to process photo URL
+    const applyPhotoURL = (user) => {
+      if (user?.photoURL && user.photoURL.startsWith('/uploads')) {
+        return { ...user, photoURL: `${IMAGE_BASE_URL}${user.photoURL}` };
+      }
+      return user;
+    };
+
     // 1. Check for Admin persistence
     const adminData = localStorage.getItem("adminData");
     if (adminData) {
       try {
         const parsed = JSON.parse(adminData);
         const user = {
+          ...parsed,
           uid: parsed._id || parsed.id || parsed.uid,
           displayName: parsed.name || parsed.displayName,
           email: parsed.email,
           role: "admin",
-          source: "mongodb",
-          ...parsed
+          source: "mongodb"
         };
-        if (user.photoURL && user.photoURL.startsWith('/uploads')) {
-          user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
-        }
-        return user;
+        return applyPhotoURL(user);
       } catch (e) {}
     }
 
@@ -83,17 +88,14 @@ export function AuthProvider({ children }) {
       try {
         const parsed = JSON.parse(medicalData);
         const user = {
+          ...parsed,
           uid: parsed._id || parsed.id || parsed.uid,
           displayName: parsed.name || parsed.displayName,
           email: parsed.email,
           role: "medicalOfficer",
-          source: "mongodb",
-          ...parsed
+          source: "mongodb"
         };
-        if (user.photoURL && user.photoURL.startsWith('/uploads')) {
-          user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
-        }
-        return user;
+        return applyPhotoURL(user);
       } catch (e) {}
     }
 
@@ -101,20 +103,16 @@ export function AuthProvider({ children }) {
     if (currentUser) {
       const isMongoUser = localStorage.getItem("mongoUser");
       const user = {
+        ...currentUser,
         uid: currentUser.uid || currentUser._id,
         displayName: currentUser.displayName || currentUser.name || currentUser.email,
         email: currentUser.email,
         emailVerified: currentUser.emailVerified ?? false,
         role: currentUser.role || "user",
         source: isMongoUser ? "mongodb" : "firebase",
-        hasPassword: currentUser.hasPassword ?? false,
-        ...currentUser
+        hasPassword: currentUser.hasPassword ?? false
       };
-
-      if (user.photoURL && user.photoURL.startsWith('/uploads')) {
-        user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
-      }
-      return user;
+      return applyPhotoURL(user);
     }
 
     return null;
@@ -649,44 +647,48 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    // Check if we have a persisted MongoDB session
-    const savedUser = localStorage.getItem('mongoUser');
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        
-        // Safety: If the photoURL is a massive base64 string, clear it once to fix QuotaExceededError
-        if (parsedUser.photoURL && parsedUser.photoURL.length > 100000) {
-          console.warn('Wiping bloated profile storage asset...');
-          localStorage.removeItem('mongoUser');
-          setCurrentUser(null);
-          setLoading(false);
-          return;
-        }
+    // 1. Restore identity from various local storage slots
+    const mongoUser = localStorage.getItem('mongoUser');
+    const adminData = localStorage.getItem('adminData');
+    const medicalOfficerData = localStorage.getItem('medicalOfficerData');
 
-        // Process photoURL if it's a relative path from the disk storage
-        if (parsedUser.photoURL && parsedUser.photoURL.startsWith('/uploads')) {
-          parsedUser.photoURL = `${IMAGE_BASE_URL}${parsedUser.photoURL}`;
+    if (mongoUser) {
+      try {
+        const parsed = JSON.parse(mongoUser);
+        // Safety: Clear bloated storage if needed
+        if (parsed.photoURL && parsed.photoURL.length > 100000) {
+          localStorage.removeItem('mongoUser');
+        } else {
+          setCurrentUser(parsed);
         }
-        
-        setCurrentUser(parsedUser);
-      } catch (e) {
-        console.error('Failed to restore identity grid:', e);
-      }
-      setLoading(false);
+      } catch (e) {}
     }
 
+    // 2. Initialize Firebase observer
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const token = await user.getIdToken();
         localStorage.setItem('userToken', token);
         setCurrentUser(user);
-      } else if (!localStorage.getItem('mongoUser')) {
-        localStorage.removeItem('userToken');
-        setCurrentUser(null);
+      } else {
+        // Only clear currentUser if we don't have a persisted MongoDB user
+        // AND we don't have an Admin or Medical Officer session active
+        const hasMongo = !!localStorage.getItem('mongoUser');
+        const hasAdmin = !!localStorage.getItem('adminToken');
+        const hasMedical = !!localStorage.getItem('medicalOfficerToken');
+
+        if (!hasMongo && !hasAdmin && !hasMedical) {
+          localStorage.removeItem('userToken');
+          setCurrentUser(null);
+        }
       }
       setLoading(false);
     });
+
+    // If we have an Admin or Medical session, we can stop the initial loading early
+    if (adminData || medicalOfficerData) {
+      setLoading(false);
+    }
 
     return unsubscribe;
   }, []);

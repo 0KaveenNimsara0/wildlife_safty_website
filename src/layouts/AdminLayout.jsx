@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useLocation, Outlet } from 'react-router-dom';
+import { useLocation, Outlet, Link } from 'react-router-dom';
 import { 
   Shield, 
   Menu, 
   Activity,
   Bell,
-  Search
+  Search,
+  Home
 } from 'lucide-react';
 import AdminSidebar from '../features/admin/components/AdminSidebar';
 import NotificationDropdown from '../components/notifications/NotificationDropdown';
@@ -43,6 +44,16 @@ export default function AdminLayout() {
                     <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Current Node</h2>
                     <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{activeItem.name}</p>
                  </div>
+              </div>
+              <div className="h-8 w-px bg-slate-100 hidden md:block" />
+              <div className="hidden md:flex items-center gap-3">
+                <Link 
+                  to="/" 
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 hover:bg-emerald-50 text-slate-700 border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 font-bold transition-all duration-300 shadow-sm group"
+                >
+                  <Home size={16} className="group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] uppercase tracking-widest">Return to Site</span>
+                </Link>
               </div>
            </div>
 
