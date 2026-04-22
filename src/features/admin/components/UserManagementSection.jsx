@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import {
   Users,
   Search,
@@ -208,8 +208,20 @@ export default function UserManagementSection() {
                     <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-8 py-6 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-2xl ${user.sources.includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative`}>
-                            {(user.displayName || user.email || '?').charAt(0).toUpperCase()}
+                          <div className={`w-12 h-12 rounded-2xl ${user.sources.includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative overflow-hidden`}>
+                            {user.photoURL ? (
+                              <img 
+                                src={user.photoURL.startsWith('http') ? user.photoURL : `${IMAGE_BASE_URL}${user.photoURL}`} 
+                                alt="" 
+                                className="w-full h-full object-cover" 
+                                onError={(e) => {
+                                  e.target.onerror = null; 
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              (user.displayName || user.email || '?').charAt(0).toUpperCase()
+                            )}
                             <div className="absolute -bottom-1 -right-1 flex gap-0.5">
                               {user.sources.includes('firebase') && (
                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-amber-600 text-white">G</div>

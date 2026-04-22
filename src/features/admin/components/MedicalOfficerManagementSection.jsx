@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import { 
   Users, 
   Search, 
@@ -228,8 +228,20 @@ export default function MedicalOfficerManagementSection() {
                   <tr key={officer._id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-8 py-6 whitespace-nowrap">
                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 border-4 border-emerald-50 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform">
-                             {officer.name ? officer.name.charAt(0).toUpperCase() : '?'}
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 border-4 border-emerald-50 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform overflow-hidden relative">
+                             {officer.photoURL ? (
+                               <img 
+                                 src={officer.photoURL.startsWith('http') ? officer.photoURL : `${IMAGE_BASE_URL}${officer.photoURL}`} 
+                                 alt="" 
+                                 className="w-full h-full object-cover"
+                                 onError={(e) => {
+                                   e.target.onerror = null;
+                                   e.target.style.display = 'none';
+                                 }}
+                               />
+                             ) : (
+                               officer.name ? officer.name.charAt(0).toUpperCase() : '?'
+                             )}
                           </div>
                           <div>
                              <div className="text-sm font-black text-slate-900 tracking-tight">{officer.name || 'No name'}</div>
