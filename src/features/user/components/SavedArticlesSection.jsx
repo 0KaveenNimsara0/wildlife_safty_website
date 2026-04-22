@@ -40,6 +40,10 @@ const SavedArticlesSection = () => {
               isRemoved: !sa.articleId
             }));
             setSavedArticles(normalized);
+            // ✅ Also populate articlesStatus so articles are clickable immediately
+            const statuses = {};
+            normalized.forEach(art => { statuses[art._id] = art; });
+            setArticlesStatus(statuses);
           } else {
             const normalized = backendData.map(sa => ({
               _id: sa.articleId?._id || sa.articleId,
@@ -120,7 +124,8 @@ const SavedArticlesSection = () => {
   };
 
   const openSavedArticle = (articleId) => {
-    const art = articlesStatus[articleId];
+    // Fall back to the article's own entry if the status map hasn't been populated yet
+    const art = articlesStatus[articleId] || savedArticles.find(a => a._id === articleId);
     if (art && !art.isRemoved) {
       const isMedicalPortal = window.location.pathname.includes('/medical-officer');
       const basePath = isMedicalPortal ? '/medical-officer/articles' : '/dashboard/articles';
