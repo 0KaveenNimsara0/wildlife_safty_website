@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { 
   auth, 
   googleProvider,
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
     return null;
   });
 
-  const getActiveUser = () => {
+  const getActiveUser = useCallback(() => {
     // 1. Check for Admin persistence
     const adminData = localStorage.getItem("adminData");
     if (adminData) {
@@ -118,7 +118,11 @@ export function AuthProvider({ children }) {
     }
 
     return null;
-  };
+  }, [currentUser]);
+
+  const syncActiveUser = useCallback(() => {
+    setActiveUser(getActiveUser());
+  }, [getActiveUser]);
 
   async function sendRegistrationOtp(email) {
     try {
@@ -308,7 +312,7 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function refreshUser() {
+  const refreshUser = useCallback(async () => {
     try {
       const active = getActiveUser();
       if (!active || !active.uid) return;
@@ -358,8 +362,9 @@ export function AuthProvider({ children }) {
       return updatedData;
     } catch (error) {
       console.error('Deep-sync synchronization error:', error);
+      return null;
     }
-  }
+  }, [getActiveUser, syncActiveUser]);
 
   // Upload profile picture to MongoDB
   async function uploadProfilePicture(file) {
@@ -441,48 +446,7 @@ export function AuthProvider({ children }) {
     }
   }
 
-  // Identity Synchronization Utility
-  async function refreshUser() {
-    try {
-      const adminToken = localStorage.getItem('adminToken');
-      const medicalToken = localStorage.getItem('medicalOfficerToken');
-      const userToken = localStorage.getItem('userToken');
 
-      if (adminToken) {
-        const response = await fetch(`${BASE_URL}/admin/auth/profile`, {
-          headers: { 'Authorization': `Bearer ${adminToken}` }
-        });
-        const data = await response.json();
-        if (data.success) {
-          const updatedAdmin = { ...data.admin, role: 'admin' };
-          localStorage.setItem('adminData', JSON.stringify(updatedAdmin));
-          setCurrentUser(updatedAdmin);
-        }
-      } else if (medicalToken) {
-        const response = await fetch(`${BASE_URL}/medical-officer/auth/profile`, {
-          headers: { 'Authorization': `Bearer ${medicalToken}` }
-        });
-        const data = await response.json();
-        if (data.success) {
-          const updatedMO = { ...data.medicalOfficer, role: 'medicalOfficer' };
-          localStorage.setItem('medicalOfficerData', JSON.stringify(updatedMO));
-          setCurrentUser(updatedMO);
-        }
-      } else if (userToken && localStorage.getItem('mongoUser')) {
-        const user = JSON.parse(localStorage.getItem('mongoUser'));
-        const response = await fetch(`${BASE_URL}/users/${user.uid || user._id}`);
-        const data = await response.json();
-        if (data) {
-          localStorage.setItem('mongoUser', JSON.stringify(data));
-          setCurrentUser(data);
-        }
-      }
-      return true;
-    } catch (error) {
-      console.error('Identity sync failure:', error);
-      return false;
-    }
-  }
 
   // Admin authentication functions
   async function adminLogin(email, password, otp) {
@@ -727,21 +691,18 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  // Sync activeUser reactively whenever currentUser or localStorage changes
-  const syncActiveUser = () => {
-    setActiveUser(getActiveUser());
-  };
+
 
   useEffect(() => {
     syncActiveUser();
-  }, [currentUser]);
+  }, [currentUser, syncActiveUser]);
 
   // Listen for localStorage changes from other tabs or explicit updates
   useEffect(() => {
     const handleStorage = () => syncActiveUser();
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, []);
+  }, [syncActiveUser]);
 
   const value = {
     currentUser,

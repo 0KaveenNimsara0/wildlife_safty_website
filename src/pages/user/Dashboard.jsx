@@ -45,6 +45,13 @@ const Dashboard = () => {
     }
   }, [location.search]);
 
+  // Handle identity synchronization on mount to ensure verified status is current
+  useEffect(() => {
+    if (activeUser) {
+      refreshUser().catch(err => console.error("Identity sync failure:", err));
+    }
+  }, []); // Only on mount
+
   const handleLogout = async () => {
     try {
       await logout();
