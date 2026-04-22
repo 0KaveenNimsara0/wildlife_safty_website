@@ -397,8 +397,16 @@ export default function MedicalOfficerManagementSection() {
            <div className="bg-white rounded-[40px] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-up">
               <div className="relative h-32 bg-slate-900">
                  <div className="absolute -bottom-12 left-10">
-                    <div className="w-24 h-24 rounded-3xl bg-emerald-600 border-[6px] border-white flex items-center justify-center text-white text-3xl font-black shadow-xl">
-                       {viewingOfficer.name?.charAt(0)}
+                    <div className="w-24 h-24 rounded-3xl bg-emerald-600 border-[6px] border-white flex items-center justify-center text-white text-3xl font-black shadow-xl overflow-hidden">
+                       {viewingOfficer.photoURL ? (
+                          <img 
+                            src={viewingOfficer.photoURL.startsWith('http') ? viewingOfficer.photoURL : `${IMAGE_BASE_URL}${viewingOfficer.photoURL}`} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                          />
+                        ) : (
+                          viewingOfficer.name?.charAt(0)
+                        )}
                     </div>
                  </div>
                  <button onClick={() => setViewingOfficer(null)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">

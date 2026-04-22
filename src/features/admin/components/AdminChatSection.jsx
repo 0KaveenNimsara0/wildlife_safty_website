@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import { 
   MessageSquare, 
   Search, 
@@ -181,8 +181,16 @@ export default function AdminChatSection() {
                  }`}
                >
                  <div className="relative">
-                    <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xs">
-                       {conv.user?.name?.charAt(0).toUpperCase() || <User size={16} />}
+                    <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xs overflow-hidden">
+                       {conv.user?.photoURL ? (
+                         <img 
+                           src={conv.user.photoURL.startsWith('http') ? conv.user.photoURL : `${IMAGE_BASE_URL}${conv.user.photoURL}`} 
+                           alt="" 
+                           className="w-full h-full object-cover" 
+                         />
+                       ) : (
+                         conv.user?.name?.charAt(0).toUpperCase() || <User size={16} />
+                       )}
                     </div>
                     {conv.unreadCount > 0 && (
                       <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] font-black text-white">
@@ -214,8 +222,16 @@ export default function AdminChatSection() {
           <>
             <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white/50 backdrop-blur-md z-10 transition-all">
                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-emerald-500/20">
-                     {currentConversation.user?.name?.charAt(0).toUpperCase() || <User size={18} />}
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-emerald-500/20 overflow-hidden">
+                     {currentConversation.user?.photoURL ? (
+                       <img 
+                         src={currentConversation.user.photoURL.startsWith('http') ? currentConversation.user.photoURL : `${IMAGE_BASE_URL}${currentConversation.user.photoURL}`} 
+                         alt="" 
+                         className="w-full h-full object-cover" 
+                       />
+                     ) : (
+                       currentConversation.user?.name?.charAt(0).toUpperCase() || <User size={18} />
+                     )}
                   </div>
                   <div>
                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none mb-1.5">{currentConversation.user?.name || currentConversation.user?.email}</h3>
