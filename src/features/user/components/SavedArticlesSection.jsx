@@ -14,53 +14,60 @@ const SavedArticlesSection = () => {
       try {
         setArticlesVerifying(true);
         const response = await api.get('/saved-articles');
-        if (response.data.success) {
-          const backendData = response.data.savedArticles || [];
-          
-          // Legacy Sync: If backend is empty but local has data, migrate it
-          const localData = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
-          if (localData.length > 0 && backendData.length === 0) {
-            console.log('[SAVED_ARTICLES] Migrating local data to backend...');
-            for (const item of localData) {
-              await api.post('/saved-articles', {
-                articleId: item._id,
-                title: item.title,
-                category: item.category,
-                excerpt: item.excerpt
-              }).catch(e => console.error('Migration failed for item:', item._id));
+        const localData = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
+        let backendData = response.data.success ? (response.data.savedArticles || []) : [];
+        
+        // Normalize backend data
+        let normalized = backendData.map(sa => ({
+          _id: sa.articleId?._id || sa.articleId || sa._id,
+          title: sa.title,
+          category: sa.category,
+          excerpt: sa.excerpt,
+          isRemoved: !sa.articleId
+        }));
+
+        // Migration & Sync: If we have local data, we need to sync it
+        if (localData.length > 0) {
+          console.log('[SAVED_ARTICLES] Syncing local data...');
+          const newToMigrate = localData.filter(local => 
+            !normalized.some(back => back._id === local._id)
+          );
+
+          if (newToMigrate.length > 0) {
+            for (const item of newToMigrate) {
+              try {
+                await api.post('/saved-articles', {
+                  articleId: item._id,
+                  title: item.title,
+                  category: item.category,
+                  excerpt: item.excerpt
+                });
+              } catch (e) {
+                console.error('Migration failed for item:', item._id, e);
+              }
             }
-            localStorage.removeItem('wildsafe_review_later');
-            // Re-fetch to get populated backend data
+            // Re-fetch after migration to get the authoritative server state
             const retry = await api.get('/saved-articles');
-            const normalized = retry.data.savedArticles.map(sa => ({
-              _id: sa.articleId?._id || sa.articleId,
-              title: sa.title,
-              category: sa.category,
-              excerpt: sa.excerpt,
-              isRemoved: !sa.articleId
-            }));
-            setSavedArticles(normalized);
-            // ✅ Also populate articlesStatus so articles are clickable immediately
-            const statuses = {};
-            normalized.forEach(art => { statuses[art._id] = art; });
-            setArticlesStatus(statuses);
-          } else {
-            const normalized = backendData.map(sa => ({
-              _id: sa.articleId?._id || sa.articleId,
-              title: sa.title,
-              category: sa.category,
-              excerpt: sa.excerpt,
-              isRemoved: !sa.articleId
-            }));
-            setSavedArticles(normalized);
-            
-            const statuses = {};
-            normalized.forEach(art => {
-              statuses[art._id] = art;
-            });
-            setArticlesStatus(statuses);
+            if (retry.data.success) {
+              backendData = retry.data.savedArticles || [];
+              normalized = backendData.map(sa => ({
+                _id: sa.articleId?._id || sa.articleId || sa._id,
+                title: sa.title,
+                category: sa.category,
+                excerpt: sa.excerpt,
+                isRemoved: !sa.articleId
+              }));
+            }
           }
+          // Once synced (or attempted), we can clear local storage
+          localStorage.removeItem('wildsafe_review_later');
         }
+
+        setSavedArticles(normalized);
+        const statuses = {};
+        normalized.forEach(art => { statuses[art._id] = art; });
+        setArticlesStatus(statuses);
+
       } catch (err) {
         console.error('Failed to fetch saved articles:', err);
         const saved = JSON.parse(localStorage.getItem('wildsafe_review_later') || '[]');
