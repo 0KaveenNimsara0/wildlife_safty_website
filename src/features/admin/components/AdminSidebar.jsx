@@ -37,7 +37,7 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'User Control', icon: Users, path: '/admin/users' },
     { name: 'Medical Users', icon: UserCheck, path: '/admin/medical-officers' },
     { name: 'Oversight Hub', icon: ShieldCheck, path: '/admin/predictions' },
-    { name: 'System Audit Logs', icon: History, path: '/admin/audit' },
+    { name: 'System Audit Logs', icon: History, path: '/admin/audit-logs' },
     { name: 'Contact Tickets', icon: Inbox, path: '/admin/contact-tickets' },
     { name: 'Medical Officer Articles', icon: FileText, path: '/admin/articles' },
     { name: 'Intelligence Grid', icon: Bell, path: '/admin/notifications' },
