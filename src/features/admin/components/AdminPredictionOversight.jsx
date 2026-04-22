@@ -94,7 +94,11 @@ const AdminPredictionOversight = () => {
 
     const filtered = predictions.filter(p => 
         p.className?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+        p.commonName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.user?.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.verifiedBy?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -180,9 +184,30 @@ const AdminPredictionOversight = () => {
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-black text-slate-900">{item.isAnonymous ? 'Anonymous Guest' : item.user?.displayName}</span>
-                                            <span className="text-xs font-bold text-slate-400">{item.isAnonymous ? 'Public Gateway' : item.user?.email}</span>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-100 border-2 border-slate-50 flex items-center justify-center text-slate-400 font-black text-[10px] overflow-hidden">
+                                                {!item.isAnonymous && item.user ? (
+                                                    item.user.photoURL ? (
+                                                        <img 
+                                                            src={item.user.photoURL.startsWith('http') ? item.user.photoURL : `${IMAGE_BASE_URL}${item.user.photoURL}`} 
+                                                            alt="" 
+                                                            className="w-full h-full object-cover" 
+                                                        />
+                                                    ) : (
+                                                        (item.user.displayName || item.user.name || item.user.email || '?').charAt(0).toUpperCase()
+                                                    )
+                                                ) : (
+                                                    <UserIcon size={16} />
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-black text-slate-900 leading-tight">
+                                                    {item.isAnonymous ? 'Anonymous Guest' : (item.user?.displayName || item.user?.name || 'Field Agent')}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                                                    {item.isAnonymous ? 'Public Gateway' : (item.user?.email || 'Authenticated User')}
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-8 py-6">
@@ -233,7 +258,17 @@ const AdminPredictionOversight = () => {
                                                     </button>
                                                 </>
                                             ) : (
-                                                <button className="text-[9px] font-black uppercase tracking-widest text-slate-300 cursor-not-allowed">Locked by Expert</button>
+                                                <div className="flex flex-col items-end opacity-60">
+                                                    <span className="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Authenticated By</span>
+                                                    <div className="flex flex-col items-end leading-tight">
+                                                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight">
+                                                            {item.verifiedBy?.name || 'System Authority'}
+                                                        </span>
+                                                        <span className="text-[7px] font-bold text-emerald-600 uppercase tracking-widest mt-0.5">
+                                                            {item.verifierRole === 'medical_officer' ? 'Medical Expert' : 'Administrator'}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             )}
                                         </div>
                                     </td>
