@@ -152,11 +152,18 @@ const UserSidebar = ({
             
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all duration-300 font-black text-[10px] uppercase tracking-widest group shadow-sm"
+              className="w-full flex items-center justify-center gap-3 py-4 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all duration-300 font-black text-[10px] uppercase tracking-widest group shadow-sm mb-4"
             >
               <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" />
               Logout from System
             </button>
+
+            <div className="p-4 rounded-2xl bg-slate-100/50 border border-slate-100 relative overflow-hidden group">
+               <div className="relative z-10 text-center">
+                  <p className="text-[10px] font-black text-slate-300 mb-1 uppercase tracking-tighter">System Version</p>
+                  <p className="text-[9px] font-bold text-slate-400 tracking-[0.2em] uppercase">Node Release 0.0.1v</p>
+               </div>
+            </div>
           </div>
         </div>
       </aside>

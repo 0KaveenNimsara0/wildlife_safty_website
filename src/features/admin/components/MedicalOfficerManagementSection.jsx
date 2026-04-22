@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import { 
   Users, 
   Search, 
@@ -228,8 +228,20 @@ export default function MedicalOfficerManagementSection() {
                   <tr key={officer._id} className="hover:bg-slate-50/50 transition-colors group">
                     <td className="px-8 py-6 whitespace-nowrap">
                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 border-4 border-emerald-50 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform">
-                             {officer.name ? officer.name.charAt(0).toUpperCase() : '?'}
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 border-4 border-emerald-50 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform overflow-hidden relative">
+                             {officer.photoURL ? (
+                               <img 
+                                 src={officer.photoURL.startsWith('http') ? officer.photoURL : `${IMAGE_BASE_URL}${officer.photoURL}`} 
+                                 alt="" 
+                                 className="w-full h-full object-cover"
+                                 onError={(e) => {
+                                   e.target.onerror = null;
+                                   e.target.style.display = 'none';
+                                 }}
+                               />
+                             ) : (
+                               officer.name ? officer.name.charAt(0).toUpperCase() : '?'
+                             )}
                           </div>
                           <div>
                              <div className="text-sm font-black text-slate-900 tracking-tight">{officer.name || 'No name'}</div>
@@ -385,8 +397,16 @@ export default function MedicalOfficerManagementSection() {
            <div className="bg-white rounded-[40px] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-up">
               <div className="relative h-32 bg-slate-900">
                  <div className="absolute -bottom-12 left-10">
-                    <div className="w-24 h-24 rounded-3xl bg-emerald-600 border-[6px] border-white flex items-center justify-center text-white text-3xl font-black shadow-xl">
-                       {viewingOfficer.name?.charAt(0)}
+                    <div className="w-24 h-24 rounded-3xl bg-emerald-600 border-[6px] border-white flex items-center justify-center text-white text-3xl font-black shadow-xl overflow-hidden">
+                       {viewingOfficer.photoURL ? (
+                          <img 
+                            src={viewingOfficer.photoURL.startsWith('http') ? viewingOfficer.photoURL : `${IMAGE_BASE_URL}${viewingOfficer.photoURL}`} 
+                            alt="" 
+                            className="w-full h-full object-cover" 
+                          />
+                        ) : (
+                          viewingOfficer.name?.charAt(0)
+                        )}
                     </div>
                  </div>
                  <button onClick={() => setViewingOfficer(null)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">

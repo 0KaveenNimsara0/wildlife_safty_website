@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Camera, CheckCircle, XCircle, Mail } from 'lucide-react';
 import { FaEnvelope } from 'react-icons/fa';
 import ImageUploader from '../../../components/form/ImageUploader';
@@ -24,6 +24,14 @@ const ProfileSection = ({
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
+
+  // Sync internal state when activeUser changes (e.g. after refreshUser)
+  useEffect(() => {
+    if (activeUser) {
+      setDisplayName(activeUser.displayName || activeUser.name || "");
+      setNewEmail(activeUser.email || "");
+    }
+  }, [activeUser]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -115,16 +123,16 @@ const ProfileSection = ({
             </p>
             <div className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
               {activeUser?.emailVerified ? (
-                <span className="text-emerald-600 flex items-center gap-1"><CheckCircle size={12} /> Verified Protocol</span>
+                <span className="text-emerald-600 flex items-center gap-1"><CheckCircle size={12} /> Verified Identity</span>
               ) : (
                 <>
-                  <span className="text-rose-500 flex items-center gap-1"><XCircle size={12} /> Unverified Frequency</span>
-                  <button type="button" onClick={handleSendVerificationCode} className="text-emerald-600 hover:scale-105 transition-transform font-black">Verify Frequency</button>
+                  <span className="text-rose-500 flex items-center gap-1"><XCircle size={12} /> Unverified Email Address</span>
+                  <button type="button" onClick={handleSendVerificationCode} className="text-emerald-600 hover:scale-105 transition-transform font-black">Verify Email</button>
                 </>
               )}
             </div>
             <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.2em]">
-              Enlisted: {new Date(activeUser?.createdAt || activeUser?.metadata?.creationTime).toLocaleDateString()}
+              Enlisted: {(activeUser?.createdAt || activeUser?.metadata?.creationTime) ? new Date(activeUser?.createdAt || activeUser?.metadata?.creationTime).toLocaleDateString() : 'Active Agent'}
             </p>
           </div>
         </div>

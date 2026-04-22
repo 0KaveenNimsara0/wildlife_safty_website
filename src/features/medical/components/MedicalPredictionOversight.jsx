@@ -72,7 +72,9 @@ export default function MedicalPredictionOversight() {
         const matchesSearch = 
             p.commonName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             p.className?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.user?.toLowerCase().includes(searchTerm.toLowerCase());
+            p.user?.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.verifiedBy?.name?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesFilter = filterStatus === 'all' || p.verificationStatus === filterStatus;
         return matchesSearch && matchesFilter;
     });
@@ -165,11 +167,30 @@ export default function MedicalPredictionOversight() {
                                     </div>
                                 </td>
                                 <td className="px-8 py-6">
-                                    <div className="flex items-center gap-2">
-                                        <UserIcon size={14} className="text-slate-300" />
-                                        <p className="text-xs font-bold text-slate-500 truncate max-w-[120px]">
-                                            {item.isAnonymous ? 'Guest User' : item.user}
-                                        </p>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 font-black text-[10px] overflow-hidden">
+                                            {!item.isAnonymous && item.user ? (
+                                                item.user.photoURL ? (
+                                                    <img 
+                                                        src={item.user.photoURL.startsWith('http') ? item.user.photoURL : `${IMAGE_BASE_URL}${item.user.photoURL}`} 
+                                                        alt="" 
+                                                        className="w-full h-full object-cover" 
+                                                    />
+                                                ) : (
+                                                    (item.user.displayName || item.user.email || '?').charAt(0).toUpperCase()
+                                                )
+                                            ) : (
+                                                <UserIcon size={16} />
+                                            )}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-black text-slate-900 leading-tight">
+                                                {item.isAnonymous ? 'Guest User' : (item.user?.displayName || 'Field Agent')}
+                                            </span>
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                                                {item.isAnonymous ? 'Public Gateway' : (item.user?.email || 'Authenticated')}
+                                            </span>
+                                        </div>
                                     </div>
                                 </td>
                                 <td className="px-8 py-6">
@@ -279,8 +300,13 @@ export default function MedicalPredictionOversight() {
                                             <p className="text-sm font-black text-emerald-600 uppercase tracking-wider">{selectedItem.verificationStatus}</p>
                                         </div>
                                         <div className="p-4 bg-white rounded-2xl shadow-sm border border-slate-100">
-                                            <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Verifier Role</p>
-                                            <p className="text-sm font-black text-slate-900 uppercase tracking-wider">{selectedItem.verifierRole || 'admin'}</p>
+                                            <p className="text-[9px] font-black text-slate-400 uppercase mb-1">Authenticated By</p>
+                                            <div className="flex flex-col">
+                                                <p className="text-sm font-black text-slate-900 uppercase tracking-wider">{selectedItem.verifiedBy?.name || 'System'}</p>
+                                                <p className="text-[8px] font-bold text-emerald-600 uppercase tracking-[0.2em] mt-1">
+                                                    {selectedItem.verifierRole === 'medical_officer' ? 'Medical Expert' : 'Administrator'}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                     {selectedItem.expertLabel && (

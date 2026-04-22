@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { 
   auth, 
   googleProvider,
@@ -21,60 +21,106 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeUser, setActiveUser] = useState(() => {
+    // Eagerly read from localStorage on first render so profile photos
+    // are available immediately for medical officers and admins
+    const applyPhotoURL = (parsed) => {
+      if (parsed?.photoURL && parsed.photoURL.startsWith('/uploads')) {
+        parsed.photoURL = `${IMAGE_BASE_URL}${parsed.photoURL}`;
+      }
+      return parsed;
+    };
+    try {
+      const adminData = localStorage.getItem('adminData');
+      if (adminData) {
+        const parsed = JSON.parse(adminData);
+        parsed.uid = parsed._id || parsed.id || parsed.uid;
+        parsed.role = 'admin';
+        return applyPhotoURL(parsed);
+      }
+      const medicalData = localStorage.getItem('medicalOfficerData');
+      if (medicalData) {
+        const parsed = JSON.parse(medicalData);
+        parsed.uid = parsed._id || parsed.id || parsed.uid;
+        parsed.displayName = parsed.name || parsed.displayName;
+        parsed.role = 'medicalOfficer';
+        return applyPhotoURL(parsed);
+      }
+      const mongoUser = localStorage.getItem('mongoUser');
+      if (mongoUser) {
+        const parsed = JSON.parse(mongoUser);
+        parsed.uid = parsed._id || parsed.id || parsed.uid;
+        return applyPhotoURL(parsed);
+      }
+    } catch (e) {}
+    return null;
+  });
 
-  const getActiveUser = () => {
-    if (currentUser) {
-      const isMongoUser = localStorage.getItem("mongoUser");
-      const user = {
-        uid: currentUser.uid || currentUser._id,
-        displayName: currentUser.displayName || currentUser.name || currentUser.email,
-        email: currentUser.email,
-        emailVerified: currentUser.emailVerified ?? false,
-        role: "user",
-        source: isMongoUser ? "mongodb" : "firebase",
-        hasPassword: currentUser.hasPassword ?? false,
-        createdAt: currentUser.createdAt || currentUser.metadata?.creationTime || new Date().toISOString(),
-        ...currentUser
-      };
-
-      // Process photoURL if it's a relative path from our disk storage
-      if (user.photoURL && user.photoURL.startsWith('/uploads')) {
-        user.photoURL = `${IMAGE_BASE_URL}${user.photoURL}`;
+  const getActiveUser = useCallback(() => {
+    // Helper to process photo URL
+    const applyPhotoURL = (user) => {
+      if (user?.photoURL && user.photoURL.startsWith('/uploads')) {
+        return { ...user, photoURL: `${IMAGE_BASE_URL}${user.photoURL}` };
       }
       return user;
-    }
+    };
+
+    // 1. Check for Admin persistence
     const adminData = localStorage.getItem("adminData");
     if (adminData) {
       try {
         const parsed = JSON.parse(adminData);
-        return {
-          uid: parsed._id || parsed.id,
-          displayName: parsed.name,
+        const user = {
+          ...parsed,
+          uid: parsed._id || parsed.id || parsed.uid,
+          displayName: parsed.name || parsed.displayName,
           email: parsed.email,
-          emailVerified: parsed.emailVerified ?? false,
           role: "admin",
-          source: "mongodb",
-          ...parsed
+          source: "mongodb"
         };
+        return applyPhotoURL(user);
       } catch (e) {}
     }
+
+    // 2. Check for Medical Officer persistence
     const medicalData = localStorage.getItem("medicalOfficerData");
     if (medicalData) {
       try {
         const parsed = JSON.parse(medicalData);
-        return {
-          uid: parsed._id || parsed.id,
-          displayName: parsed.name,
+        const user = {
+          ...parsed,
+          uid: parsed._id || parsed.id || parsed.uid,
+          displayName: parsed.name || parsed.displayName,
           email: parsed.email,
-          emailVerified: parsed.emailVerified ?? false,
           role: "medicalOfficer",
-          source: "mongodb",
-          ...parsed
+          source: "mongodb"
         };
+        return applyPhotoURL(user);
       } catch (e) {}
     }
+
+    // 3. Fallback to standard User session
+    if (currentUser) {
+      const isMongoUser = localStorage.getItem("mongoUser");
+      const user = {
+        ...currentUser,
+        uid: currentUser.uid || currentUser._id,
+        displayName: currentUser.displayName || currentUser.name || currentUser.email,
+        email: currentUser.email,
+        emailVerified: currentUser.emailVerified ?? false,
+        role: currentUser.role || "user",
+        source: isMongoUser ? "mongodb" : "firebase",
+        hasPassword: currentUser.hasPassword ?? false
+      };
+      return applyPhotoURL(user);
+    }
+
     return null;
-  };
+  }, [currentUser]); // currentUser is still needed to trigger updates when Firebase state changes
+
+  const syncActiveUser = useCallback(() => {
+    setActiveUser(getActiveUser());
+  }, [getActiveUser]);
 
   async function sendRegistrationOtp(email) {
     try {
@@ -264,35 +310,62 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function refreshUser() {
+  const refreshUser = useCallback(async () => {
     try {
       const active = getActiveUser();
       if (!active || !active.uid) return;
 
       let endpoint = `/users/${active.uid}`;
-      if (active.role === 'admin') endpoint = `/admin/users/${active.uid}`;
-      else if (active.role === 'medicalOfficer') endpoint = `/medical-officer/auth/profile`; // Generic profile uses token
+      let headers = {};
 
-      const response = await fetch(`${BASE_URL}${endpoint}`);
+      if (active.role === 'admin') {
+        endpoint = `/admin/users/${active.uid}`;
+        const token = localStorage.getItem('adminToken');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      } else if (active.role === 'medicalOfficer') {
+        endpoint = `/medical-officer/auth/profile`;
+        const token = localStorage.getItem('medicalOfficerToken');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      } else {
+        const token = localStorage.getItem('userToken');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${BASE_URL}${endpoint}`, { headers });
       if (!response.ok) throw new Error('Identity synchronization failed');
       
       const data = await response.json();
-      const updatedData = data.user || data;
+      // Extract the actual user data based on the response shape of each endpoint
+      let updatedData;
+      if (active.role === 'medicalOfficer') {
+        updatedData = data.medicalOfficer || data.user || data;
+      } else if (active.role === 'admin') {
+        updatedData = data.admin || data.user || data;
+      } else {
+        updatedData = data.user || data;
+      }
 
       if (active.role === "admin") {
-        localStorage.setItem("adminData", JSON.stringify(updatedData));
+        const merged = { ...active, ...updatedData };
+        localStorage.setItem("adminData", JSON.stringify(merged));
       } else if (active.role === "medicalOfficer") {
-        localStorage.setItem("medicalOfficerData", JSON.stringify(updatedData));
+        const merged = { ...active, ...updatedData };
+        localStorage.setItem("medicalOfficerData", JSON.stringify(merged));
       } else {
-        localStorage.setItem("mongoUser", JSON.stringify(updatedData));
-        setCurrentUser(updatedData);
+        const merged = { ...active, ...updatedData };
+        localStorage.setItem("mongoUser", JSON.stringify(merged));
+        setCurrentUser(merged);
       }
+
+      // Trigger activeUser sync
+      syncActiveUser();
       
       return updatedData;
     } catch (error) {
       console.error('Deep-sync synchronization error:', error);
+      return null;
     }
-  }
+  }, [getActiveUser, syncActiveUser]);
 
   // Upload profile picture to MongoDB
   async function uploadProfilePicture(file) {
@@ -374,6 +447,8 @@ export function AuthProvider({ children }) {
     }
   }
 
+
+
   // Admin authentication functions
   async function adminLogin(email, password, otp) {
     try {
@@ -399,6 +474,7 @@ export function AuthProvider({ children }) {
       // Store admin token and data
       localStorage.setItem('adminToken', data.token);
       localStorage.setItem('adminData', JSON.stringify(data.admin));
+      setTimeout(() => syncActiveUser(), 0);
 
       return data;
     } catch (error) {
@@ -530,6 +606,8 @@ export function AuthProvider({ children }) {
       // Store medical officer token and data
       localStorage.setItem('medicalOfficerToken', data.token);
       localStorage.setItem('medicalOfficerData', JSON.stringify(data.medicalOfficer));
+      // Trigger reactive activeUser update
+      setTimeout(() => syncActiveUser(), 0);
 
       return data;
     } catch (error) {
@@ -568,54 +646,72 @@ export function AuthProvider({ children }) {
   async function medicalOfficerLogout() {
     localStorage.removeItem('medicalOfficerToken');
     localStorage.removeItem('medicalOfficerData');
+    setTimeout(() => syncActiveUser(), 0);
   }
 
   useEffect(() => {
-    // Check if we have a persisted MongoDB session
-    const savedUser = localStorage.getItem('mongoUser');
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        
-        // Safety: If the photoURL is a massive base64 string, clear it once to fix QuotaExceededError
-        if (parsedUser.photoURL && parsedUser.photoURL.length > 100000) {
-          console.warn('Wiping bloated profile storage asset...');
-          localStorage.removeItem('mongoUser');
-          setCurrentUser(null);
-          setLoading(false);
-          return;
-        }
+    // 1. Restore identity from various local storage slots
+    const mongoUser = localStorage.getItem('mongoUser');
+    const adminData = localStorage.getItem('adminData');
+    const medicalOfficerData = localStorage.getItem('medicalOfficerData');
 
-        // Process photoURL if it's a relative path from the disk storage
-        if (parsedUser.photoURL && parsedUser.photoURL.startsWith('/uploads')) {
-          parsedUser.photoURL = `${IMAGE_BASE_URL}${parsedUser.photoURL}`;
+    if (mongoUser) {
+      try {
+        const parsed = JSON.parse(mongoUser);
+        // Safety: Clear bloated storage if needed
+        if (parsed.photoURL && parsed.photoURL.length > 100000) {
+          localStorage.removeItem('mongoUser');
+        } else {
+          setCurrentUser(parsed);
         }
-        
-        setCurrentUser(parsedUser);
-      } catch (e) {
-        console.error('Failed to restore identity grid:', e);
-      }
-      setLoading(false);
+      } catch (e) {}
     }
 
+    // 2. Initialize Firebase observer
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const token = await user.getIdToken();
         localStorage.setItem('userToken', token);
         setCurrentUser(user);
-      } else if (!localStorage.getItem('mongoUser')) {
-        localStorage.removeItem('userToken');
-        setCurrentUser(null);
+      } else {
+        // Only clear currentUser if we don't have a persisted MongoDB user
+        // AND we don't have an Admin or Medical Officer session active
+        const hasMongo = !!localStorage.getItem('mongoUser');
+        const hasAdmin = !!localStorage.getItem('adminToken');
+        const hasMedical = !!localStorage.getItem('medicalOfficerToken');
+
+        if (!hasMongo && !hasAdmin && !hasMedical) {
+          localStorage.removeItem('userToken');
+          setCurrentUser(null);
+        }
       }
       setLoading(false);
     });
 
+    // If we have an Admin or Medical session, we can stop the initial loading early
+    if (adminData || medicalOfficerData) {
+      setLoading(false);
+    }
+
     return unsubscribe;
   }, []);
 
+
+
+  useEffect(() => {
+    syncActiveUser();
+  }, [currentUser, syncActiveUser]);
+
+  // Listen for localStorage changes from other tabs or explicit updates
+  useEffect(() => {
+    const handleStorage = () => syncActiveUser();
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, [syncActiveUser]);
+
   const value = {
     currentUser,
-    activeUser: getActiveUser(),
+    activeUser,
     login: mongoLogin,
     signup: mongoSignup,
     logout,
@@ -651,4 +747,6 @@ export function AuthProvider({ children }) {
     </AuthContext.Provider>
   );
 }
+
+
 

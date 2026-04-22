@@ -3,7 +3,7 @@ import { Loader2, MessageSquare, ChevronDown, Activity } from 'lucide-react';
 import MessageBubble from '../../chat/components/MessageBubble';
 import ChatInput from '../../chat/components/ChatInput';
 import { formatDate } from '../../../utils/formatters';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 
 const ConsultationsSection = () => {
   const [medicalOfficerId, setMedicalOfficerId] = useState(null);
@@ -265,21 +265,28 @@ const ConsultationsSection = () => {
                             : 'bg-transparent border-transparent hover:bg-white/50 hover:border-slate-100'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
-                            <p className="font-black text-slate-900 truncate text-xs uppercase tracking-tight">
-                               {conversation.user?.displayName || conversation.user?.email?.split('@')[0] || 'Field Node'}
-                            </p>
-                            <p className="text-[10px] text-slate-400 truncate mt-1 italic font-medium">
-                               {conversation.lastMessage?.message || 'Start typing...'}
-                            </p>
+                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-slate-200 flex-shrink-0 overflow-hidden flex items-center justify-center text-[10px] font-black text-slate-400">
+                               {conversation.user?.photoURL ? (
+                                 <img src={conversation.user.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${conversation.user.photoURL}` : conversation.user.photoURL} alt="User" className="w-full h-full object-cover" />
+                               ) : (
+                                 conversation.user?.displayName?.charAt(0).toUpperCase() || 'U'
+                               )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-black text-slate-900 truncate text-xs tracking-tight">
+                                 {conversation.user?.displayName || conversation.user?.email?.split('@')[0] || 'Field Node'}
+                              </p>
+                              <p className="text-[10px] text-slate-400 truncate mt-1 italic font-medium">
+                                 {conversation.lastMessage?.message || 'Start typing...'}
+                              </p>
+                            </div>
                           </div>
                           {conversation.unreadCount > 0 && (
                             <span className="ml-2 w-5 h-5 flex items-center justify-center bg-indigo-500 text-white text-[9px] font-black rounded-full shadow-lg shadow-indigo-500/20">
                                {conversation.unreadCount}
                             </span>
                           )}
-                        </div>
                       </button>
                     ))
                   ) : (
@@ -291,11 +298,13 @@ const ConsultationsSection = () => {
                            className={`w-full text-left p-4 rounded-2xl cursor-pointer transition-all duration-300 border ${currentConversation?.admin?._id === admin._id ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-500/20 border-indigo-500' : 'bg-transparent border-transparent hover:bg-white/50 hover:border-slate-100 text-slate-900 font-black'}`}
                          >
                              <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black shadow-inner ${currentConversation?.admin?._id === admin._id ? 'bg-white text-indigo-600' : 'bg-slate-900 text-white'}`}>
-                                   {admin.name.charAt(0).toUpperCase()}
+                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black shadow-inner overflow-hidden flex-shrink-0 ${currentConversation?.admin?._id === admin._id ? 'bg-white text-indigo-600' : 'bg-slate-900 text-white'}`}>
+                                   {admin.photoURL ? (
+                                      <img src={admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${admin.photoURL}` : admin.photoURL} alt="Admin" className="w-full h-full object-cover" />
+                                   ) : admin.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="min-w-0">
-                                   <p className="text-xs font-black uppercase tracking-tight truncate">{admin.name}</p>
+                                   <p className="text-xs font-black tracking-tight truncate">{admin.name}</p>
                                    <p className={`text-[9px] font-bold uppercase tracking-widest ${currentConversation?.admin?._id === admin._id ? 'text-indigo-200' : 'text-slate-400'}`}>Official Support</p>
                                  </div>
                              </div>
@@ -317,11 +326,19 @@ const ConsultationsSection = () => {
                 <>
                   <div className="px-8 py-6 bg-white border-b border-slate-50 flex items-center justify-between shadow-sm relative z-10">
                     <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow-xl ${currentConversation.admin ? 'bg-slate-900 shadow-slate-900/10' : 'bg-indigo-600 shadow-indigo-500/10'}`}>
-                           {currentConversation.user?.displayName?.charAt(0).toUpperCase() || currentConversation.admin?.name?.charAt(0).toUpperCase() || 'U'}
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-sm shadow-xl overflow-hidden ${currentConversation.admin ? 'bg-slate-900 shadow-slate-900/10' : 'bg-indigo-600 shadow-indigo-500/10'}`}>
+                           {currentConversation.admin ? (
+                              currentConversation.admin.photoURL ? (
+                                <img src={currentConversation.admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.admin.photoURL}` : currentConversation.admin.photoURL} alt="Admin" className="w-full h-full object-cover" />
+                              ) : currentConversation.admin.name?.charAt(0).toUpperCase()
+                           ) : (
+                              currentConversation.user?.photoURL ? (
+                                <img src={currentConversation.user.photoURL?.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.user.photoURL}` : currentConversation.user.photoURL} alt="User" className="w-full h-full object-cover" />
+                              ) : currentConversation.user?.displayName?.charAt(0).toUpperCase() || 'U'
+                           )}
                         </div>
                         <div>
-                          <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none mb-1.5">
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1.5">
                              {currentConversation.user?.displayName || currentConversation.user?.email || currentConversation.admin?.name || 'Authorized User'}
                           </h3>
                           <div className="flex items-center gap-2">
@@ -389,6 +406,11 @@ const ConsultationsSection = () => {
                           <MessageBubble 
                             message={message} 
                             isMe={isMedicalOfficer} 
+                            avatar={!isMedicalOfficer ? (
+                              currentConversation.admin 
+                                ? (currentConversation.admin.photoURL ? (currentConversation.admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.admin.photoURL}` : currentConversation.admin.photoURL) : null)
+                                : (currentConversation.user?.photoURL ? (currentConversation.user.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.user.photoURL}` : currentConversation.user.photoURL) : null)
+                            ) : null}
                           />
                         </div>
                       );

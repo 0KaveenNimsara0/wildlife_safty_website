@@ -18,6 +18,8 @@ import CommunityFeed from '../pages/user/CommunityFeed';
 import ArticleSelection from '../pages/user/ArticleSelection';
 import UserPosts from '../pages/user/UserPosts';
 import Chat from '../pages/user/Chat';
+import NotificationsPage from '../pages/NotificationsPage';
+import ContactPage from '../pages/user/ContactPage';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -32,22 +34,22 @@ import ForgotPassword from '../pages/auth/ForgotPassword';
 import AdminOverviewSection from '../features/admin/components/AdminOverviewSection';
 import UserManagementSection from '../features/admin/components/UserManagementSection';
 import MedicalOfficerManagementSection from '../features/admin/components/MedicalOfficerManagementSection';
-import AdminChatSection from '../features/admin/components/AdminChatSection';
 import AdminMedicalChatSection from '../features/admin/components/AdminMedicalChatSection';
 import AdminArticleSection from '../features/admin/components/AdminArticleSection';
 import AdminProfileSection from '../features/admin/components/AdminProfileSection';
 import AdminPredictionOversight from '../features/admin/components/AdminPredictionOversight';
 import GlobalAuditOversight from '../features/admin/components/GlobalAuditOversight';
+import AdminContactSection from '../features/admin/components/AdminContactSection';
 
 // Medical Officer Sections
 import MedicalOverviewSection from '../features/medical/components/MedicalOverviewSection';
 import ConsultationsSection from '../features/medical/components/ConsultationsSection';
 import MedicalArticleSection from '../features/medical/components/MedicalArticleSection';
 import MedicalProfileSection from '../features/medical/components/MedicalProfileSection';
-import MedicalNotificationSection from '../features/medical/components/MedicalNotificationSection';
 import MedicalArticleCreate from '../features/medical/components/MedicalOfficerArticleCreatePage';
 import MedicalArticleEdit from '../features/medical/components/MedicalOfficerArticleEditPage';
 import MedicalPredictionOversight from '../features/medical/components/MedicalPredictionOversight';
+import MedicalActivitySection from '../features/medical/components/MedicalActivitySection';
 import MedicalOfficerArticleViewPage from '../features/medical/components/MedicalOfficerArticleViewPage';
 import UserArticleViewPage from '../features/user/components/UserArticleViewPage';
 
@@ -68,15 +70,18 @@ export default function AppRoutes() {
         <Route path="/article-selection" element={<ArticleSelection />} />
         <Route path="/my-posts" element={<UserPosts />} />
         <Route path="/chat" element={<Chat />} />
-        
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Route>
       
-      {/* Protected User Dashboard - Now standalone (no main header/footer) */}
+      {/* Protected User Dashboard */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />}>
+           <Route path="articles/:articleId" element={<UserArticleViewPage />} />
+        </Route>
       </Route>
 
-      {/* Authentication Layer - All Auth types use their own internal AuthLayout component */}
+      {/* Authentication Layer */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -96,11 +101,12 @@ export default function AppRoutes() {
         <Route path="users" element={<UserManagementSection />} />
         <Route path="medical-officers" element={<MedicalOfficerManagementSection />} />
         <Route path="predictions" element={<AdminPredictionOversight />} />
-        <Route path="audit" element={<GlobalAuditOversight />} />
-        <Route path="chat" element={<AdminChatSection />} />
+        <Route path="audit-logs" element={<GlobalAuditOversight />} />
         <Route path="chat/officer/:officerId" element={<AdminMedicalChatSection />} />
         <Route path="articles" element={<AdminArticleSection />} />
         <Route path="profile" element={<AdminProfileSection />} />
+        <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="contact-tickets" element={<AdminContactSection />} />
       </Route>
 
       {/* Medical Officer Portal Layer - Wrapped in MedicalOfficerLayout */}
@@ -110,16 +116,12 @@ export default function AppRoutes() {
         <Route path="predictions" element={<MedicalPredictionOversight />} />
         <Route path="chat" element={<ConsultationsSection />} />
         <Route path="profile" element={<MedicalProfileSection />} />
-        <Route path="notifications" element={<MedicalNotificationSection />} />
+        <Route path="notifications" element={<NotificationsPage />} />
         <Route path="articles" element={<MedicalArticleSection />} />
+        <Route path="activity-log" element={<MedicalActivitySection />} />
         <Route path="articles/:articleId" element={<MedicalOfficerArticleViewPage />} />
         <Route path="articles/create" element={<MedicalArticleCreate />} />
         <Route path="articles/edit/:articleId" element={<MedicalArticleEdit />} />
-      </Route>
-
-      {/* User Dashboard Routes */}
-      <Route path="/dashboard" element={<Dashboard />}>
-        <Route path="articles/:articleId" element={<UserArticleViewPage />} />
       </Route>
 
       {/* Fallback */}

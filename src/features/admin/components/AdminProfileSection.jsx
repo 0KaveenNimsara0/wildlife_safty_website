@@ -11,9 +11,12 @@ import {
   AlertCircle,
   Key,
   ShieldCheck,
-  Smartphone,
-  Fingerprint
+  Fingerprint,
+  RotateCcw,
+  Smartphone
 } from 'lucide-react';
+import { BASE_URL } from '../../../config/constants';
+import OtpVerificationModal from '../../../components/ui/OtpVerificationModal';
 
 export default function AdminProfileSection() {
   const [adminData, setAdminData] = useState(null);
@@ -26,6 +29,16 @@ export default function AdminProfileSection() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [modalError, setModalError] = useState('');
+  
+  // Security States
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [otpEmail, setOtpEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [verifiedOtp, setVerifiedOtp] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,6 +53,7 @@ export default function AdminProfileSection() {
         email: parsedAdmin.email || '',
         role: parsedAdmin.role || 'Administrator'
       });
+      setOtpEmail(parsedAdmin.email || '');
     }
     setLoading(false);
   }, []);
@@ -61,23 +75,143 @@ export default function AdminProfileSection() {
     setSuccess('');
   };
 
-  const handleSave = () => {
+   const handleSave = async () => {
     if (!formData.name.trim() || !formData.email.trim()) {
       setError('Name and email are required');
       return;
     }
 
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setError('Please enter a valid email address');
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`${BASE_URL}/admin/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('adminData', JSON.stringify(data.admin));
+        setAdminData(data.admin);
+        setIsEditing(false);
+        setSuccess('Personnel profile records synchronized.');
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.message || 'Transmission failed.');
+      }
+    } catch (err) {
+      setError('Signal disruption: Update could not be committed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRequestPasswordReset = async () => {
+    setError('');
+    setSuccess('');
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`${BASE_URL}/admin/auth/request-password-otp`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        setIsOtpModalOpen(true);
+      } else {
+        const data = await response.json();
+        setError(data.message || 'Security protocol failure.');
+      }
+    } catch (err) {
+      setError('Connection interrupted.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOtpVerified = async (otp) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`${BASE_URL}/admin/auth/verify-password-otp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ otp })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setVerifiedOtp(otp);
+        setIsOtpModalOpen(false);
+        setIsPasswordModalOpen(true);
+        setModalError('');
+      } else {
+        // Throw error so the modal can handle incorrect attempt
+        throw new Error(data.message || 'Verification rejected.');
+      }
+    } catch (err) {
+      // Propagate error to modal
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!newPassword || newPassword.length < 6) {
+      setModalError('New password must be at least 6 characters.');
       return;
     }
 
-    const updatedAdmin = { ...adminData, ...formData };
-    localStorage.setItem('adminData', JSON.stringify(updatedAdmin));
-    setAdminData(updatedAdmin);
-    setIsEditing(false);
-    setSuccess('Profile updated successfully');
-    setTimeout(() => setSuccess(''), 3000);
+    if (newPassword !== confirmPassword) {
+      setModalError('Password mismatch: Security keys do not align.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`${BASE_URL}/admin/auth/change-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+          otp: verifiedOtp
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSuccess('Access credentials successfully reset and encrypted.');
+        setIsPasswordModalOpen(false);
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setVerifiedOtp('');
+        setModalError('');
+      } else {
+        setModalError(data.message || 'Security reset rejected.');
+      }
+    } catch (err) {
+      setModalError('Protocol error during security reset.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -118,12 +252,12 @@ export default function AdminProfileSection() {
            </div>
            <div className="text-center md:text-left">
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-                 <h1 className="text-4xl font-black tracking-tight uppercase text-white">{adminData?.name || 'Administrator'}</h1>
+                 <h1 className="text-4xl font-black tracking-tight text-white">{adminData?.name || 'Administrator'}</h1>
                  <div className="px-4 py-1.5 bg-emerald-500/20 rounded-full border border-emerald-500/30 backdrop-blur-md">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Administrator</span>
                  </div>
               </div>
-              <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{adminData?.email}</p>
+              <p className="text-slate-400 font-bold tracking-[0.1em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{adminData?.email}</p>
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                     <Fingerprint size={14} className="text-emerald-500" /> User ID: <span className="text-white">{adminData?.uid?.slice(0, 8) || 'ADMIN_USER_01'}</span>
@@ -190,18 +324,18 @@ export default function AdminProfileSection() {
                   {isEditing ? (
                     <div className="relative group">
                        <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
-                       <input
+                        <input
                         type={field.name === 'email' ? 'email' : 'text'}
                         name={field.name}
                         value={field.val}
                         onChange={handleInputChange}
-                        className="w-full pl-14 pr-6 py-4.5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs uppercase tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all shadow-inner"
+                        className={`w-full pl-16 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all shadow-inner`}
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center h-[64px] px-8 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
+                    <div className="flex items-center min-h-[64px] px-8 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
                       <field.icon size={18} className="text-slate-300 mr-5" />
-                      <span className="text-xs font-black text-slate-900 tracking-tight uppercase tracking-widest">{field.val || 'NULL_NODE'}</span>
+                      <span className="text-xs font-black text-slate-900 tracking-widest">{field.val || 'NULL_NODE'}</span>
                     </div>
                   )}
                 </div>
@@ -218,7 +352,7 @@ export default function AdminProfileSection() {
                         name="role"
                         value={formData.role}
                         onChange={handleInputChange}
-                        className="w-full pl-14 pr-10 py-4.5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs uppercase tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 appearance-none transition-all shadow-inner"
+                        className="w-full pl-16 pr-10 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs uppercase tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 appearance-none transition-all shadow-inner"
                       >
                         <option value="Administrator">Administrator</option>
                         <option value="Super Admin">Super Admin</option>
@@ -226,9 +360,9 @@ export default function AdminProfileSection() {
                       </select>
                    </div>
                 ) : (
-                  <div className="flex items-center h-[64px] px-8 bg-emerald-50 border border-emerald-100 rounded-[20px] shadow-sm">
+                  <div className="flex items-center min-h-[64px] px-8 bg-emerald-50 border border-emerald-100 rounded-[20px] shadow-sm">
                     <Shield size={18} className="text-emerald-500 mr-5" />
-                    <span className="text-xs font-black text-emerald-700 tracking-tight uppercase tracking-[0.1em]">{adminData?.role || 'Administrator Authority'}</span>
+                    <span className="text-xs font-black text-emerald-700 tracking-widest uppercase">{adminData?.role || 'Administrator Authority'}</span>
                   </div>
                 )}
               </div>
@@ -267,8 +401,8 @@ export default function AdminProfileSection() {
       {/* Security Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {[
-          { title: 'Security Settings', sub: 'Update account password', icon: Key, action: 'Update Password', color: 'emerald' },
-          { title: '2FA Settings', sub: 'Multi-factor identification', icon: Smartphone, action: 'Manage 2FA', color: 'slate' }
+          { title: 'Security Settings', sub: 'Update account password', icon: Key, action: 'Update Password', color: 'emerald', onClick: handleRequestPasswordReset },
+          { title: '2FA Settings', sub: 'Multi-factor identification', icon: Smartphone, action: 'Manage 2FA', color: 'slate', onClick: () => setSuccess('2FA management coming soon') }
         ].map((sec, idx) => (
           <div key={idx} className="bg-white border border-slate-100 p-10 flex flex-col justify-between rounded-[40px] shadow-2xl shadow-slate-200/40 hover:shadow-2xl transition-all group">
             <div className="flex items-start justify-between mb-10">
@@ -280,7 +414,9 @@ export default function AdminProfileSection() {
                   <p className="text-lg font-black text-slate-900 uppercase tracking-tight">{sec.sub}</p>
                </div>
             </div>
-            <button className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all
+            <button 
+              onClick={sec.onClick}
+              className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all
               ${sec.color === 'emerald' ? 'bg-emerald-600 text-white hover:bg-slate-900 shadow-xl shadow-emerald-900/20' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}
               active:scale-95
             `}>
@@ -289,6 +425,97 @@ export default function AdminProfileSection() {
           </div>
         ))}
       </div>
+
+      {/* OTP Verification Modal */}
+      <OtpVerificationModal
+        isOpen={isOtpModalOpen}
+        onClose={() => setIsOtpModalOpen(false)}
+        email={otpEmail}
+        onVerify={handleOtpVerified}
+        onResend={handleRequestPasswordReset}
+      />
+
+      {/* Password Reset Modal */}
+      {isPasswordModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+           <div className="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+              <div className="flex items-center gap-4 mb-8">
+                 <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
+                    <ShieldCheck size={28} />
+                 </div>
+                 <div>
+                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Reset Password</h3>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Authorized Security Override</p>
+                 </div>
+              </div>
+
+              <div className="space-y-6">
+                 {modalError && (
+                    <div className="flex items-center gap-3 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 animate-shake">
+                       <AlertCircle size={16} />
+                       <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">{modalError}</span>
+                    </div>
+                 )}
+                 <div>
+                    <div className="flex items-center justify-between mb-3 ml-1">
+                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Current Password</label>
+                       <Shield size={12} className="text-slate-300" />
+                    </div>
+                    <input 
+                       type="password"
+                       value={currentPassword}
+                       onChange={(e) => setCurrentPassword(e.target.value)}
+                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       placeholder="Enter current credentials"
+                    />
+                 </div>
+                 <div>
+                    <div className="flex items-center justify-between mb-3 ml-1">
+                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">New Password</label>
+                       <Key size={12} className="text-emerald-500" />
+                    </div>
+                    <input 
+                       type="password"
+                       value={newPassword}
+                       onChange={(e) => setNewPassword(e.target.value)}
+                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       placeholder="Create new security key"
+                    />
+                 </div>
+                 <div>
+                    <div className="flex items-center justify-between mb-3 ml-1">
+                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Confirm Password</label>
+                       <RotateCcw size={12} className={newPassword && confirmPassword ? (newPassword === confirmPassword ? 'text-emerald-500' : 'text-rose-500') : 'text-slate-300'} />
+                    </div>
+                    <input 
+                       type="password"
+                       value={confirmPassword}
+                       onChange={(e) => setConfirmPassword(e.target.value)}
+                       className={`w-full px-6 py-4 bg-slate-50 border-2 rounded-[20px] font-bold focus:outline-none transition-all shadow-inner ${confirmPassword ? (newPassword === confirmPassword ? 'border-emerald-500/30' : 'border-rose-500/30') : 'border-transparent'}`}
+                       placeholder="Repeat new security key"
+                    />
+                    <p className="mt-2 text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 italic">* Minimum 6 characters required</p>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-10">
+                 <button 
+                    onClick={() => setIsPasswordModalOpen(false)}
+                    className="py-4 bg-slate-100 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
+                 >
+                    Cancel
+                 </button>
+                 <button 
+                    onClick={handlePasswordReset}
+                    disabled={loading}
+                    className="py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
+                 >
+                    {loading ? 'Processing...' : 'Confirm Reset'}
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
     </div>
   );
 }

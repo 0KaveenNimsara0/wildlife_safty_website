@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle} from 'lucide-react';
+import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { IMAGE_BASE_URL } from '../../config/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
+import NotificationDropdown from '../notifications/NotificationDropdown';
 
 export default function Header() {
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { currentUser, logout, googleSignIn, adminLogout, medicalOfficerLogout } = useAuth();
+    const { currentUser, activeUser, logout, googleSignIn, adminLogout, medicalOfficerLogout } = useAuth();
     const navigate = useNavigate();
 
     const navigation = [
@@ -17,7 +18,8 @@ export default function Header() {
         { id: 'map', name: 'Map', icon: MapPin, path: '/map' },
         { id: 'animalDetail', name: 'Animal Details', icon: Search, path: '/animalDetail' },
         { id: 'communityFeed', name: 'Community Feed', icon: User, path: '/communityFeed' },
-        { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' }
+        { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' },
+        { id: 'contact', name: 'Contact Us', icon: Mail, path: '/contact' }
     ];
 
     // Helper functions to check login state
@@ -37,27 +39,26 @@ export default function Header() {
 
     // Get user display info and dashboard path
     const getUserInfo = () => {
-        if (currentUser) {
+        // High priority: Use activeUser from context
+        if (activeUser) {
+            let dashboardPath = '/dashboard';
+            if (activeUser.role === 'admin') dashboardPath = '/admin/dashboard';
+            if (activeUser.role === 'medicalOfficer') dashboardPath = '/medical-officer/dashboard';
+
             return {
-                name: currentUser.displayName || (currentUser.email && currentUser.email.includes('@') ? currentUser.email.split('@')[0] : 'User'),
-                dashboardPath: '/dashboard',
+                name: activeUser.displayName || activeUser.name || 'Agent',
+                dashboardPath,
                 avatar: getUserAvatar()
             };
-        } else if (isAdminLoggedIn()) {
-            const adminData = getAdminData();
-            return {
-                name: adminData?.name || 'Admin',
-                dashboardPath: '/admin/dashboard',
-                avatar: <Shield className="w-4 h-4 text-white" />
-            };
-        } else if (isMedicalOfficerLoggedIn()) {
-            const moData = getMedicalOfficerData();
-            return {
-                name: moData?.name || 'Medical Officer',
-                dashboardPath: '/medical-officer/dashboard',
-                avatar: <User className="w-4 h-4 text-white" />
-            };
         }
+
+        // Low priority: Fallback to localStorage if state is lagging
+        const admin = getAdminData();
+        if (admin) return { name: admin.name || 'Admin', dashboardPath: '/admin/dashboard', avatar: <Shield className="w-4 h-4 text-white" /> };
+
+        const medical = getMedicalOfficerData();
+        if (medical) return { name: medical.name || 'Officer', dashboardPath: '/medical-officer/dashboard', avatar: <User className="w-4 h-4 text-white" /> };
+
         return null;
     };
 
@@ -72,7 +73,7 @@ export default function Header() {
             medicalOfficerLogout();
             navigate('/');
         } else {
-            setAuthPage('login');
+            navigate('/login');
         }
     };
 
@@ -98,45 +99,32 @@ export default function Header() {
 
     // Get user profile picture or default icon
     const getUserAvatar = () => {
-        let photoURL = currentUser?.photoURL;
-        if (photoURL && photoURL.startsWith('/uploads')) {
-            photoURL = `${IMAGE_BASE_URL}${photoURL}`;
-        }
+        if (!activeUser) return <User className="w-4 h-4 text-white" />;
+
+        const photoURL = activeUser.photoURL;
 
         if (photoURL) {
             return (
                 <img 
                     src={photoURL} 
                     alt="Profile" 
-                    className="w-8 h-8 rounded-full object-cover border-2 border-white"
+                    className="w-full h-full object-cover"
                 />
             );
         }
         
-        // Check if user signed in with Google (providerId check)
-        const isGoogleUser = currentUser?.providerData?.some(provider => provider.providerId === 'google.com');
-        
-        if (isGoogleUser) {
-            // Show Google logo for Google-authenticated users without profile pictures
-            return (
-                <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center border-2 border-white">
-                    <img 
-                        src="/src/assets/google-icon-logo-svgrepo-com.svg" 
-                        alt="Google" 
-                        className="w-5 h-5"
-                    />
-                </div>
-            );
-        } else if (currentUser?.email) {
-            // Create avatar with user initials
-            const initials = currentUser.email.charAt(0).toUpperCase();
-            return (
-                <div className="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold border-2 border-white">
-                    {initials}
-                </div>
-            );
-        }
-        return <User className="w-4 h-4 text-white" />;
+        // Handle Professional Role Icons as fallback
+        if (activeUser.role === 'admin') return <Shield className="w-4 h-4 text-white" />;
+        if (activeUser.role === 'medicalOfficer') return <User className="w-4 h-4 text-white" />;
+
+        // Create avatar with user initials
+        const name = activeUser.displayName || activeUser.name || activeUser.email || 'U';
+        const initials = name.charAt(0).toUpperCase();
+        return (
+            <div className="w-full h-full flex items-center justify-center text-white font-bold">
+                {initials}
+            </div>
+        );
     };
 
     return (
@@ -200,6 +188,12 @@ export default function Header() {
                     {/* Action Section */}
                     <div className="hidden md:flex items-center space-x-4">
                         <div className="h-8 w-[1px] bg-slate-200/60 mx-2" />
+                        
+                        {isAnyUserLoggedIn() && (
+                            <NotificationDropdown 
+                                role={isAdminLoggedIn() ? 'admin' : (isMedicalOfficerLoggedIn() ? 'medical' : 'user')} 
+                            />
+                        )}
                         
                         {isAnyUserLoggedIn() ? (
                             <div className="flex items-center space-x-3">

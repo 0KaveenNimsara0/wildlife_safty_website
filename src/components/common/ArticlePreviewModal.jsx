@@ -1,6 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowLeft, Award, Clock, User } from 'lucide-react';
+import { IMAGE_BASE_URL } from '../../config/constants';
+import { ArrowLeft, Award, Clock, User, ShieldAlert } from 'lucide-react';
 
 const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
   if (!isOpen || !article) return null;
@@ -33,7 +34,17 @@ const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
             <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Author / Source</p>
               <div className="flex items-center gap-2">
-                <User size={14} className="text-emerald-600" />
+                <div className="w-6 h-6 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
+                  {article.author?.photoURL ? (
+                    <img 
+                      src={article.author.photoURL.startsWith('http') ? article.author.photoURL : `${IMAGE_BASE_URL}${article.author.photoURL}`} 
+                      alt="" 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <User size={12} className="w-full h-full p-1 text-slate-400" />
+                  )}
+                </div>
                 <p className="text-sm font-black text-slate-900 tracking-tight">{article.author?.name || 'Authorized Officer'}</p>
               </div>
             </div>
@@ -48,6 +59,17 @@ const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
                 </p>
               </div>
             </div>
+            {(article.status === 'rejected' || article.rejectionReason) && article.status !== 'published' && (
+              <div className="col-span-full mt-4 p-5 bg-rose-50 border border-rose-100 rounded-[2rem] flex items-start gap-4">
+                <div className="p-2 bg-rose-100 text-rose-600 rounded-xl">
+                  <ShieldAlert size={18} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-rose-700 uppercase tracking-[0.2em] mb-1">Reviewer Feedback / Rejection Reason</p>
+                  <p className="text-sm font-medium text-rose-600 italic">"{article.rejectionReason || 'No specific feedback provided. Please review guidelines.'}"</p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="prose prose-slate max-w-none">

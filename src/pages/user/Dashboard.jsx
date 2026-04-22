@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { Menu, Award, ArrowLeft, Globe } from 'lucide-react';
@@ -10,8 +10,9 @@ import SecuritySection from '../../features/user/components/SecuritySection';
 import PredictionHistorySection from '../../features/user/components/PredictionHistorySection';
 import SavedArticlesSection from '../../features/user/components/SavedArticlesSection';
 import ActivitySection from '../../features/user/components/ActivitySection';
-import NotificationSection from '../../features/user/components/NotificationSection';
+import UnifiedNotificationGrid from '../../components/notifications/UnifiedNotificationGrid';
 import UserSidebar from '../../features/user/components/UserSidebar';
+import NotificationDropdown from '../../components/notifications/NotificationDropdown';
 
 const Dashboard = () => {
   const { 
@@ -34,6 +35,22 @@ const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const isArticleView = location.pathname.includes('/dashboard/articles/');
+
+  // Handle URL segments and query params for tab switching
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tabParam = queryParams.get('tab');
+    if (tabParam && ['profile', 'security', 'history', 'activity', 'articles', 'notifications'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
+
+  // Handle identity synchronization on mount to ensure verified status is current
+  useEffect(() => {
+    if (activeUser) {
+      refreshUser().catch(err => console.error("Identity sync failure:", err));
+    }
+  }, []); // Only on mount
 
   const handleLogout = async () => {
     try {
@@ -75,14 +92,18 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <button 
-            onClick={() => navigate('/home')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all duration-300 group shadow-xl shadow-slate-900/10"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Return to Site</span>
-            <Globe size={14} className="opacity-50 ml-1" />
-          </button>
+          <div className="flex items-center gap-4">
+            <NotificationDropdown role="user" />
+            
+            <button 
+              onClick={() => navigate('/home')}
+              className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all duration-300 group shadow-xl shadow-slate-900/10"
+            >
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Return to Site</span>
+              <Globe size={14} className="opacity-50 ml-1" />
+            </button>
+          </div>
         </header>
 
         <main className="flex-1 p-6 lg:px-12 lg:pt-8 lg:pb-12 max-w-7xl lg:mx-auto w-full">
@@ -140,7 +161,7 @@ const Dashboard = () => {
                   )}
 
                   {activeTab === 'notifications' && (
-                    <NotificationSection />
+                    <UnifiedNotificationGrid showHeader={false} />
                   )}
                 </>
               )}

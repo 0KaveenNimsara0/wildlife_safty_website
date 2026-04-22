@@ -23,6 +23,7 @@ const MedicalOfficerArticleEditPage = () => {
   const [category, setCategory] = useState('');
   const [tags, setTags] = useState('');
   const [images, setImages] = useState('');
+  const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingArticle, setLoadingArticle] = useState(true);
@@ -53,6 +54,7 @@ const MedicalOfficerArticleEditPage = () => {
           setContent(data.article.content || '');
           setExcerpt(data.article.excerpt || '');
           setCategory(data.article.category || '');
+          setStatus(data.article.status || '');
           setTags((data.article.tags || []).join(', '));
           setImages((data.article.images || []).map(img => typeof img === 'string' ? img : img.url).join(', '));
         } else {
@@ -67,6 +69,57 @@ const MedicalOfficerArticleEditPage = () => {
 
     fetchArticle();
   }, [articleId]);
+
+  const handleSaveAndSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    
+    if (!title.trim() || !content.trim() || !category.trim()) {
+      setError('Title, content, and category are essential data points.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('medicalOfficerToken');
+      // Step 1: Update
+      const updateResponse = await fetch(`${BASE_URL}/medical-officer/articles/${articleId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title, content, excerpt, category,
+          tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+          images: images.split(',').map(url => ({ url: url.trim(), alt: '', caption: '' })).filter(img => img.url)
+        })
+      });
+
+      if (!updateResponse.ok) {
+        const data = await updateResponse.json();
+        throw new Error(data.message || 'Update failed');
+      }
+
+      // Step 2: Submit
+      const submitResponse = await fetch(`${BASE_URL}/medical-officer/articles/${articleId}/submit`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (submitResponse.ok) {
+        alert('Article updated and resubmitted for approval');
+        navigate('/medical-officer/articles');
+      } else {
+        const data = await submitResponse.json();
+        setError(data.message || 'Submission failed');
+      }
+    } catch (err) {
+      setError(err.message || 'Error occurred during resubmission');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -257,15 +310,36 @@ const MedicalOfficerArticleEditPage = () => {
                   {loading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                      Saving Updates...
+                      Processing...
                     </>
                   ) : (
                     <>
                       <Save size={16} />
-                      Update Article
+                      Save Changes
                     </>
                   )}
                 </button>
+
+                {(status === 'rejected' || status === 'draft') && (
+                  <button
+                    type="button"
+                    onClick={handleSaveAndSubmit}
+                    disabled={loading}
+                    className="w-full mt-4 bg-emerald-600 text-white rounded-2xl flex items-center justify-center gap-3 py-4 text-xs font-bold uppercase tracking-widest shadow-lg shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        <Globe size={16} />
+                        Save & Resubmit
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import {
   Users,
   Search,
@@ -9,8 +9,7 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
-  Filter,
-  MoreVertical
+  Filter
 } from 'lucide-react';
 
 export default function UserManagementSection() {
@@ -106,7 +105,8 @@ export default function UserManagementSection() {
       });
 
       if (!response.ok) {
-        throw new Error('Update failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Update failed');
       }
 
       setUsers(users.map(user =>
@@ -135,7 +135,8 @@ export default function UserManagementSection() {
       });
 
       if (!response.ok) {
-        throw new Error('Delete failed');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Delete failed');
       }
 
       await fetchUsers();
@@ -207,27 +208,39 @@ export default function UserManagementSection() {
                     <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
                       <td className="px-8 py-6 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-2xl ${user.sources.includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative`}>
-                            {(user.displayName || user.email || '?').charAt(0).toUpperCase()}
-                            <div className="absolute -bottom-1 -right-1 flex gap-0.5">
-                              {user.sources.includes('firebase') && (
-                                <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-amber-600 text-white">G</div>
-                              )}
-                              {user.sources.includes('mongodb') && (
-                                <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-emerald-600 text-white">P</div>
-                              )}
-                            </div>
+                          <div className={`w-12 h-12 rounded-2xl ${(user.sources || []).includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative overflow-hidden`}>
+                            {user.photoURL ? (
+                              <img 
+                                src={user.photoURL.startsWith('http') ? user.photoURL : `${IMAGE_BASE_URL}${user.photoURL}`} 
+                                alt="" 
+                                className="w-full h-full object-cover" 
+                                onError={(e) => {
+                                  e.target.onerror = null; 
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            ) : (
+                              (user.displayName || user.email || '?').charAt(0).toUpperCase()
+                            )}
+                             <div className="absolute -bottom-1 -right-1 flex gap-0.5">
+                               {(user.sources || []).includes('firebase') && (
+                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-amber-600 text-white">G</div>
+                               )}
+                               {(user.sources || []).includes('mongodb') && (
+                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-emerald-600 text-white">P</div>
+                               )}
+                             </div>
                           </div>
                           <div>
                             <div className="text-sm font-black text-slate-900 tracking-tight">{user.displayName || 'Anonymous User'}</div>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              {user.sources.includes('firebase') && (
-                                <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100">Social</div>
-                              )}
-                              {user.hasPassword && (
-                                <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">Protocol</div>
-                              )}
-                            </div>
+                             <div className="flex items-center gap-1.5 mt-0.5">
+                               {(user.sources || []).includes('firebase') && (
+                                 <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100">Social</div>
+                               )}
+                               {user.hasPassword && (
+                                 <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">Protocol</div>
+                               )}
+                             </div>
                           </div>
                         </div>
                       </td>
@@ -256,23 +269,20 @@ export default function UserManagementSection() {
                       <td className="px-8 py-6 whitespace-nowrap text-right">
                         {editingUser === user.uid ? (
                           <div className="flex justify-end gap-2">
-                             <button onClick={handleUpdate} className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 active:scale-95 transition-all">
+                             <button onClick={handleUpdate} className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 active:scale-95 transition-all" title="Confirm Update">
                                 <CheckCircle size={16} />
                              </button>
-                             <button onClick={() => setEditingUser(null)} className="p-2.5 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 active:scale-95 transition-all">
+                             <button onClick={() => setEditingUser(null)} className="p-2.5 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 active:scale-95 transition-all" title="Abort">
                                 <XCircle size={16} />
                              </button>
                           </div>
                         ) : (
                           <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button onClick={() => handleEdit(user)} className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 hover:border-emerald-100 rounded-xl shadow-sm transition-all active:scale-95">
+                             <button onClick={() => handleEdit(user)} className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 hover:border-emerald-100 rounded-xl shadow-sm transition-all active:scale-95" title="Modify Personnel Record">
                                 <Edit size={16} />
                              </button>
-                             <button onClick={() => handleDelete(user.uid)} className="p-2.5 bg-white border border-slate-100 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl shadow-sm transition-all active:scale-95">
+                             <button onClick={() => handleDelete(user.uid)} className="p-2.5 bg-white border border-slate-100 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl shadow-sm transition-all active:scale-95" title="Purge Identity">
                                 <Trash2 size={16} />
-                             </button>
-                             <button className="p-2.5 bg-white border border-slate-100 text-slate-300 rounded-xl hover:text-slate-900 transition-colors">
-                                <MoreVertical size={16} />
                              </button>
                           </div>
                         )}

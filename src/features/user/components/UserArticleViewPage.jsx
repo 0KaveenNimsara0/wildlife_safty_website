@@ -138,16 +138,17 @@ export default function UserArticleViewPage() {
       {/* Article Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
         <div className="lg:col-span-8 flex flex-col">
-          <div 
-            className="prose prose-slate prose-lg max-w-none 
-              prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight
-              prose-p:text-slate-600 prose-p:leading-loose
-              prose-strong:text-slate-900 prose-strong:font-black
-              pt-4 border-t-4 border-emerald-500 w-24 mb-12"
-          >
-            <div className="text-xl font-medium text-slate-700 leading-relaxed space-y-8 whitespace-pre-wrap">
-              {article.content}
-            </div>
+          <div className="pt-4 border-t-4 border-emerald-500 w-24 mb-12">
+            {article.content && (article.content.includes('<') && article.content.includes('>')) ? (
+              <div 
+                className="text-xl font-medium text-slate-700 leading-loose space-y-8"
+                dangerouslySetInnerHTML={{ __html: article.content }}
+              />
+            ) : (
+              <div className="text-xl font-medium text-slate-700 leading-loose space-y-8 whitespace-pre-wrap">
+                {article.content}
+              </div>
+            )}
           </div>
 
           {/* Tags */}

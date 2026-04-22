@@ -5,9 +5,10 @@ import MedicalOfficerSelector from '../../features/chat/components/MedicalOffice
 import ChatInterface from '../../features/chat/components/ChatInterface';
 import { Shield, MessageCircle, Users, Activity, ChevronRight, XCircle, Search } from 'lucide-react';
 import api from '../../services/api';
+import { IMAGE_BASE_URL } from '../../config/constants';
 
 const UserChatPage = () => {
-  const { currentUser } = useAuth();
+  const { activeUser: currentUser } = useAuth();
   const [selectedMedicalOfficer, setSelectedMedicalOfficer] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [currentConversation, setCurrentConversation] = useState(null);
@@ -224,8 +225,17 @@ const UserChatPage = () => {
                         }`}
                       >
                         <div className="flex items-center justify-between gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors">
-                            {conversation.medicalOfficer?.name?.charAt(0) || 'M'}
+                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors overflow-hidden">
+                            {conversation.medicalOfficer?.photoURL ? (
+                              <img
+                                src={conversation.medicalOfficer.photoURL.startsWith('http') ? conversation.medicalOfficer.photoURL : `${IMAGE_BASE_URL}${conversation.medicalOfficer.photoURL}`}
+                                alt={conversation.medicalOfficer.name?.charAt(0) || 'M'}
+                                className="w-full h-full object-cover"
+                                onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = conversation.medicalOfficer?.name?.charAt(0) || 'M'; }}
+                              />
+                            ) : (
+                              conversation.medicalOfficer?.name?.charAt(0) || 'M'
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-black text-slate-900 truncate tracking-tight">

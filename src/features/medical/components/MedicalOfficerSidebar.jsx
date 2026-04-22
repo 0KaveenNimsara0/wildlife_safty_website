@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import { 
   LayoutDashboard, 
   MessageSquare, 
@@ -10,11 +11,28 @@ import {
   User,
   Settings,
   X,
-  Bell
+  Bell,
+  Mail
 } from 'lucide-react';
 
 const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const navigate = useNavigate();
+  const [officerData, setOfficerData] = React.useState(null);
+
+  React.useEffect(() => {
+    const data = localStorage.getItem('medicalOfficerData');
+    if (data) {
+      setOfficerData(JSON.parse(data));
+    }
+
+    const handleStorage = () => {
+      const updated = localStorage.getItem('medicalOfficerData');
+      if (updated) setOfficerData(JSON.parse(updated));
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const menuItems = [
     { name: 'Dashboard', path: '/medical-officer/dashboard', icon: LayoutDashboard },
@@ -22,6 +40,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Messages', path: '/medical-officer/chat', icon: MessageSquare },
     { name: 'Articles', path: '/medical-officer/articles', icon: FileText },
     { name: 'Notifications', path: '/medical-officer/notifications', icon: Bell },
+    { name:'Activity Log', path:'/medical-officer/activity-log', icon:Activity}
   ];
 
   const handleLogout = () => {
@@ -42,7 +61,8 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* Sidebar Container */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:relative lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:translate-x-0
+        lg:sticky lg:top-0 lg:h-screen
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
@@ -114,10 +134,25 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
           {/* Footer Card */}
           <div className="p-6">
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden group mb-4">
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-lg overflow-hidden">
+                  {officerData?.photoURL ? (
+                    <img src={officerData.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${officerData.photoURL}` : officerData.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    officerData?.name?.charAt(0).toUpperCase() || 'M'
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black text-white truncate">{officerData?.name || 'Medical Officer'}</p>
+                  <p className="text-[8px] font-medium text-slate-500 uppercase tracking-widest mt-0.5">Active Session</p>
+                </div>
+              </div>
+            </div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden group">
               <div className="relative z-10 text-center">
                 <p className="text-[10px] font-bold text-slate-300 mb-1">System Version</p>
-                <p className="text-[9px] font-medium text-slate-500">Node Release 4.2.0v</p>
+                <p className="text-[9px] font-medium text-slate-500">Node Release 0.0.1v</p>
               </div>
             </div>
           </div>

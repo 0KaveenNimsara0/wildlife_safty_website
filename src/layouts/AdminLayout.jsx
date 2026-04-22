@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { useLocation, Outlet } from 'react-router-dom';
+import { useLocation, Outlet, Link } from 'react-router-dom';
 import { 
   Shield, 
   Menu, 
   Activity,
   Bell,
-  Search
+  Search,
+  Home
 } from 'lucide-react';
 import AdminSidebar from '../features/admin/components/AdminSidebar';
+import NotificationDropdown from '../components/notifications/NotificationDropdown';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,6 +45,16 @@ export default function AdminLayout() {
                     <p className="text-sm font-black text-slate-900 tracking-tight uppercase">{activeItem.name}</p>
                  </div>
               </div>
+              <div className="h-8 w-px bg-slate-100 hidden md:block" />
+              <div className="hidden md:flex items-center gap-3">
+                <Link 
+                  to="/" 
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/50 hover:bg-emerald-50 text-slate-700 border border-slate-200 hover:border-emerald-200 hover:text-emerald-700 font-bold transition-all duration-300 shadow-sm group"
+                >
+                  <Home size={16} className="group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] uppercase tracking-widest">Return to Site</span>
+                </Link>
+              </div>
            </div>
 
            <div className="flex items-center gap-4">
@@ -57,9 +69,7 @@ export default function AdminLayout() {
                </div>
 
                <div className="flex items-center gap-2">
-                  <button className="p-2.5 rounded-xl bg-white text-slate-400 hover:text-emerald-500 border border-slate-100 shadow-sm transition-all active:scale-90">
-                     <Bell size={18} />
-                  </button>
+                  <NotificationDropdown role="admin" />
                   <button className="p-2.5 rounded-xl bg-slate-900 text-white shadow-lg shadow-emerald-900/20 transition-all active:scale-95 flex items-center gap-2">
                      <Search size={18} />
                      <span className="hidden lg:inline text-[9px] font-black tracking-widest uppercase px-1">Global Scan</span>

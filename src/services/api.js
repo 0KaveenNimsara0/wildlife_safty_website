@@ -20,14 +20,19 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${adminToken}`;
     } else if (config.url.includes('/medical-officer') && medicalToken) {
       config.headers.Authorization = `Bearer ${medicalToken}`;
-    } else if (config.url.includes('/posts') || config.url.includes('/articles')) {
-      // Community endpoints - use whatever token is available (priority: medical -> user -> admin)
-      if (medicalToken) {
+    } else if (
+      config.url.includes('/posts') || 
+      config.url.includes('/articles') || 
+      config.url.includes('/notifications') || 
+      config.url.includes('/chat')
+    ) {
+      // Shared endpoints - use whatever token is available (priority: admin -> medical -> user)
+      if (adminToken) {
+        config.headers.Authorization = `Bearer ${adminToken}`;
+      } else if (medicalToken) {
         config.headers.Authorization = `Bearer ${medicalToken}`;
       } else if (userToken) {
         config.headers.Authorization = `Bearer ${userToken}`;
-      } else if (adminToken) {
-        config.headers.Authorization = `Bearer ${adminToken}`;
       }
     } else if (userToken) {
       config.headers.Authorization = `Bearer ${userToken}`;
@@ -37,5 +42,23 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+// Centralized Notification API
+export const notificationApi = {
+  getNotifications: () => api.get('/notifications'),
+  getUnreadCount: () => api.get('/notifications/unread-count'),
+  markAsRead: (id) => api.patch(`/notifications/${id}/read`),
+  markAllAsRead: () => api.patch('/notifications/read-all'),
+  deleteNotification: (id) => api.delete(`/notifications/${id}`),
+};
+
+// Medical Officer API
+export const medicalOfficerApi = {
+  getProfile: () => api.get('/medical-officer/profile'),
+  updateProfile: (data) => api.put('/medical-officer/profile', data),
+  uploadProfilePicture: (formData) => api.post('/medical-officer/profile-picture', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+};
 
 export default api;

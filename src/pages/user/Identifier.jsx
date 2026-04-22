@@ -31,6 +31,10 @@ export default function Identifier() {
             setError(`Format Not Supported. Please use JPG or PNG.`);
             return;
         }
+        if (file.size > 5 * 1024 * 1024) {
+            setError(`Asset Too Large. Please select an image under 5MB.`);
+            return;
+        }
         setImageFile(file);
         setImageURL(URL.createObjectURL(file));
     }, [clearState]);

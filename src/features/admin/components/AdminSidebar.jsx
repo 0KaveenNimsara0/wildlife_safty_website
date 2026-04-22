@@ -4,13 +4,14 @@ import {
   LayoutDashboard, 
   Users, 
   UserCheck, 
-  MessageSquare, 
   FileText, 
   Shield, 
   LogOut, 
   X,
   ShieldCheck,
-  History
+  History,
+  Bell,
+  Inbox
 } from 'lucide-react';
 
 export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
@@ -36,9 +37,10 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'User Control', icon: Users, path: '/admin/users' },
     { name: 'Medical Users', icon: UserCheck, path: '/admin/medical-officers' },
     { name: 'Oversight Hub', icon: ShieldCheck, path: '/admin/predictions' },
-    { name: 'System Audit Logs', icon: History, path: '/admin/audit' },
-    { name: 'Communications', icon: MessageSquare, path: '/admin/chat' },
+    { name: 'System Audit Logs', icon: History, path: '/admin/audit-logs' },
+    { name: 'Contact Tickets', icon: Inbox, path: '/admin/contact-tickets' },
     { name: 'Medical Officer Articles', icon: FileText, path: '/admin/articles' },
+    { name: 'Intelligence Grid', icon: Bell, path: '/admin/notifications' },
     { name: 'Personnel Profile', icon: Shield, path: '/admin/profile' },
   ];
 
@@ -54,7 +56,8 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
 
       {/* Modern Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:relative lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:translate-x-0
+        lg:sticky lg:top-0 lg:h-screen
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full bg-slate-900 border-r border-slate-800">
@@ -114,11 +117,18 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
             </div>
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all duration-300 font-black text-[10px] uppercase tracking-widest"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all duration-300 font-black text-[10px] uppercase tracking-widest mb-4"
             >
               <LogOut size={16} />
               Term. Session
             </button>
+
+            <div className="p-4 rounded-2xl bg-slate-800/30 border border-slate-800 relative overflow-hidden group">
+               <div className="relative z-10 text-center">
+                  <p className="text-[10px] font-bold text-slate-300 mb-1">System Version</p>
+                  <p className="text-[9px] font-medium text-slate-500 tracking-widest uppercase">Node Release 0.0.1v</p>
+               </div>
+            </div>
           </div>
         </div>
       </aside>
