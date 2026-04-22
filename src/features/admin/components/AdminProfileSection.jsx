@@ -29,6 +29,7 @@ export default function AdminProfileSection() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [modalError, setModalError] = useState('');
   
   // Security States
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -36,6 +37,7 @@ export default function AdminProfileSection() {
   const [otpEmail, setOtpEmail] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [verifiedOtp, setVerifiedOtp] = useState('');
   const navigate = useNavigate();
 
@@ -153,6 +155,7 @@ export default function AdminProfileSection() {
         setVerifiedOtp(otp);
         setIsOtpModalOpen(false);
         setIsPasswordModalOpen(true);
+        setModalError('');
       } else {
         // Throw error so the modal can handle incorrect attempt
         throw new Error(data.message || 'Verification rejected.');
@@ -167,7 +170,12 @@ export default function AdminProfileSection() {
 
   const handlePasswordReset = async () => {
     if (!newPassword || newPassword.length < 6) {
-      setError('New password must be at least 6 characters.');
+      setModalError('New password must be at least 6 characters.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setModalError('Password mismatch: Security keys do not align.');
       return;
     }
 
@@ -193,12 +201,14 @@ export default function AdminProfileSection() {
         setIsPasswordModalOpen(false);
         setCurrentPassword('');
         setNewPassword('');
+        setConfirmPassword('');
         setVerifiedOtp('');
+        setModalError('');
       } else {
-        setError(data.message || 'Security reset rejected.');
+        setModalError(data.message || 'Security reset rejected.');
       }
     } catch (err) {
-      setError('Protocol error during security reset.');
+      setModalError('Protocol error during security reset.');
     } finally {
       setLoading(false);
     }
@@ -440,24 +450,49 @@ export default function AdminProfileSection() {
               </div>
 
               <div className="space-y-6">
+                 {modalError && (
+                    <div className="flex items-center gap-3 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 animate-shake">
+                       <AlertCircle size={16} />
+                       <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">{modalError}</span>
+                    </div>
+                 )}
                  <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Current Password</label>
+                    <div className="flex items-center justify-between mb-3 ml-1">
+                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Current Password</label>
+                       <Shield size={12} className="text-slate-300" />
+                    </div>
                     <input 
                        type="password"
                        value={currentPassword}
                        onChange={(e) => setCurrentPassword(e.target.value)}
-                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl font-bold focus:outline-none focus:border-emerald-500 transition-all"
-                       placeholder="••••••••"
+                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       placeholder="Enter current credentials"
                     />
                  </div>
                  <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">New Password</label>
+                    <div className="flex items-center justify-between mb-3 ml-1">
+                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">New Password</label>
+                       <Key size={12} className="text-emerald-500" />
+                    </div>
                     <input 
                        type="password"
                        value={newPassword}
                        onChange={(e) => setNewPassword(e.target.value)}
-                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl font-bold focus:outline-none focus:border-emerald-500 transition-all"
-                       placeholder="••••••••"
+                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       placeholder="Create new security key"
+                    />
+                 </div>
+                 <div>
+                    <div className="flex items-center justify-between mb-3 ml-1">
+                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Confirm Password</label>
+                       <RotateCcw size={12} className={newPassword && confirmPassword ? (newPassword === confirmPassword ? 'text-emerald-500' : 'text-rose-500') : 'text-slate-300'} />
+                    </div>
+                    <input 
+                       type="password"
+                       value={confirmPassword}
+                       onChange={(e) => setConfirmPassword(e.target.value)}
+                       className={`w-full px-6 py-4 bg-slate-50 border-2 rounded-[20px] font-bold focus:outline-none transition-all shadow-inner ${confirmPassword ? (newPassword === confirmPassword ? 'border-emerald-500/30' : 'border-rose-500/30') : 'border-transparent'}`}
+                       placeholder="Repeat new security key"
                     />
                     <p className="mt-2 text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 italic">* Minimum 6 characters required</p>
                  </div>
