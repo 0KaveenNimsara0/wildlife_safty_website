@@ -141,7 +141,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-black text-white uppercase truncate">{officerData?.name || 'Medical Officer'}</p>
+                  <p className="text-[10px] font-black text-white truncate">{officerData?.name || 'Medical Officer'}</p>
                   <p className="text-[8px] font-medium text-slate-500 uppercase tracking-widest mt-0.5">Active Session</p>
                 </div>
               </div>

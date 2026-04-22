@@ -161,7 +161,7 @@ export default function MedicalArticleSection() {
                               article.author?.name?.charAt(0).toUpperCase()
                             )}
                          </div>
-                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{article.author?.name}</span>
+                         <span className="text-[10px] font-black text-slate-500 tracking-widest">{article.author?.name}</span>
                       </div>
                       
                       <div className="flex items-center gap-2">

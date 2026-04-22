@@ -252,12 +252,12 @@ export default function AdminProfileSection() {
            </div>
            <div className="text-center md:text-left">
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-                 <h1 className="text-4xl font-black tracking-tight uppercase text-white">{adminData?.name || 'Administrator'}</h1>
+                 <h1 className="text-4xl font-black tracking-tight text-white">{adminData?.name || 'Administrator'}</h1>
                  <div className="px-4 py-1.5 bg-emerald-500/20 rounded-full border border-emerald-500/30 backdrop-blur-md">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Administrator</span>
                  </div>
               </div>
-              <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{adminData?.email}</p>
+              <p className="text-slate-400 font-bold tracking-[0.1em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{adminData?.email}</p>
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                     <Fingerprint size={14} className="text-emerald-500" /> User ID: <span className="text-white">{adminData?.uid?.slice(0, 8) || 'ADMIN_USER_01'}</span>
@@ -329,13 +329,13 @@ export default function AdminProfileSection() {
                         name={field.name}
                         value={field.val}
                         onChange={handleInputChange}
-                        className="w-full pl-16 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs uppercase tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all shadow-inner"
+                        className={`w-full pl-16 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all shadow-inner`}
                       />
                     </div>
                   ) : (
                     <div className="flex items-center min-h-[64px] px-8 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
                       <field.icon size={18} className="text-slate-300 mr-5" />
-                      <span className="text-xs font-black text-slate-900 tracking-widest uppercase">{field.val || 'NULL_NODE'}</span>
+                      <span className="text-xs font-black text-slate-900 tracking-widest">{field.val || 'NULL_NODE'}</span>
                     </div>
                   )}
                 </div>

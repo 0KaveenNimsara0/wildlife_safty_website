@@ -308,7 +308,7 @@ export default function MedicalProfileSection() {
            </div>
             <div className="text-center md:text-left">
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-                 <h1 className="text-4xl font-black tracking-tight text-white uppercase">{activeUser?.name || activeUser?.displayName || 'Medical Officer'}</h1>
+                 <h1 className="text-4xl font-black tracking-tight text-white">{activeUser?.name || activeUser?.displayName || 'Medical Officer'}</h1>
                  <div className="px-4 py-1.5 bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">Verified Member</span>
                  </div>
@@ -392,18 +392,18 @@ export default function MedicalProfileSection() {
                 {isEditing && !field.readOnly ? (
                   <div className="relative group">
                      <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors" size={18} />
-                     <input
+                      <input
                       type={field.type || 'text'}
                       name={field.name}
                       value={field.val}
                       onChange={handleInputChange}
-                      className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs uppercase tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition-all shadow-inner"
+                      className={`w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition-all shadow-inner`}
                     />
                   </div>
                 ) : (
                   <div className={`flex items-center h-[64px] px-8 border rounded-[20px] shadow-sm ${field.readOnly ? 'bg-slate-100/50 border-slate-100 opacity-60' : 'bg-slate-50/50 border-slate-50'}`}>
                     <field.icon size={18} className="text-slate-300 mr-5" />
-                    <span className="text-xs font-black text-slate-700 uppercase tracking-widest">{field.val || '---'}</span>
+                    <span className={`text-xs font-black text-slate-700 ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-widest`}>{field.val || '---'}</span>
                   </div>
                 )}
               </div>
@@ -434,7 +434,7 @@ export default function MedicalProfileSection() {
                 ) : (
                   <div className={`flex items-center h-[64px] px-8 border rounded-[20px] shadow-sm ${field.readOnly ? 'bg-slate-100/50 border-slate-100 opacity-60' : 'bg-slate-50/50 border-slate-50'}`}>
                     <field.icon size={18} className="text-slate-300 mr-5" />
-                    <span className="text-xs font-black text-slate-700 uppercase tracking-widest">{field.val || '---'}</span>
+                    <span className={`text-xs font-black text-slate-700 ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-widest`}>{field.val || '---'}</span>
                   </div>
                 )}
               </div>

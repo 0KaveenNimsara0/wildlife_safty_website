@@ -274,7 +274,7 @@ const ConsultationsSection = () => {
                                )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-black text-slate-900 truncate text-xs uppercase tracking-tight">
+                              <p className="font-black text-slate-900 truncate text-xs tracking-tight">
                                  {conversation.user?.displayName || conversation.user?.email?.split('@')[0] || 'Field Node'}
                               </p>
                               <p className="text-[10px] text-slate-400 truncate mt-1 italic font-medium">
@@ -304,7 +304,7 @@ const ConsultationsSection = () => {
                                    ) : admin.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="min-w-0">
-                                   <p className="text-xs font-black uppercase tracking-tight truncate">{admin.name}</p>
+                                   <p className="text-xs font-black tracking-tight truncate">{admin.name}</p>
                                    <p className={`text-[9px] font-bold uppercase tracking-widest ${currentConversation?.admin?._id === admin._id ? 'text-indigo-200' : 'text-slate-400'}`}>Official Support</p>
                                  </div>
                              </div>
@@ -338,7 +338,7 @@ const ConsultationsSection = () => {
                            )}
                         </div>
                         <div>
-                          <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none mb-1.5">
+                          <h3 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1.5">
                              {currentConversation.user?.displayName || currentConversation.user?.email || currentConversation.admin?.name || 'Authorized User'}
                           </h3>
                           <div className="flex items-center gap-2">

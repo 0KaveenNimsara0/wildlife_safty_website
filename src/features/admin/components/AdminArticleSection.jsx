@@ -358,7 +358,7 @@ export default function AdminArticleSection() {
                                      <UserIcon size={10} className="w-full h-full p-1 text-slate-400" />
                                    )}
                                 </div>
-                                <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest">{article.author?.name}</span>
+                                <span className="text-[9px] font-black text-emerald-500 tracking-widest">{article.author?.name}</span>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-2 py-0.5 bg-slate-50 rounded">Expert</span>
                              </div>
                           </div>

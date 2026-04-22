@@ -219,7 +219,7 @@ export default function AdminChatSection() {
                  </div>
                  <div className="flex-1 text-left min-w-0">
                     <div className="flex justify-between items-start mb-0.5">
-                       <h3 className="text-xs font-black text-slate-900 uppercase tracking-tight truncate">
+                       <h3 className="text-xs font-black text-slate-900 tracking-tight truncate">
                           {conv.user?.name || conv.user?.email?.split('@')[0]}
                        </h3>
                        <span className="text-[8px] font-bold text-slate-400 uppercase">
@@ -253,7 +253,7 @@ export default function AdminChatSection() {
                      )}
                   </div>
                   <div>
-                     <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-none mb-1.5">{currentConversation.user?.name || currentConversation.user?.email}</h3>
+                     <h3 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1.5">{currentConversation.user?.name || currentConversation.user?.email}</h3>
                      <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Secure Protocol Active</span>
