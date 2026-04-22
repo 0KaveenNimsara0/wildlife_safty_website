@@ -61,7 +61,8 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* Sidebar Container */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:relative lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:translate-x-0
+        lg:sticky lg:top-0 lg:h-screen
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
