@@ -19,6 +19,7 @@ import ArticleSelection from '../pages/user/ArticleSelection';
 import UserPosts from '../pages/user/UserPosts';
 import Chat from '../pages/user/Chat';
 import NotificationsPage from '../pages/NotificationsPage';
+import ContactPage from '../pages/user/ContactPage';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -33,12 +34,12 @@ import ForgotPassword from '../pages/auth/ForgotPassword';
 import AdminOverviewSection from '../features/admin/components/AdminOverviewSection';
 import UserManagementSection from '../features/admin/components/UserManagementSection';
 import MedicalOfficerManagementSection from '../features/admin/components/MedicalOfficerManagementSection';
-import AdminChatSection from '../features/admin/components/AdminChatSection';
 import AdminMedicalChatSection from '../features/admin/components/AdminMedicalChatSection';
 import AdminArticleSection from '../features/admin/components/AdminArticleSection';
 import AdminProfileSection from '../features/admin/components/AdminProfileSection';
 import AdminPredictionOversight from '../features/admin/components/AdminPredictionOversight';
 import GlobalAuditOversight from '../features/admin/components/GlobalAuditOversight';
+import AdminContactSection from '../features/admin/components/AdminContactSection';
 
 // Medical Officer Sections
 import MedicalOverviewSection from '../features/medical/components/MedicalOverviewSection';
@@ -69,7 +70,7 @@ export default function AppRoutes() {
         <Route path="/my-posts" element={<UserPosts />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/notifications" element={<NotificationsPage />} />
-        
+        <Route path="/contact" element={<ContactPage />} />
       </Route>
       
       {/* Protected User Dashboard */}
@@ -79,7 +80,7 @@ export default function AppRoutes() {
         </Route>
       </Route>
 
-      {/* Authentication Layer - All Auth types use their own internal AuthLayout component */}
+      {/* Authentication Layer */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -99,12 +100,12 @@ export default function AppRoutes() {
         <Route path="users" element={<UserManagementSection />} />
         <Route path="medical-officers" element={<MedicalOfficerManagementSection />} />
         <Route path="predictions" element={<AdminPredictionOversight />} />
-        <Route path="audit" element={<GlobalAuditOversight />} />
-        <Route path="chat" element={<AdminChatSection />} />
+        <Route path="audit-logs" element={<GlobalAuditOversight />} />
         <Route path="chat/officer/:officerId" element={<AdminMedicalChatSection />} />
         <Route path="articles" element={<AdminArticleSection />} />
         <Route path="profile" element={<AdminProfileSection />} />
         <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="contact-tickets" element={<AdminContactSection />} />
       </Route>
 
       {/* Medical Officer Portal Layer - Wrapped in MedicalOfficerLayout */}

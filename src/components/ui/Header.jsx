@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle} from 'lucide-react';
+import { Camera, Phone, BookOpen, Search, Menu, X, User, LogIn, Shield, MapPin, MessageCircle, Mail } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { IMAGE_BASE_URL } from '../../config/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -18,7 +18,8 @@ export default function Header() {
         { id: 'map', name: 'Map', icon: MapPin, path: '/map' },
         { id: 'animalDetail', name: 'Animal Details', icon: Search, path: '/animalDetail' },
         { id: 'communityFeed', name: 'Community Feed', icon: User, path: '/communityFeed' },
-        { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' }
+        { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' },
+        { id: 'contact', name: 'Contact Us', icon: Mail, path: '/contact' }
     ];
 
     // Helper functions to check login state
@@ -185,8 +186,8 @@ export default function Header() {
                     </div>
 
                     {/* Action Section */}
-                    <div class="hidden md:flex items-center space-x-4">
-                        <div class="h-8 w-[1px] bg-slate-200/60 mx-2" />
+                    <div className="hidden md:flex items-center space-x-4">
+                        <div className="h-8 w-[1px] bg-slate-200/60 mx-2" />
                         
                         {isAnyUserLoggedIn() && (
                             <NotificationDropdown 

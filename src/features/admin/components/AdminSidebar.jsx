@@ -4,14 +4,14 @@ import {
   LayoutDashboard, 
   Users, 
   UserCheck, 
-  MessageSquare, 
   FileText, 
   Shield, 
   LogOut, 
   X,
   ShieldCheck,
   History,
-  Bell
+  Bell,
+  Inbox
 } from 'lucide-react';
 
 export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
@@ -38,7 +38,7 @@ export default function AdminSidebar({ sidebarOpen, setSidebarOpen }) {
     { name: 'Medical Users', icon: UserCheck, path: '/admin/medical-officers' },
     { name: 'Oversight Hub', icon: ShieldCheck, path: '/admin/predictions' },
     { name: 'System Audit Logs', icon: History, path: '/admin/audit' },
-    { name: 'Communications', icon: MessageSquare, path: '/admin/chat' },
+    { name: 'Contact Tickets', icon: Inbox, path: '/admin/contact-tickets' },
     { name: 'Medical Officer Articles', icon: FileText, path: '/admin/articles' },
     { name: 'Intelligence Grid', icon: Bell, path: '/admin/notifications' },
     { name: 'Personnel Profile', icon: Shield, path: '/admin/profile' },
