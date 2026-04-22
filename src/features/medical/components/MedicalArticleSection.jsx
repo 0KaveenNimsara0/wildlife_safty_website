@@ -134,9 +134,19 @@ export default function MedicalArticleSection() {
                       {article.title}
                    </h3>
                    
-                   <p className="text-xs font-medium text-slate-400 mb-8 line-clamp-3 leading-relaxed">
+                   <p className="text-xs font-medium text-slate-400 mb-6 line-clamp-3 leading-relaxed">
                       {article.content?.replace(/<[^>]*>?/gm, '').substring(0, 120)}...
                    </p>
+                   
+                   {(article.status === 'rejected' || (article.status === 'draft' && article.rejectionReason)) && (
+                     <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3">
+                        <AlertCircle size={14} className="text-rose-500 mt-0.5 flex-shrink-0" />
+                        <div className="min-w-0">
+                           <p className="text-[8px] font-black text-rose-700 uppercase tracking-widest mb-1">Rejection Reason</p>
+                           <p className="text-[10px] font-bold text-rose-600 line-clamp-2 italic leading-tight">"{article.rejectionReason || 'No feedback provided.'}"</p>
+                        </div>
+                     </div>
+                   )}
                    
                    <div className="flex items-center justify-between pt-8 border-t border-slate-50">
                       <div className="flex items-center gap-3">
