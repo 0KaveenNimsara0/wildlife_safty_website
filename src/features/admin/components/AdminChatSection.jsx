@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import { 
   MessageSquare, 
@@ -21,11 +22,14 @@ export default function AdminChatSection() {
   const [convLoading, setConvLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [newMessagesCount, setNewMessagesCount] = useState(0);
+  const [searchParams] = useSearchParams();
+  const targetUserId = searchParams.get('user');
   
   const messagesEndRef = useRef(null);
   const pollingInterval = useRef(null);
   const messagesContainerRef = useRef(null);
   const lastMessagesLengthRef = useRef(0);
+  const lastMessageIdRef = useRef(null);
 
   const adminToken = localStorage.getItem('adminToken');
 
@@ -48,20 +52,34 @@ export default function AdminChatSection() {
     };
   }, [currentConversation?._id]);
 
+  // Handle direct navigation from User Management
+  useEffect(() => {
+    if (targetUserId && conversations.length > 0 && !currentConversation) {
+      const conv = conversations.find(c => (c.user?._id === targetUserId || c.user?.uid === targetUserId));
+      if (conv) {
+        handleSelectConversation(conv);
+      }
+    }
+  }, [conversations, targetUserId]);
+
   useEffect(() => {
     if (messagesContainerRef.current) {
         const container = messagesContainerRef.current;
         const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+        const latestMsgId = messages.length > 0 ? messages[messages.length - 1]._id : null;
         
-        if (messages.length > lastMessagesLengthRef.current) {
-            if (isNearBottom) {
+        // Only scroll if we have more messages than before OR the last message ID is different
+        if (messages.length > 0 && latestMsgId !== lastMessageIdRef.current) {
+            if (isNearBottom || lastMessagesLengthRef.current === 0) {
                 scrollToBottom();
                 setNewMessagesCount(0);
-            } else {
+            } else if (lastMessagesLengthRef.current > 0) {
                 setNewMessagesCount(prev => prev + (messages.length - lastMessagesLengthRef.current));
             }
         }
+        
         lastMessagesLengthRef.current = messages.length;
+        lastMessageIdRef.current = latestMsgId;
     }
   }, [messages]);
 
@@ -100,6 +118,7 @@ export default function AdminChatSection() {
   const handleSelectConversation = (conv) => {
     setCurrentConversation(conv);
     setMessages([]);
+    lastMessagesLengthRef.current = 0;
     setNewMessagesCount(0);
     fetchMessages(conv._id);
   };

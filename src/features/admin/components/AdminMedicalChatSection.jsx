@@ -8,7 +8,8 @@ import {
   Activity,
   Shield,
   AlertCircle,
-  Loader2
+  Loader2,
+  ChevronDown
 } from 'lucide-react';
 import MessageBubble from '../../chat/components/MessageBubble';
 import ChatInput from '../../chat/components/ChatInput';
@@ -25,7 +26,11 @@ export default function AdminMedicalChatSection() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const lastMessagesLengthRef = useRef(0);
+  const lastMessageIdRef = useRef(null);
   const pollingInterval = useRef(null);
+  const [newMessagesCount, setNewMessagesCount] = useState(0);
 
   const adminToken = localStorage.getItem('adminToken');
 
@@ -46,7 +51,25 @@ export default function AdminMedicalChatSection() {
   }, [paramOfficerId]);
 
   useEffect(() => {
-    scrollToBottom();
+    if (messagesContainerRef.current) {
+        const container = messagesContainerRef.current;
+        const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+        const latestMsgId = messages.length > 0 ? messages[messages.length - 1]._id : null;
+        
+        // Only scroll if we have more messages than before OR the last message ID is different
+        if (messages.length > 0 && latestMsgId !== lastMessageIdRef.current) {
+            if (isNearBottom || lastMessagesLengthRef.current === 0) {
+                scrollToBottom();
+                setNewMessagesCount(0);
+            } else if (lastMessagesLengthRef.current > 0) {
+                // Only show "new messages" if it's not the initial load
+                setNewMessagesCount(prev => prev + (messages.length - lastMessagesLengthRef.current));
+            }
+        }
+        
+        lastMessagesLengthRef.current = messages.length;
+        lastMessageIdRef.current = latestMsgId;
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -54,7 +77,8 @@ export default function AdminMedicalChatSection() {
       if (pollingInterval.current) clearInterval(pollingInterval.current);
       
       pollingInterval.current = setInterval(() => {
-        fetchMessages(currentOfficer.conversationId);
+        fetchConversations(true);
+        fetchMessages(currentOfficer.conversationId, true);
       }, 2000);
     }
 
@@ -62,6 +86,20 @@ export default function AdminMedicalChatSection() {
       if (pollingInterval.current) clearInterval(pollingInterval.current);
     };
   }, [currentOfficer]);
+
+  // Link selected officer to conversation once conversations load
+  useEffect(() => {
+    if (currentOfficer && !currentOfficer.conversationId && conversations.length > 0) {
+      const conv = conversations.find(c => c.medicalOfficer?._id === currentOfficer._id);
+      if (conv) {
+        setCurrentOfficer(prev => ({
+          ...prev,
+          conversationId: conv._id
+        }));
+        fetchMessages(conv._id);
+      }
+    }
+  }, [conversations, currentOfficer?._id]);
 
   const fetchOfficerDetails = async (id) => {
     try {
@@ -83,9 +121,9 @@ export default function AdminMedicalChatSection() {
     }
   };
 
-  const fetchConversations = async () => {
+  const fetchConversations = async (silent = false) => {
     try {
-      setConvLoading(true);
+      if (!silent) setConvLoading(true);
       const response = await fetch(`${BASE_URL}/admin/chat/conversations/medical-officers`, {
         headers: { 'Authorization': `Bearer ${adminToken}` }
       });
@@ -94,15 +132,16 @@ export default function AdminMedicalChatSection() {
         setConversations(data.conversations);
       }
     } catch (err) {
-      setError('Failed to load conversations');
+      if (!silent) setError('Failed to load conversations');
     } finally {
-      setConvLoading(false);
+      if (!silent) setConvLoading(false);
     }
   };
 
-  const fetchMessages = async (convId) => {
+  const fetchMessages = async (convId, silent = false) => {
     if (!convId) return;
     try {
+      if (!silent) setMsgLoading(true);
       const response = await fetch(`${BASE_URL}/admin/chat/messages/medical-officer/${convId}`, {
         headers: { 'Authorization': `Bearer ${adminToken}` }
       });
@@ -112,6 +151,8 @@ export default function AdminMedicalChatSection() {
       }
     } catch (err) {
       console.error('[AdminChat] Signal Acquisition Failure:', err);
+    } finally {
+      if (!silent) setMsgLoading(false);
     }
   };
 
@@ -120,6 +161,9 @@ export default function AdminMedicalChatSection() {
       ...officer,
       conversationId: convId || conversations.find(c => c.medicalOfficer?._id === officer._id)?._id
     });
+    
+    lastMessagesLengthRef.current = 0;
+    setNewMessagesCount(0);
 
     if (convId) {
       fetchMessages(convId);
@@ -129,8 +173,10 @@ export default function AdminMedicalChatSection() {
         fetchMessages(existing._id);
       } else {
         setMessages([]);
+        lastMessagesLengthRef.current = 0;
       }
     }
+    setNewMessagesCount(0);
   };
 
   const onSendMessage = async (messageText) => {
@@ -157,8 +203,11 @@ export default function AdminMedicalChatSection() {
              ...prev,
              conversationId: data.message.conversationId
           }));
+          // Fetch full history now that we have a ID
+          fetchMessages(data.message.conversationId);
         }
-        fetchConversations();
+        fetchConversations(true);
+        setTimeout(scrollToBottom, 100);
       } else {
         alert('Failed to send message: ' + (data.message || 'Unknown protocol error'));
       }
@@ -292,7 +341,10 @@ export default function AdminMedicalChatSection() {
                </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6 bg-slate-50/30">
+            <div 
+              ref={messagesContainerRef}
+              className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6 bg-slate-50/30"
+            >
                {msgLoading ? (
                  <div className="flex items-center justify-center h-full opacity-30">
                     <Loader2 size={32} className="animate-spin text-emerald-600" />
@@ -318,6 +370,16 @@ export default function AdminMedicalChatSection() {
                )}
                <div ref={messagesEndRef} />
             </div>
+
+            {newMessagesCount > 0 && (
+              <button 
+                onClick={scrollToBottom}
+                className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl animate-bounce flex items-center gap-2 z-20"
+              >
+                 <ChevronDown size={14} />
+                 {newMessagesCount} New Transmissions
+              </button>
+            )}
 
             <ChatInput 
               onSendMessage={onSendMessage} 
