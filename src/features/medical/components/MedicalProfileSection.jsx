@@ -56,9 +56,10 @@ export default function MedicalProfileSection() {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
-  // Keep form data in sync with activeUser when mount or activeUser changes
-  React.useEffect(() => {
-    if (activeUser) {
+  // 1. Keep form data in sync with activeUser (reactive)
+  // Only sync when not editing to prevent overwriting user input
+  useEffect(() => {
+    if (activeUser && !isEditing) {
       setFormData({
         name: activeUser.name || activeUser.displayName || '',
         email: activeUser.email || '',
@@ -68,7 +69,20 @@ export default function MedicalProfileSection() {
         hospital: activeUser.hospital || ''
       });
     }
-  }, [activeUser]);
+  }, [activeUser, isEditing]);
+
+  // 2. Perform a one-time deep-sync on mount to catch admin updates
+  useEffect(() => {
+    const performInitialSync = async () => {
+      try {
+        await refreshUser();
+      } catch (err) {
+        console.error('Initial background sync failed:', err);
+      }
+    };
+    performInitialSync();
+    // We only want this on mount, or if the refresh function itself changes
+  }, [refreshUser]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -306,7 +320,7 @@ export default function MedicalProfileSection() {
                     <FileText size={14} className="text-indigo-400" /> License: <span className="text-white">{activeUser?.licenseNumber || 'Pending'}</span>
                  </div>
                  <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                    <ShieldCheck size={14} className="text-emerald-400" /> Operational Status: <span className="text-emerald-400 uppercase">{activeUser?.isApproved ? 'ACTIVE' : 'PENDING'}</span>
+                    <ShieldCheck size={14} className="text-emerald-400" /> Operational Status: <span className="text-emerald-400 uppercase">{(activeUser?.isApproved === true || activeUser?.isApproved === 'true') ? 'ACTIVE' : 'PENDING'}</span>
                  </div>
               </div>
            </div>

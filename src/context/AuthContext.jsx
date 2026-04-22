@@ -116,7 +116,7 @@ export function AuthProvider({ children }) {
     }
 
     return null;
-  }, [currentUser]);
+  }, [currentUser]); // currentUser is still needed to trigger updates when Firebase state changes
 
   const syncActiveUser = useCallback(() => {
     setActiveUser(getActiveUser());
@@ -346,12 +346,15 @@ export function AuthProvider({ children }) {
       }
 
       if (active.role === "admin") {
-        localStorage.setItem("adminData", JSON.stringify(updatedData));
+        const merged = { ...active, ...updatedData };
+        localStorage.setItem("adminData", JSON.stringify(merged));
       } else if (active.role === "medicalOfficer") {
-        localStorage.setItem("medicalOfficerData", JSON.stringify(updatedData));
+        const merged = { ...active, ...updatedData };
+        localStorage.setItem("medicalOfficerData", JSON.stringify(merged));
       } else {
-        localStorage.setItem("mongoUser", JSON.stringify(updatedData));
-        setCurrentUser(updatedData);
+        const merged = { ...active, ...updatedData };
+        localStorage.setItem("mongoUser", JSON.stringify(merged));
+        setCurrentUser(merged);
       }
 
       // Trigger activeUser sync
