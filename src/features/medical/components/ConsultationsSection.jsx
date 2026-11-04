@@ -160,13 +160,13 @@ const ConsultationsSection = () => {
   };
 
   const onSendMessage = async (messageText) => {
-    if (!messageText.trim() || !currentConversation) return;
+    if (!messageText.trim() || !currentConversation) return false;
 
     try {
       const receiverId = currentConversation.user?.uid || currentConversation.user?._id || currentConversation.admin?._id;
       const receiverType = currentConversation.admin ? 'admin' : 'user';
 
-      if (!receiverId) return;
+      if (!receiverId) return false;
 
       setLoading(true);
       const response = await fetch(`${BASE_URL}/medical-officer/chat/send/${receiverId}`, {
@@ -187,10 +187,12 @@ const ConsultationsSection = () => {
         fetchConversations(medicalOfficerId);
       } else {
         setError(data.message || 'Failed to send message');
+        return false;
       }
     } catch (error) {
       console.error('Error sending message:', error);
       setError('Failed to send message');
+      return false;
     } finally {
       setLoading(false);
     }

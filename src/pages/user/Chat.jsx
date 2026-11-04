@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import MedicalOfficerSelector from '../../features/chat/components/MedicalOfficerSelector';
@@ -12,6 +12,7 @@ const UserChatPage = () => {
   const [selectedMedicalOfficer, setSelectedMedicalOfficer] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [currentConversation, setCurrentConversation] = useState(null);
+  const activeConversationRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -38,7 +39,8 @@ const UserChatPage = () => {
       if (!silent) setLoading(true);
       const response = await api.get(`/user/chat/messages/${conversationId}`);
       if (response.data.success) {
-        setMessages(response.data.messages);
+        if (activeConversationRef.current !== conversationId) return;
+        setMessages(prev => [...response.data.messages, ...prev.filter(m => String(m._id).startsWith("temp-"))]);
         // Sync conversation list immediately to clear unread badges
         fetchConversations(true);
       }
@@ -71,14 +73,19 @@ const UserChatPage = () => {
         setMessages(prev => prev.map(msg => 
           msg._id === optimisticMessage._id ? response.data.message : msg
         ));
+        if (!currentConversation && response.data.message.conversationId) {
+          activeConversationRef.current = response.data.message.conversationId;
+          setCurrentConversation({ _id: response.data.message.conversationId, medicalOfficer: selectedMedicalOfficer });
+        }
         fetchConversations();
       } else {
         throw new Error(response.data.message || 'Transmission failed');
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      setError('Communication interrupted. Retrying...');
+      setError('Message was not confirmed. Your draft is preserved; check the conversation before retrying.');
       setMessages(prev => prev.filter(msg => msg._id !== optimisticMessage._id));
+      return false;
     }
   };
 
@@ -91,12 +98,15 @@ const UserChatPage = () => {
       handleConversationSelect(existingConversation);
     } else {
       setSelectedMedicalOfficer(medicalOfficer);
+      activeConversationRef.current = null;
       setCurrentConversation(null);
       setMessages([]);
     }
   };
 
   const handleConversationSelect = (conversation) => {
+    activeConversationRef.current = conversation._id;
+    setMessages([]);
     setCurrentConversation(conversation);
     setSelectedMedicalOfficer(conversation.medicalOfficer);
     fetchMessages(conversation._id);
@@ -114,7 +124,7 @@ const UserChatPage = () => {
       }, 5000);
 
       messagesInterval = setInterval(() => {
-        if (currentConversation) {
+        if (currentConversation && document.visibilityState === "visible") {
           fetchMessages(currentConversation._id, true);
         }
       }, 3000);

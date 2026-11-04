@@ -180,7 +180,7 @@ export default function AdminMedicalChatSection() {
   };
 
   const onSendMessage = async (messageText) => {
-    if (!messageText.trim() || !currentOfficer) return;
+    if (!messageText.trim() || !currentOfficer) return false;
 
     const officerId = currentOfficer._id;
 
@@ -210,9 +210,11 @@ export default function AdminMedicalChatSection() {
         setTimeout(scrollToBottom, 100);
       } else {
         alert('Failed to send message: ' + (data.message || 'Unknown protocol error'));
+        return false;
       }
     } catch (err) {
       alert('Failed to send message');
+      return false;
     }
   };
 

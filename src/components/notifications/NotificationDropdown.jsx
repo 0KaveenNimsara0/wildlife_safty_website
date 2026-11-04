@@ -1,3 +1,4 @@
+import { subscribeNotifications } from '../../services/notificationStream';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -54,8 +55,7 @@ const NotificationDropdown = ({ role }) => {
 
   useEffect(() => {
     fetchSummary();
-    const interval = setInterval(fetchSummary, 60000);
-    return () => clearInterval(interval);
+    return subscribeNotifications(() => { fetchSummary(); });
   }, []);
 
   useEffect(() => {

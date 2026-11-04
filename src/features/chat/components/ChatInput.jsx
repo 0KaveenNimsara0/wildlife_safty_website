@@ -3,13 +3,18 @@ import { Send, MessageSquare, Loader2 } from 'lucide-react';
 
 const ChatInput = ({ onSendMessage, loading, placeholder = "Type a message..." }) => {
   const [newMessage, setNewMessage] = useState('');
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || loading) return;
-
-    onSendMessage(newMessage.trim());
-    setNewMessage('');
+    if (!newMessage.trim() || loading || sending) return;
+    const draft = newMessage;
+    setSending(true);
+    try {
+      const sent = await onSendMessage(draft.trim());
+      if (sent !== false) setNewMessage(current => current === draft ? '' : current);
+    } catch { /* Keep the draft for retry; parent displays the error. */ }
+    finally { setSending(false); }
   };
 
   return (
@@ -24,20 +29,20 @@ const ChatInput = ({ onSendMessage, loading, placeholder = "Type a message..." }
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={placeholder}
-            className="w-full pl-12 pr-6 py-3 bg-slate-50 rounded-2xl border border-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm font-normal text-slate-800 placeholder:text-slate-500 transition-all"
-            disabled={loading}
+            className="w-full pl-12 pr-6 py-3 bg-slate-50 rounded-full border border-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-sm font-normal text-slate-800 placeholder:text-slate-500 transition-all"
+            disabled={loading || sending}
           />
         </div>
         <button
           type="submit"
-          disabled={!newMessage.trim() || loading}
-          className="px-4 bg-emerald-700 text-white rounded-2xl font-semibold text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-slate-200 flex items-center gap-3 active:scale-95"
+          disabled={!newMessage.trim() || loading || sending}
+          className="px-4 bg-emerald-700 text-white rounded-full font-semibold text-[10px] uppercase tracking-[0.2em] hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl shadow-slate-200 flex items-center gap-3 active:scale-95"
         >
-          {loading ? (
+          {(loading || sending) ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
             <>
-              <span>Send Message</span>
+              <span className="sr-only">Send message</span>
               <Send size={14} />
             </>
           )}
