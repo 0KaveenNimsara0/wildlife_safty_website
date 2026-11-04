@@ -73,7 +73,7 @@ const Dashboard = () => {
       />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-100 px-6 py-4 flex items-center justify-between lg:px-12">
+        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-100 px-4 py-3 flex items-center justify-between lg:px-6">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setSidebarOpen(true)}
@@ -82,11 +82,11 @@ const Dashboard = () => {
               <Menu size={20} />
             </button>
             <div className="space-y-0.5">
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">
+              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-600">
                 <Award size={12} />
                 <span>Account Overview</span>
               </div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-slate-900 tracking-tight flex items-center gap-2">
                 User <span className="text-emerald-600">Dashboard</span>
               </h2>
             </div>
@@ -100,13 +100,13 @@ const Dashboard = () => {
               className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all duration-300 group shadow-xl shadow-slate-900/10"
             >
               <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-              <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Return to Site</span>
+              <span className="text-[10px] font-semibold uppercase tracking-widest hidden sm:inline">Return to Site</span>
               <Globe size={14} className="opacity-50 ml-1" />
             </button>
           </div>
         </header>
 
-        <main className="flex-1 p-6 lg:px-12 lg:pt-8 lg:pb-12 max-w-7xl lg:mx-auto w-full">
+        <main className="flex-1 p-4 lg:px-6 lg:pt-5 lg:pb-6 max-w-7xl lg:mx-auto w-full">
           <div className="space-y-8">
             {error && (
               <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-sm font-bold animate-shake">
@@ -119,7 +119,7 @@ const Dashboard = () => {
               </div>
             )}
 
-            <div className="card-premium p-10 bg-white shadow-2xl relative overflow-hidden min-h-[600px]">
+            <div className="card-premium p-4 sm:p-6 bg-white shadow-sm relative overflow-hidden ">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full opacity-50 -mr-16 -mt-16" />
               
               {isArticleView ? (

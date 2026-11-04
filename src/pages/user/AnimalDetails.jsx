@@ -43,7 +43,7 @@ const AnimalDetails = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 space-y-12 animate-fade-in">
       {/* Search & Navigation Bar */}
-      <div className="flex flex-col md:flex-row gap-6 items-center p-6 glass rounded-[2.5rem] border-slate-100 shadow-xl">
+      <div className="flex flex-col md:flex-row gap-6 items-center p-6 glass rounded-2xl border-slate-100 shadow-xl">
         <button 
           onClick={() => navigate(-1)}
           className="p-3 bg-white rounded-full text-slate-400 hover:text-emerald-600 hover:shadow-lg transition-all active:scale-95"
@@ -85,7 +85,7 @@ const AnimalDetails = () => {
               {loading ? (
                 <div className="flex flex-col items-center gap-4 text-emerald-500">
                   <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs font-black uppercase tracking-widest">Retrieving Asset</span>
+                  <span className="text-xs font-semibold uppercase tracking-widest">Retrieving Asset</span>
                 </div>
               ) : image ? (
                 <img
@@ -104,7 +104,7 @@ const AnimalDetails = () => {
             <div className="p-6 bg-gradient-to-t from-slate-900 to-slate-900/80 text-white">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="text-2xl font-black tracking-tight">{selectedAnimal['Common English Name(s)']}</h2>
+                  <h2 className="text-2xl font-semibold tracking-tight">{selectedAnimal['Common English Name(s)']}</h2>
                   <p className="text-emerald-400 text-sm italic font-medium">{selectedAnimal['Scientific Name & Authority']}</p>
                 </div>
                 <div className="bg-emerald-500/20 p-3 rounded-2xl backdrop-blur-md border border-emerald-500/30">
@@ -119,15 +119,15 @@ const AnimalDetails = () => {
             <div className="card-premium p-6 border-slate-100 flex flex-col gap-3">
               <div className="p-2 bg-emerald-50 w-fit rounded-lg"><Hash size={16} className="text-emerald-600" /></div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Family</p>
-                <p className="text-sm font-black text-slate-800">{selectedAnimal['Family']}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 mb-1">Family</p>
+                <p className="text-sm font-semibold text-slate-800">{selectedAnimal['Family']}</p>
               </div>
             </div>
             <div className="card-premium p-6 border-slate-100 flex flex-col gap-3">
               <div className="p-2 bg-sky-50 w-fit rounded-lg"><MapPin size={16} className="text-sky-600" /></div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Habitat Range</p>
-                <p className="text-sm font-black text-slate-800 truncate">{selectedAnimal['Areas spread across Sri Lanka']}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 mb-1">Habitat Range</p>
+                <p className="text-sm font-semibold text-slate-800 truncate">{selectedAnimal['Areas spread across Sri Lanka']}</p>
               </div>
             </div>
           </div>
@@ -137,16 +137,16 @@ const AnimalDetails = () => {
         <div className="lg:col-span-7 space-y-10">
           <div className="space-y-6">
             <div className="flex flex-wrap gap-3">
-              <span className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-2 flex items-center gap-2 ${getVenomBadgeColor(selectedAnimal['Venom & Medical Significance'])}`}>
+              <span className={`px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest border-2 flex items-center gap-2 ${getVenomBadgeColor(selectedAnimal['Venom & Medical Significance'])}`}>
                 <Shield size={12} />
                 {selectedAnimal['Venom & Medical Significance']}
               </span>
-              <span className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border-2 flex items-center gap-2 ${getStatusBadgeColor(selectedAnimal['Global IUCN Red List Status'])}`}>
+              <span className={`px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest border-2 flex items-center gap-2 ${getStatusBadgeColor(selectedAnimal['Global IUCN Red List Status'])}`}>
                 <Globe size={12} />
                 {selectedAnimal['Global IUCN Red List Status']}
               </span>
               {selectedAnimal['Endemic Status'] === 'Endemic to Sri Lanka' && (
-                <span className="px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-purple-100 text-purple-800 border-2 border-purple-200 flex items-center gap-2">
+                <span className="px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest bg-purple-100 text-purple-800 border-2 border-purple-200 flex items-center gap-2">
                   <Heart size={12} />
                   Native / Endemic
                 </span>
@@ -154,8 +154,8 @@ const AnimalDetails = () => {
             </div>
 
             <div className="card-premium p-8 border-slate-100 bg-slate-50/30">
-              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-emerald-600 mb-4">Vernacular Nomenclature</h3>
-              <p className="text-3xl font-black text-slate-900 leading-tight">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.3em] text-emerald-600 mb-4">Vernacular Nomenclature</h3>
+              <p className="text-3xl font-semibold text-slate-900 leading-tight">
                 {selectedAnimal['Local Name(s) (Sinhala/Tamil)']}
               </p>
             </div>
@@ -165,7 +165,7 @@ const AnimalDetails = () => {
             <section className="space-y-4">
               <div className="flex items-center gap-3 text-slate-900">
                 <Search size={20} className="text-emerald-600" />
-                <h3 className="text-xl font-black tracking-tight">Field Identification</h3>
+                <h3 className="text-xl font-semibold tracking-tight">Field Identification</h3>
               </div>
               <div className="card-premium p-6 bg-white border-slate-100 leading-relaxed text-slate-600 font-medium">
                 {selectedAnimal['how to find(recognize)']}
@@ -176,7 +176,7 @@ const AnimalDetails = () => {
               <section className="space-y-4">
                 <div className="flex items-center gap-3 text-slate-900">
                   <Info size={20} className="text-emerald-600" />
-                  <h3 className="text-lg font-black tracking-tight">Biological Audit</h3>
+                  <h3 className="text-lg font-semibold tracking-tight">Biological Audit</h3>
                 </div>
                 <div className="card-premium p-6 bg-white border-slate-100 text-sm leading-relaxed text-slate-500 font-medium">
                   {selectedAnimal['A detailed description']}
@@ -187,7 +187,7 @@ const AnimalDetails = () => {
                 <section className="space-y-4">
                   <div className="flex items-center gap-3 text-slate-900">
                     <Heart size={20} className="text-rose-500" />
-                    <h3 className="text-lg font-black tracking-tight">Reproduction</h3>
+                    <h3 className="text-lg font-semibold tracking-tight">Reproduction</h3>
                   </div>
                   <div className="card-premium p-6 bg-rose-50/30 border-rose-100 text-sm leading-relaxed text-slate-600 font-medium">
                     {selectedAnimal['Contagion (Reproduction)']}
@@ -197,7 +197,7 @@ const AnimalDetails = () => {
                 <section className="space-y-4">
                   <div className="flex items-center gap-3 text-slate-900">
                     <Book size={20} className="text-sky-500" />
-                    <h3 className="text-lg font-black tracking-tight">Trophic Ecology</h3>
+                    <h3 className="text-lg font-semibold tracking-tight">Trophic Ecology</h3>
                   </div>
                   <div className="card-premium p-6 bg-sky-50/30 border-sky-100 text-sm leading-relaxed text-slate-600 font-medium">
                     {selectedAnimal['foods they eat']}

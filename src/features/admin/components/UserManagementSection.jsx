@@ -148,7 +148,7 @@ export default function UserManagementSection() {
   };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="flex-1 w-full max-w-2xl">
           <div className="relative group">
@@ -163,7 +163,7 @@ export default function UserManagementSection() {
                 setSearchTerm(e.target.value);
                 handleSearch(e.target.value);
               }}
-              className="w-full pl-14 pr-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-black uppercase tracking-widest text-slate-800 placeholder:text-slate-300 transition-all"
+              className="w-full pl-14 pr-6 py-2.5 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-semibold uppercase tracking-normal text-slate-800 placeholder:text-slate-300 transition-all"
             />
           </div>
         </div>
@@ -171,7 +171,7 @@ export default function UserManagementSection() {
         <div className="flex items-center gap-3">
           <div className="px-5 py-3.5 bg-slate-900 rounded-2xl flex items-center gap-3 shadow-lg shadow-emerald-900/10">
             <Users size={16} className="text-emerald-400" />
-            <span className="text-[10px] font-black text-white uppercase tracking-widest">{users.length} Active Nodes</span>
+            <span className="text-[10px] font-semibold text-white uppercase tracking-normal">{users.length} Active Nodes</span>
           </div>
           <button className="p-3.5 rounded-2xl bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 transition-all hover:shadow-lg active:scale-95">
              <Filter size={18} />
@@ -180,35 +180,35 @@ export default function UserManagementSection() {
       </div>
 
       {error && (
-        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-6 py-4 rounded-2xl shadow-sm">
+        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-4 py-2.5 rounded-2xl shadow-sm">
           <AlertCircle className="w-5 h-5 mr-3 text-rose-500" />
-          <span className="text-sm font-black uppercase tracking-widest">{error}</span>
+          <span className="text-sm font-semibold uppercase tracking-normal">{error}</span>
         </div>
       )}
 
-      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
+      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-sm shadow-slate-200/50">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
               <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Synchronizing Data...</p>
+              <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Synchronizing Data...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-100">
                 <thead>
                   <tr className="bg-slate-50/50">
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Full Identity</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contact Node</th>
-                    <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Timestamp</th>
-                    <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Full Identity</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Contact Node</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Timestamp</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {users && users.map((user) => (
                     <tr key={user.uid} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-8 py-6 whitespace-nowrap">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-4">
-                          <div className={`w-12 h-12 rounded-2xl ${(user.sources || []).includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform relative overflow-hidden`}>
+                          <div className={`w-12 h-12 rounded-2xl ${(user.sources || []).includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-semibold text-sm shadow-lg group-hover:scale-110 transition-transform relative overflow-hidden`}>
                             {user.photoURL ? (
                               <img 
                                 src={user.photoURL.startsWith('http') ? user.photoURL : `${IMAGE_BASE_URL}${user.photoURL}`} 
@@ -224,49 +224,49 @@ export default function UserManagementSection() {
                             )}
                              <div className="absolute -bottom-1 -right-1 flex gap-0.5">
                                {(user.sources || []).includes('firebase') && (
-                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-amber-600 text-white">G</div>
+                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-semibold shadow-lg bg-amber-600 text-white">G</div>
                                )}
                                {(user.sources || []).includes('mongodb') && (
-                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-black shadow-lg bg-emerald-600 text-white">P</div>
+                                 <div className="w-5 h-5 rounded-lg border-2 border-white flex items-center justify-center text-[8px] font-semibold shadow-lg bg-emerald-600 text-white">P</div>
                                )}
                              </div>
                           </div>
                           <div>
-                            <div className="text-sm font-black text-slate-900 tracking-tight">{user.displayName || 'Anonymous User'}</div>
+                            <div className="text-sm font-semibold text-slate-900 tracking-tight">{user.displayName || 'Anonymous User'}</div>
                              <div className="flex items-center gap-1.5 mt-0.5">
                                {(user.sources || []).includes('firebase') && (
-                                 <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100">Social</div>
+                                 <div className="text-[9px] font-bold text-amber-500 uppercase tracking-normal bg-amber-50 px-1.5 py-0.5 rounded-md border border-amber-100">Social</div>
                                )}
                                {user.hasPassword && (
-                                 <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">Protocol</div>
+                                 <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-normal bg-emerald-50 px-1.5 py-0.5 rounded-md border border-emerald-100">Protocol</div>
                                )}
                              </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-6 whitespace-nowrap">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         {editingUser === user.uid ? (
                           <input
                             type="email"
                             value={editForm.email}
                             onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                            className="bg-white border-2 border-emerald-500 outline-none px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-widest text-slate-900"
+                            className="bg-white border-2 border-emerald-500 outline-none px-3 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-normal text-slate-900"
                           />
                         ) : (
                           <div className="text-xs font-bold text-slate-500 lowercase">{user.email || 'No email registered'}</div>
                         )}
                       </td>
-                      <td className="px-8 py-6 whitespace-nowrap">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-normal">
                             {user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-US', {
                                year: 'numeric', month: 'short', day: 'numeric'
                             }) : 'UNKNOWN'}
                           </span>
                         </div>
                       </td>
-                      <td className="px-8 py-6 whitespace-nowrap text-right">
+                      <td className="px-4 py-3 whitespace-nowrap text-right">
                         {editingUser === user.uid ? (
                           <div className="flex justify-end gap-2">
                              <button onClick={handleUpdate} className="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 active:scale-95 transition-all" title="Confirm Update">

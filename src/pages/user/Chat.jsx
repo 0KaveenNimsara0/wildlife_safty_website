@@ -131,9 +131,9 @@ const UserChatPage = () => {
       <div className="min-h-[80vh] flex items-center justify-center p-4">
         <div className="max-w-md w-full relative group">
           {/* Background Decorative Blur */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+          <div className="absolute -inset-1 bg-gradient-to-r from-emerald-500 to-sky-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
           
-          <div className="relative glass p-10 rounded-[2.5rem] shadow-2xl border-white/40 ring-1 ring-slate-900/5 text-center space-y-8">
+          <div className="relative glass p-10 rounded-2xl shadow-2xl border-white/40 ring-1 ring-slate-900/5 text-center space-y-8">
             <div className="mx-auto w-24 h-24 relative flex items-center justify-center">
               <div className="absolute inset-0 bg-emerald-500/10 rounded-full animate-ping opacity-20" />
               <div className="relative bg-emerald-50 w-20 h-20 rounded-3xl flex items-center justify-center text-emerald-600 shadow-inner">
@@ -142,7 +142,7 @@ const UserChatPage = () => {
             </div>
 
             <div className="space-y-4">
-              <h2 className="text-4xl font-black text-slate-900 tracking-tighter">
+              <h2 className="text-4xl font-semibold text-slate-900 tracking-tight">
                 Access <span className="text-emerald-600">Restricted</span>
               </h2>
               <p className="text-slate-500 font-medium leading-relaxed">
@@ -158,7 +158,7 @@ const UserChatPage = () => {
                 <span>Establish Connection</span>
                 <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Authorized Personnel Only
               </p>
             </div>
@@ -180,7 +180,7 @@ const UserChatPage = () => {
               </div>
               <div>
                 <h1 className="text-2xl text-white tracking-tight uppercase">Talk to <span className="text-emerald-400">Specialist</span></h1>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500/80">
+                <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-500/80">
                   <Shield size={12} />
                   <span>Medical Support Chat</span>
                 </div>
@@ -188,7 +188,7 @@ const UserChatPage = () => {
             </div>
             <div className="hidden md:flex items-center gap-6 relative z-10">
                <div className="text-right">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Terminal Status</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Terminal Status</p>
                   <p className="text-xs font-bold text-emerald-400">ACTIVE CONNECTION</p>
                </div>
                <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
@@ -208,7 +208,7 @@ const UserChatPage = () => {
                 <div className="p-6 border-b border-slate-100 bg-white/50 backdrop-blur-sm">
                   <div className="flex items-center gap-2">
                     <Users size={16} className="text-slate-400" />
-                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Active Channels</h3>
+                    <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Active Channels</h3>
                   </div>
                 </div>
                 
@@ -238,7 +238,7 @@ const UserChatPage = () => {
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-black text-slate-900 truncate tracking-tight">
+                            <p className="font-semibold text-slate-900 truncate tracking-tight">
                               {conversation.medicalOfficer?.name || 'Medical Officer'}
                             </p>
                             <p className="text-xs text-slate-400 font-medium truncate mt-0.5">
@@ -247,7 +247,7 @@ const UserChatPage = () => {
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             {conversation.unreadCount > 0 && (
-                              <span className="w-5 h-5 bg-emerald-600 text-white text-[10px] font-black rounded-lg flex items-center justify-center shadow-lg shadow-emerald-200">
+                              <span className="w-5 h-5 bg-emerald-600 text-white text-[10px] font-semibold rounded-lg flex items-center justify-center shadow-lg shadow-emerald-200">
                                 {conversation.unreadCount}
                               </span>
                             )}
@@ -259,7 +259,7 @@ const UserChatPage = () => {
                   ) : (
                     <div className="p-12 text-center space-y-4 opacity-50">
                       <Search size={32} className="mx-auto text-slate-200" />
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No active channels</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">No active channels</p>
                     </div>
                   )}
                 </div>
@@ -279,7 +279,7 @@ const UserChatPage = () => {
                 />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gray-50">
-                  <div className="text-7xl text-green-300 mb-4 animate-bounce">💬</div>
+                  <div className="text-4xl text-green-300 mb-4 animate-bounce">💬</div>
                   <h3 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to the Chat</h3>
                   <p className="text-gray-500 max-w-sm">
                     Choose a medical officer from the list on the left or select an existing conversation to continue your chat.

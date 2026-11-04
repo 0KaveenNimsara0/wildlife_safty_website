@@ -166,7 +166,7 @@ export default function MedicalOfficerManagementSection() {
   );
 
   return (
-    <div className="space-y-10 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="flex-1 w-full max-w-2xl">
           <div className="relative group">
@@ -178,7 +178,7 @@ export default function MedicalOfficerManagementSection() {
               placeholder="System Scan: Search Medical Users, Spec, or Hospital..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-black uppercase tracking-widest text-slate-800 placeholder:text-slate-300 transition-all"
+              className="w-full pl-14 pr-6 py-2.5 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-semibold uppercase tracking-normal text-slate-800 placeholder:text-slate-300 transition-all"
             />
           </div>
         </div>
@@ -186,49 +186,49 @@ export default function MedicalOfficerManagementSection() {
         <div className="flex items-center gap-4">
            <button
              onClick={() => setShowAddModal(true)}
-             className="px-6 py-4 bg-slate-900 text-white rounded-2xl flex items-center gap-3 shadow-xl shadow-emerald-900/10 hover:bg-emerald-600 transition-all active:scale-95 group"
+             className="px-4 py-2.5 bg-slate-900 text-white rounded-2xl flex items-center gap-3 shadow-sm shadow-emerald-900/10 hover:bg-emerald-600 transition-all active:scale-95 group"
            >
              <UserPlus size={18} className="text-emerald-400 group-hover:text-white" />
-             <span className="text-[10px] font-black uppercase tracking-widest">Enroll Officer</span>
+             <span className="text-[10px] font-semibold uppercase tracking-normal">Enroll Officer</span>
            </button>
         </div>
       </div>
 
       {error && (
-        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-6 py-4 rounded-2xl shadow-sm">
+        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-4 py-2.5 rounded-2xl shadow-sm">
           <AlertCircle className="w-5 h-5 mr-3 text-rose-500" />
-          <span className="text-sm font-black uppercase tracking-widest">{error}</span>
+          <span className="text-sm font-semibold uppercase tracking-normal">{error}</span>
         </div>
       )}
 
-      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
+      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-sm shadow-slate-200/50">
         {loading ? (
            <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
               <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Retrieving Medical Logs...</p>
+              <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Retrieving Medical Logs...</p>
            </div>
         ) : medicalOfficers.length === 0 ? (
           <div className="text-center py-20 opacity-40">
             <Shield className="h-12 w-12 mx-auto mb-4 text-slate-300" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">No Operational Nodes Found</p>
+            <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">No Operational Nodes Found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-100">
               <thead>
                 <tr className="bg-slate-50/50">
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Medical Expert</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Specialization</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Uplink Status</th>
-                  <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tactical Actions</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Medical Expert</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Specialization</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Uplink Status</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Tactical Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {filteredOfficers.map((officer) => (
                   <tr key={officer._id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-4 py-3 whitespace-nowrap">
                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 border-4 border-emerald-50 flex items-center justify-center text-white font-black text-sm shadow-lg group-hover:scale-110 transition-transform overflow-hidden relative">
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-600 border-4 border-emerald-50 flex items-center justify-center text-white font-semibold text-sm shadow-lg group-hover:scale-110 transition-transform overflow-hidden relative">
                              {officer.photoURL ? (
                                <img 
                                  src={officer.photoURL.startsWith('http') ? officer.photoURL : `${IMAGE_BASE_URL}${officer.photoURL}`} 
@@ -244,27 +244,27 @@ export default function MedicalOfficerManagementSection() {
                              )}
                           </div>
                           <div>
-                             <div className="text-sm font-black text-slate-900 tracking-tight">{officer.name || 'No name'}</div>
+                             <div className="text-sm font-semibold text-slate-900 tracking-tight">{officer.name || 'No name'}</div>
                              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight flex items-center gap-1 mt-1">
                                 <Hospital size={10} className="text-slate-300" /> {officer.hospital || 'Private Clinic'}
                              </p>
                           </div>
                        </div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
-                       <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-lg border border-emerald-100">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                       <span className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-semibold uppercase tracking-normal rounded-lg border border-emerald-100">
                           {getSpecializationLabel(officer.specialization)}
                        </span>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-4 py-3 whitespace-nowrap">
                        <div className="flex items-center gap-2">
                           <div className={`w-2 h-2 rounded-full ${officer.isApproved ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                          <span className={`text-[10px] font-black uppercase tracking-widest ${officer.isApproved ? 'text-emerald-600' : 'text-amber-600'}`}>
+                          <span className={`text-[10px] font-semibold uppercase tracking-normal ${officer.isApproved ? 'text-emerald-600' : 'text-amber-600'}`}>
                              {officer.isApproved ? 'Operational' : 'Pending Auth'}
                           </span>
                        </div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap text-right">
+                    <td className="px-4 py-3 whitespace-nowrap text-right">
                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button onClick={() => navigate(`/admin/chat/officer/${officer._id}`)} className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 rounded-xl shadow-sm transition-all active:scale-95">
                              <MessageSquare size={16} />
@@ -327,43 +327,43 @@ export default function MedicalOfficerManagementSection() {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-           <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl border border-slate-100 overflow-hidden animate-scale-in">
-              <div className="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+           <div className="bg-white rounded-3xl w-full max-w-2xl shadow-sm border border-slate-100 overflow-hidden animate-scale-in">
+              <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                  <div>
-                    <h2 className="text-xl font-black uppercase tracking-tight">{editingOfficer ? 'Modify' : 'Enroll'} <span className="text-emerald-500">Officer</span></h2>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Operational Protocol v2.4</p>
+                    <h2 className="text-xl font-semibold uppercase tracking-tight">{editingOfficer ? 'Modify' : 'Enroll'} <span className="text-emerald-500">Officer</span></h2>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-normal mt-1">Operational Protocol v2.4</p>
                  </div>
                  <button onClick={() => { setShowAddModal(false); setEditingOfficer(null); }} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
                     <XCircle size={24} />
                  </button>
               </div>
               
-              <form onSubmit={handleSubmit} className="p-10 space-y-6">
+              <form onSubmit={handleSubmit} className="p-5 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Full Identity</label>
-                       <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Command Name" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required />
+                       <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Full Identity</label>
+                       <input name="name" value={formData.name} onChange={handleInputChange} placeholder="Command Name" className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all" required />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Comms Email</label>
-                       <input name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="officer@uplink.net" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required />
+                       <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Comms Email</label>
+                       <input name="email" value={formData.email} onChange={handleInputChange} type="email" placeholder="officer@uplink.net" className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all" required />
                     </div>
                     
                     {!editingOfficer && (
                       <div className="space-y-2">
-                         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Access Password</label>
-                         <input name="password" value={formData.password} onChange={handleInputChange} type="password" placeholder="MIN_6_CHARS" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required={!editingOfficer} />
+                         <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Access Password</label>
+                         <input name="password" value={formData.password} onChange={handleInputChange} type="password" placeholder="MIN_6_CHARS" className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all" required={!editingOfficer} />
                       </div>
                     )}
 
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Medical License</label>
-                       <input name="licenseNumber" value={formData.licenseNumber} onChange={handleInputChange} placeholder="LIC-XXXX-XXXX" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" required />
+                       <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Medical License</label>
+                       <input name="licenseNumber" value={formData.licenseNumber} onChange={handleInputChange} placeholder="LIC-XXXX-XXXX" className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all" required />
                     </div>
 
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Specialization</label>
-                       <select name="specialization" value={formData.specialization} onChange={handleInputChange} className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all">
+                       <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Specialization</label>
+                       <select name="specialization" value={formData.specialization} onChange={handleInputChange} className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all">
                           <option value="general">General Practitioner</option>
                           <option value="toxicology">Toxicology Specialist</option>
                           <option value="emergency">Emergency Response</option>
@@ -372,18 +372,18 @@ export default function MedicalOfficerManagementSection() {
                     </div>
 
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Contact Number</label>
-                       <input name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} placeholder="+XX XXX XXX XXXX" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" />
+                       <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Contact Number</label>
+                       <input name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} placeholder="+XX XXX XXX XXXX" className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all" />
                     </div>
 
                     <div className="md:col-span-2 space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Base Hospital / Station</label>
-                       <input name="hospital" value={formData.hospital} onChange={handleInputChange} placeholder="GALLE GENERAL HOSPITAL / STATION HQ" className="w-full px-6 py-4 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-black uppercase tracking-widest transition-all" />
+                       <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-1">Base Hospital / Station</label>
+                       <input name="hospital" value={formData.hospital} onChange={handleInputChange} placeholder="GALLE GENERAL HOSPITAL / STATION HQ" className="w-full px-4 py-2.5 bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-emerald-500 focus:outline-none text-xs font-semibold uppercase tracking-normal transition-all" />
                     </div>
                  </div>
                  
                  <div className="pt-6">
-                    <button type="submit" className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 transition-all active:scale-95">
+                    <button type="submit" className="w-full py-3 bg-emerald-600 text-white rounded-2xl font-semibold uppercase tracking-normal text-xs shadow-lg shadow-emerald-900/20 hover:bg-emerald-500 transition-all active:scale-95">
                        {editingOfficer ? 'Commit Updates' : 'Authorize Enrollment'}
                     </button>
                  </div>
@@ -394,10 +394,10 @@ export default function MedicalOfficerManagementSection() {
 
       {viewingOfficer && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
-           <div className="bg-white rounded-[40px] w-full max-w-lg shadow-2xl overflow-hidden animate-slide-up">
+           <div className="bg-white rounded-[40px] w-full max-w-lg shadow-sm overflow-hidden animate-slide-up">
               <div className="relative h-32 bg-slate-900">
                  <div className="absolute -bottom-12 left-10">
-                    <div className="w-24 h-24 rounded-3xl bg-emerald-600 border-[6px] border-white flex items-center justify-center text-white text-3xl font-black shadow-xl overflow-hidden">
+                    <div className="w-24 h-24 rounded-3xl bg-emerald-600 border-[6px] border-white flex items-center justify-center text-white text-xl font-semibold shadow-sm overflow-hidden">
                        {viewingOfficer.photoURL ? (
                           <img 
                             src={viewingOfficer.photoURL.startsWith('http') ? viewingOfficer.photoURL : `${IMAGE_BASE_URL}${viewingOfficer.photoURL}`} 
@@ -415,22 +415,22 @@ export default function MedicalOfficerManagementSection() {
               </div>
               <div className="px-10 pt-16 pb-12">
                  <div className="mb-8">
-                    <h3 className="text-2xl font-black uppercase tracking-tight">{viewingOfficer.name}</h3>
-                    <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.2em]">{getSpecializationLabel(viewingOfficer.specialization)}</p>
+                    <h3 className="text-2xl font-semibold uppercase tracking-tight">{viewingOfficer.name}</h3>
+                    <p className="text-[10px] font-semibold text-emerald-500 uppercase tracking-normal">{getSpecializationLabel(viewingOfficer.specialization)}</p>
                  </div>
                  
                  <div className="space-y-4">
                     <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                        <Phone size={16} className="text-slate-400" />
-                       <span className="text-xs font-black text-slate-600 uppercase tracking-widest">{viewingOfficer.phoneNumber || 'NO_CONTACT_LOCKED'}</span>
+                       <span className="text-xs font-semibold text-slate-600 uppercase tracking-normal">{viewingOfficer.phoneNumber || 'NO_CONTACT_LOCKED'}</span>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                        <Shield size={16} className="text-slate-400" />
-                       <span className="text-xs font-black text-slate-600 uppercase tracking-widest">License: {viewingOfficer.licenseNumber || 'PENDING_SCAN'}</span>
+                       <span className="text-xs font-semibold text-slate-600 uppercase tracking-normal">License: {viewingOfficer.licenseNumber || 'PENDING_SCAN'}</span>
                     </div>
                     <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                        <Activity size={16} className="text-emerald-500" />
-                       <span className="text-xs font-black text-emerald-600 uppercase tracking-widest">Uplink: {viewingOfficer.isApproved ? 'ACTIVE_AUTH' : 'PROBATION'}</span>
+                       <span className="text-xs font-semibold text-emerald-600 uppercase tracking-normal">Uplink: {viewingOfficer.isApproved ? 'ACTIVE_AUTH' : 'PROBATION'}</span>
                     </div>
                  </div>
               </div>

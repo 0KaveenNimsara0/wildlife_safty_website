@@ -53,9 +53,9 @@ export default function MedicalOfficerLayout() {
       <MedicalOfficerSidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="min-w-0 flex-1 flex flex-col h-screen overflow-hidden">
         {/* Clean Professional Header */}
-        <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between z-30 flex-shrink-0">
+        <header className="h-16 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between z-30 flex-shrink-0">
            <div className="flex items-center gap-6">
               <button 
                 onClick={() => setSidebarOpen(true)} 
@@ -114,7 +114,7 @@ export default function MedicalOfficerLayout() {
         </header>
 
         <main className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10">
-           <div className="max-w-[1600px] mx-auto">
+           <div className="max-w-7xl mx-auto">
               <Outlet />
            </div>
         </main>

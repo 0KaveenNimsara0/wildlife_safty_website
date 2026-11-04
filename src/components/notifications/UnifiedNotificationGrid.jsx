@@ -148,9 +148,9 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
 
   if (loading) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center space-y-4 opacity-50">
+      <div className="py-10 flex flex-col items-center justify-center space-y-4 opacity-50">
         <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-emerald-600 animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Intelligence Grid...</p>
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Syncing Intelligence Grid...</p>
       </div>
     );
   }
@@ -161,11 +161,11 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
         <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-4 sm:px-0">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight">
+              <h2 className="text-xl font-semibold text-slate-900 uppercase tracking-tight">
                 {activeUser?.role === 'admin' ? 'Security Intelligence' : 'Intelligence'}
               </h2>
               {unreadCount > 0 && (
-                <span className="px-3 py-1 bg-rose-500 text-white text-[10px] font-black rounded-full animate-pulse uppercase tracking-widest shadow-lg shadow-rose-200">
+                <span className="px-3 py-1 bg-rose-500 text-white text-[10px] font-semibold rounded-full animate-pulse uppercase tracking-widest shadow-lg shadow-rose-200">
                   {unreadCount} New
                 </span>
               )}
@@ -175,7 +175,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
                 const dashboardPath = activeUser?.role === 'admin' ? '/admin/dashboard' : (activeUser?.role === 'medicalOfficer' ? '/medical-officer/dashboard' : '/dashboard');
                 navigate(dashboardPath);
               }}
-              className="group flex items-center gap-2 text-slate-400 hover:text-emerald-600 transition-all font-black text-[10px] uppercase tracking-widest mb-4 w-fit"
+              className="group flex items-center gap-2 text-slate-400 hover:text-emerald-600 transition-all font-semibold text-[10px] uppercase tracking-widest mb-4 w-fit"
             >
                <ChevronRight size={14} className="rotate-180" />
                Go Back to {activeUser?.role === 'admin' ? 'Command Center' : 'Dashboard'}
@@ -186,7 +186,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
           {notifications.length > 0 && (
             <button 
               onClick={handleMarkAllRead}
-              className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 hover:border-emerald-100 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-sm transition-all hover:shadow-md active:scale-95"
+              className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-100 text-slate-600 hover:text-emerald-600 hover:border-emerald-100 rounded-2xl text-[10px] font-semibold uppercase tracking-widest shadow-sm transition-all hover:shadow-md active:scale-95"
             >
               <CheckCheck size={16} />
               Synchronize All
@@ -201,7 +201,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
             <Bell size={40} className="text-slate-200" />
           </div>
           <div>
-            <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2">Clear Frequency</h3>
+            <h3 className="text-xl font-semibold text-slate-800 uppercase tracking-tight mb-2">Clear Frequency</h3>
             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest max-w-xs mx-auto">No intelligence transmissions detected at this time.</p>
           </div>
         </div>
@@ -228,7 +228,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4 mb-2">
-                    <h4 className={`text-sm font-black tracking-tight leading-snug uppercase ${notification.isRead ? 'text-slate-500 font-bold' : 'text-slate-900'}`}>
+                    <h4 className={`text-sm font-semibold tracking-tight leading-snug uppercase ${notification.isRead ? 'text-slate-500 font-bold' : 'text-slate-900'}`}>
                       {notification.message}
                     </h4>
                     <div className="flex items-center gap-1 shrink-0">
@@ -261,10 +261,10 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
                     {notification.actor && (
                       <div className="flex items-center gap-1.5 text-emerald-600">
                         <User size={12} />
-                        <span className="text-[10px] font-black uppercase tracking-tight">{notification.actor.name}</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-tight">{notification.actor.name}</span>
                       </div>
                     )}
-                    <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-slate-300">
+                    <div className="flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-widest text-slate-300">
                        <ExternalLink size={10} />
                        View Intel
                     </div>

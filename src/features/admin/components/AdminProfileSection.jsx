@@ -227,20 +227,20 @@ export default function AdminProfileSection() {
       <div className="py-20 flex items-center justify-center bg-transparent">
         <div className="text-center">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-slate-500 font-black uppercase tracking-widest text-[10px]">Loading Profile...</p>
+          <p className="mt-4 text-slate-500 font-semibold uppercase tracking-normal text-[10px]">Loading Profile...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       {/* Profile Header Hero */}
-      <div className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-12 text-white shadow-2xl">
+      <div className="relative overflow-hidden bg-slate-900 rounded-2xl p-6 text-white shadow-sm">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full -mr-48 -mt-48 blur-3xl animate-pulse" />
-        <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+        <div className="relative z-10 flex flex-col md:flex-row items-center gap-5">
            <div className="relative group">
-              <div className="w-32 h-32 rounded-[2rem] bg-emerald-600 border-4 border-slate-800 flex items-center justify-center text-4xl font-black shadow-2xl overflow-hidden shadow-emerald-900/40 transition-transform duration-500 group-hover:scale-105">
+              <div className="w-32 h-32 rounded-xl bg-emerald-600 border-4 border-slate-800 flex items-center justify-center text-2xl font-semibold shadow-sm overflow-hidden shadow-emerald-900/40 transition-transform duration-500 group-hover:scale-105">
                  {adminData?.name?.charAt(0) || 'A'}
                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <Edit3 size={24} className="text-white" />
@@ -252,17 +252,17 @@ export default function AdminProfileSection() {
            </div>
            <div className="text-center md:text-left">
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
-                 <h1 className="text-4xl font-black tracking-tight text-white">{adminData?.name || 'Administrator'}</h1>
+                 <h1 className="text-2xl font-semibold tracking-tight text-white">{adminData?.name || 'Administrator'}</h1>
                  <div className="px-4 py-1.5 bg-emerald-500/20 rounded-full border border-emerald-500/30 backdrop-blur-md">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Administrator</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-normal text-emerald-400">Administrator</span>
                  </div>
               </div>
               <p className="text-slate-400 font-bold tracking-[0.1em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{adminData?.email}</p>
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
-                 <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                 <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-normal text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                     <Fingerprint size={14} className="text-emerald-500" /> User ID: <span className="text-white">{adminData?.uid?.slice(0, 8) || 'ADMIN_USER_01'}</span>
                  </div>
-                 <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
+                 <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-normal text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/5">
                     <ShieldCheck size={14} className="text-emerald-500" /> Access Level: <span className="text-emerald-500">LEVEL 4 ROOT</span>
                  </div>
               </div>
@@ -270,22 +270,22 @@ export default function AdminProfileSection() {
         </div>
       </div>
         {(error || success) && (
-          <div className={`px-8 py-5 rounded-[24px] flex items-center gap-4 animate-shake ${error ? 'bg-rose-50 border border-rose-100 text-rose-700' : 'bg-emerald-50 border border-emerald-100 text-emerald-700'}`}>
+          <div className={`px-4 py-3 rounded-[24px] flex items-center gap-4 animate-shake ${error ? 'bg-rose-50 border border-rose-100 text-rose-700' : 'bg-emerald-50 border border-emerald-100 text-emerald-700'}`}>
             <AlertCircle size={20} className={error ? 'text-rose-500' : 'text-emerald-500'} />
-            <span className="text-[10px] font-black uppercase tracking-widest">{error || success}</span>
+            <span className="text-[10px] font-semibold uppercase tracking-normal">{error || success}</span>
           </div>
         )}
 
-        <div className="card-premium p-12 bg-white border-slate-100 overflow-hidden relative shadow-2xl shadow-slate-200/50 rounded-[40px]">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+        <div className="card-premium p-6 bg-white border-slate-100 overflow-hidden relative shadow-sm shadow-slate-200/50 rounded-[40px]">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-12">
             <div>
-              <h3 className="text-[10px] font-black uppercase tracking-[0.25em] text-emerald-600 mb-2">Account Administration</h3>
-              <p className="text-2xl font-black text-slate-900 tracking-tight uppercase">Admin Settings <span className="text-slate-200">/</span> Summary</p>
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.25em] text-emerald-600 mb-2">Account Administration</h3>
+              <p className="text-2xl font-semibold text-slate-900 tracking-tight uppercase">Admin Settings <span className="text-slate-200">/</span> Summary</p>
             </div>
             {!isEditing ? (
               <button
                 onClick={handleEdit}
-                className="flex items-center gap-3 px-8 py-4 bg-slate-900 border border-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-emerald-600 hover:border-emerald-600 rounded-2xl shadow-xl shadow-slate-900/10 transition-all active:scale-95 transition-all"
+                className="flex items-center gap-3 px-4 py-2.5 bg-slate-900 border border-slate-900 text-[10px] font-semibold uppercase tracking-normal text-white hover:bg-emerald-600 hover:border-emerald-600 rounded-2xl shadow-sm shadow-slate-900/10 transition-all active:scale-95 transition-all"
               >
                 <Edit3 size={16} />
                 Edit Profile
@@ -294,14 +294,14 @@ export default function AdminProfileSection() {
               <div className="flex gap-4">
                 <button
                   onClick={handleSave}
-                  className="flex items-center gap-3 px-8 py-4 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-emerald-900/20 active:scale-95 transition-all"
+                  className="flex items-center gap-3 px-4 py-2.5 bg-emerald-600 text-white text-[10px] font-semibold uppercase tracking-normal rounded-2xl shadow-sm shadow-emerald-900/20 active:scale-95 transition-all"
                 >
                   <Save size={16} />
                   Save Changes
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="flex items-center gap-3 px-8 py-4 bg-slate-100 text-[10px] font-black uppercase tracking-widest text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-95"
+                  className="flex items-center gap-3 px-4 py-2.5 bg-slate-100 text-[10px] font-semibold uppercase tracking-normal text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-95"
                 >
                   <X size={16} />
                   Cancel
@@ -310,15 +310,15 @@ export default function AdminProfileSection() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Profile Details */}
-            <div className="space-y-8">
+            <div className="space-y-5">
               {[
                 { label: 'Full Name', name: 'name', icon: User, val: formData.name },
                 { label: 'Email Address', name: 'email', icon: Mail, val: formData.email }
               ].map((field) => (
                 <div key={field.name}>
-                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
+                  <label className="block text-[10px] font-semibold uppercase tracking-normal text-slate-400 mb-3 ml-1">
                     {field.label}
                   </label>
                   {isEditing ? (
@@ -329,20 +329,20 @@ export default function AdminProfileSection() {
                         name={field.name}
                         value={field.val}
                         onChange={handleInputChange}
-                        className={`w-full pl-16 pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all shadow-inner`}
+                        className={`w-full pl-16 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-[20px] font-semibold text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-normal text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all shadow-inner`}
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center min-h-[64px] px-8 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
+                    <div className="flex items-center min-h-[64px] px-4 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
                       <field.icon size={18} className="text-slate-300 mr-5" />
-                      <span className="text-xs font-black text-slate-900 tracking-widest">{field.val || 'NULL_NODE'}</span>
+                      <span className="text-xs font-semibold text-slate-900 tracking-normal">{field.val || 'NULL_NODE'}</span>
                     </div>
                   )}
                 </div>
               ))}
 
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
+                <label className="block text-[10px] font-semibold uppercase tracking-normal text-slate-400 mb-3 ml-1">
                   Access Level
                 </label>
                 {isEditing ? (
@@ -352,7 +352,7 @@ export default function AdminProfileSection() {
                         name="role"
                         value={formData.role}
                         onChange={handleInputChange}
-                        className="w-full pl-16 pr-10 py-5 bg-slate-50 border-2 border-transparent rounded-[20px] font-black text-xs uppercase tracking-widest text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 appearance-none transition-all shadow-inner"
+                        className="w-full pl-16 pr-10 py-3 bg-slate-50 border-2 border-transparent rounded-[20px] font-semibold text-xs uppercase tracking-normal text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-500 appearance-none transition-all shadow-inner"
                       >
                         <option value="Administrator">Administrator</option>
                         <option value="Super Admin">Super Admin</option>
@@ -360,38 +360,38 @@ export default function AdminProfileSection() {
                       </select>
                    </div>
                 ) : (
-                  <div className="flex items-center min-h-[64px] px-8 bg-emerald-50 border border-emerald-100 rounded-[20px] shadow-sm">
+                  <div className="flex items-center min-h-[64px] px-4 bg-emerald-50 border border-emerald-100 rounded-[20px] shadow-sm">
                     <Shield size={18} className="text-emerald-500 mr-5" />
-                    <span className="text-xs font-black text-emerald-700 tracking-widest uppercase">{adminData?.role || 'Administrator Authority'}</span>
+                    <span className="text-xs font-semibold text-emerald-700 tracking-normal uppercase">{adminData?.role || 'Administrator Authority'}</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Status Info */}
-            <div className="space-y-8">
+            <div className="space-y-5">
                {[
                  { label: 'Join Date', icon: Calendar, val: adminData?.createdAt ? new Date(adminData.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' }) : 'Member since 2024' },
                  { label: 'Last Update', icon: Key, val: `${new Date().toLocaleDateString()} @ ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` }
                ].map((item, idx) => (
                  <div key={idx}>
-                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
+                    <label className="block text-[10px] font-semibold uppercase tracking-normal text-slate-400 mb-3 ml-1">
                       {item.label}
                     </label>
-                    <div className="flex items-center h-[64px] px-8 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
+                    <div className="flex items-center h-[64px] px-4 bg-slate-50/50 border border-slate-50 rounded-[20px] shadow-sm">
                       <item.icon size={18} className="text-slate-300 mr-5" />
-                      <span className="text-xs font-black text-slate-900 tracking-tight uppercase tracking-widest">{item.val}</span>
+                      <span className="text-xs font-semibold text-slate-900 tracking-tight uppercase tracking-normal">{item.val}</span>
                     </div>
                  </div>
                ))}
 
                <div>
-                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 ml-1">
+                <label className="block text-[10px] font-semibold uppercase tracking-normal text-slate-400 mb-3 ml-1">
                   Connection Status
                 </label>
-                <div className="flex items-center h-[64px] px-8 bg-slate-900 border border-slate-800 rounded-[20px] shadow-xl">
+                <div className="flex items-center h-[64px] px-4 bg-slate-900 border border-slate-800 rounded-[20px] shadow-sm">
                   <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full mr-5 shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-pulse"></div>
-                  <span className="text-xs font-black text-white tracking-tight uppercase italic tracking-widest">SYSTEM ONLINE</span>
+                  <span className="text-xs font-semibold text-white tracking-tight uppercase italic tracking-normal">SYSTEM ONLINE</span>
                 </div>
               </div>
             </div>
@@ -399,25 +399,25 @@ export default function AdminProfileSection() {
         </div>
 
       {/* Security Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {[
           { title: 'Security Settings', sub: 'Update account password', icon: Key, action: 'Update Password', color: 'emerald', onClick: handleRequestPasswordReset },
           { title: '2FA Settings', sub: 'Multi-factor identification', icon: Smartphone, action: 'Manage 2FA', color: 'slate', onClick: () => setSuccess('2FA management coming soon') }
         ].map((sec, idx) => (
-          <div key={idx} className="bg-white border border-slate-100 p-10 flex flex-col justify-between rounded-[40px] shadow-2xl shadow-slate-200/40 hover:shadow-2xl transition-all group">
-            <div className="flex items-start justify-between mb-10">
-               <div className={`p-5 rounded-[24px] ${sec.color === 'emerald' ? 'bg-emerald-600 shadow-emerald-500/20' : 'bg-slate-900 shadow-slate-900/10'} text-white shadow-xl group-hover:scale-110 transition-transform duration-500`}>
+          <div key={idx} className="bg-white border border-slate-100 p-5 flex flex-col justify-between rounded-[40px] shadow-sm shadow-slate-200/40 hover:shadow-sm transition-all group">
+            <div className="flex items-start justify-between mb-5">
+               <div className={`p-5 rounded-[24px] ${sec.color === 'emerald' ? 'bg-emerald-600 shadow-emerald-500/20' : 'bg-slate-900 shadow-slate-900/10'} text-white shadow-sm group-hover:scale-110 transition-transform duration-500`}>
                   <sec.icon size={24} />
                </div>
                <div className="text-right">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">{sec.title}</h4>
-                  <p className="text-lg font-black text-slate-900 uppercase tracking-tight">{sec.sub}</p>
+                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 mb-1">{sec.title}</h4>
+                  <p className="text-lg font-semibold text-slate-900 uppercase tracking-tight">{sec.sub}</p>
                </div>
             </div>
             <button 
               onClick={sec.onClick}
-              className={`w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all
-              ${sec.color === 'emerald' ? 'bg-emerald-600 text-white hover:bg-slate-900 shadow-xl shadow-emerald-900/20' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}
+              className={`w-full py-3 rounded-2xl font-semibold uppercase tracking-normal text-[10px] transition-all
+              ${sec.color === 'emerald' ? 'bg-emerald-600 text-white hover:bg-slate-900 shadow-sm shadow-emerald-900/20' : 'bg-slate-50 text-slate-500 hover:bg-slate-100'}
               active:scale-95
             `}>
               {sec.action}
@@ -438,14 +438,14 @@ export default function AdminProfileSection() {
       {/* Password Reset Modal */}
       {isPasswordModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
-           <div className="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+           <div className="bg-white w-full max-w-md rounded-2xl p-5 shadow-sm animate-in zoom-in-95 duration-300">
               <div className="flex items-center gap-4 mb-8">
                  <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
                     <ShieldCheck size={28} />
                  </div>
                  <div>
-                    <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Reset Password</h3>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Authorized Security Override</p>
+                    <h3 className="text-xl font-semibold text-slate-900 uppercase tracking-tight">Reset Password</h3>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-normal">Authorized Security Override</p>
                  </div>
               </div>
 
@@ -453,62 +453,62 @@ export default function AdminProfileSection() {
                  {modalError && (
                     <div className="flex items-center gap-3 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 animate-shake">
                        <AlertCircle size={16} />
-                       <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">{modalError}</span>
+                       <span className="text-[10px] font-semibold uppercase tracking-normal leading-relaxed">{modalError}</span>
                     </div>
                  )}
                  <div>
                     <div className="flex items-center justify-between mb-3 ml-1">
-                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Current Password</label>
+                       <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Current Password</label>
                        <Shield size={12} className="text-slate-300" />
                     </div>
                     <input 
                        type="password"
                        value={currentPassword}
                        onChange={(e) => setCurrentPassword(e.target.value)}
-                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
                        placeholder="Enter current credentials"
                     />
                  </div>
                  <div>
                     <div className="flex items-center justify-between mb-3 ml-1">
-                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">New Password</label>
+                       <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-normal">New Password</label>
                        <Key size={12} className="text-emerald-500" />
                     </div>
                     <input 
                        type="password"
                        value={newPassword}
                        onChange={(e) => setNewPassword(e.target.value)}
-                       className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
+                       className="w-full px-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-[20px] font-bold focus:outline-none focus:border-emerald-500 transition-all shadow-inner"
                        placeholder="Create new security key"
                     />
                  </div>
                  <div>
                     <div className="flex items-center justify-between mb-3 ml-1">
-                       <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Confirm Password</label>
+                       <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Confirm Password</label>
                        <RotateCcw size={12} className={newPassword && confirmPassword ? (newPassword === confirmPassword ? 'text-emerald-500' : 'text-rose-500') : 'text-slate-300'} />
                     </div>
                     <input 
                        type="password"
                        value={confirmPassword}
                        onChange={(e) => setConfirmPassword(e.target.value)}
-                       className={`w-full px-6 py-4 bg-slate-50 border-2 rounded-[20px] font-bold focus:outline-none transition-all shadow-inner ${confirmPassword ? (newPassword === confirmPassword ? 'border-emerald-500/30' : 'border-rose-500/30') : 'border-transparent'}`}
+                       className={`w-full px-4 py-2.5 bg-slate-50 border-2 rounded-[20px] font-bold focus:outline-none transition-all shadow-inner ${confirmPassword ? (newPassword === confirmPassword ? 'border-emerald-500/30' : 'border-rose-500/30') : 'border-transparent'}`}
                        placeholder="Repeat new security key"
                     />
-                    <p className="mt-2 text-[9px] text-slate-400 font-bold uppercase tracking-widest ml-1 italic">* Minimum 6 characters required</p>
+                    <p className="mt-2 text-[9px] text-slate-400 font-bold uppercase tracking-normal ml-1 italic">* Minimum 6 characters required</p>
                  </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-10">
                  <button 
                     onClick={() => setIsPasswordModalOpen(false)}
-                    className="py-4 bg-slate-100 text-slate-400 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-200 transition-all"
+                    className="py-2.5 bg-slate-100 text-slate-400 rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-slate-200 transition-all"
                  >
                     Cancel
                  </button>
                  <button 
                     onClick={handlePasswordReset}
                     disabled={loading}
-                    className="py-4 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
+                    className="py-2.5 bg-emerald-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal shadow-lg shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
                  >
                     {loading ? 'Processing...' : 'Confirm Reset'}
                  </button>

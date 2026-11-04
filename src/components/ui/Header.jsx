@@ -105,7 +105,7 @@ export default function Header() {
 
         if (photoURL) {
             return (
-                <img 
+                <img referrerPolicy="no-referrer" 
                     src={photoURL} 
                     alt="Profile" 
                     className="w-full h-full object-cover"
@@ -129,7 +129,7 @@ export default function Header() {
 
     return (
         <header className="sticky top-0 z-50 glass border-b border-slate-200/50 shadow-sm transition-all duration-300">
-            <nav className="container mx-auto px-4 sm:px-6 h-18 py-3">
+            <nav className="max-w-screen-2xl mx-auto px-4 sm:px-6 py-2">
                 <div className="flex justify-between items-center">
                     {/* Logo Section */}
                     <div 
@@ -137,8 +137,8 @@ export default function Header() {
                         onClick={() => handleNavigation('/home')}
                     >
                         <div className="relative">
-                            <div className="w-12 h-12 bg-white rounded-2xl shadow-xl shadow-emerald-500/10 flex items-center justify-center p-1.5 group-hover:scale-110 transition-transform duration-500 border border-slate-100">
-                                <img 
+                            <div className="w-9 h-9 bg-white rounded-2xl shadow-xl shadow-emerald-500/10 flex items-center justify-center p-1.5 group-hover:scale-110 transition-transform duration-500 border border-slate-100">
+                                <img referrerPolicy="no-referrer" 
                                     src="/src/assets/logo.png" 
                                     alt="WildLife Safety Logo" 
                                     className="w-full h-full object-contain"
@@ -149,17 +149,17 @@ export default function Header() {
                             </div>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-xl font-black tracking-tight bg-gradient-to-br from-slate-900 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">
+                            <h1 className="text-base font-semibold tracking-tight bg-gradient-to-br from-slate-900 via-emerald-800 to-emerald-600 bg-clip-text text-transparent">
                                 WildLife Safety
                             </h1>
-                            <span className="text-[10px] uppercase tracking-tighter text-slate-500 font-bold -mt-1">
+                            <span className="text-[10px] uppercase tracking-tight text-slate-500 font-bold -mt-1">
                                 Smart Protection
                             </span>
                         </div>
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden lg:flex items-center space-x-1">
+                    <div className="hidden xl:flex items-center space-x-1">
                         {navigation.map((item) => {
                             const IconComponent = item.icon;
                             const isActive = isPathActive(item.path);
@@ -167,7 +167,7 @@ export default function Header() {
                                 <button
                                     key={item.id}
                                     onClick={() => handleNavigation(item.path)}
-                                    className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 group ${
+                                    className={`relative px-2 py-2 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center space-x-2 group ${
                                         isActive 
                                             ? 'text-emerald-700' 
                                             : 'text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50'
@@ -186,7 +186,7 @@ export default function Header() {
                     </div>
 
                     {/* Action Section */}
-                    <div className="hidden md:flex items-center space-x-4">
+                    <div className="hidden md:flex items-center space-x-2">
                         <div className="h-8 w-[1px] bg-slate-200/60 mx-2" />
                         
                         {isAnyUserLoggedIn() && (
@@ -249,7 +249,7 @@ export default function Header() {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
+                        className="xl:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors"
                     >
                         {mobileMenuOpen ? <X className="w-6 h-6 text-rose-500" /> : <Menu className="w-6 h-6" />}
                     </button>
@@ -257,7 +257,7 @@ export default function Header() {
 
                 {/* Mobile Navigation Drawer */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden absolute top-full left-0 w-full glass border-b border-slate-200 animate-fade-in shadow-2xl overflow-hidden rounded-b-3xl">
+                    <div className="xl:hidden absolute top-full left-0 w-full glass border-b border-slate-200 animate-fade-in shadow-2xl overflow-hidden rounded-b-3xl">
                         <div className="p-4 space-y-2">
                             {navigation.map((item) => {
                                 const IconComponent = item.icon;

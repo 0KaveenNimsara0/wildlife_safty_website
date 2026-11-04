@@ -61,20 +61,20 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       {/* Sidebar Container */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:translate-x-0
+        fixed inset-y-0 left-0 z-50 w-56 shrink-0 bg-slate-900 text-white transform transition-transform duration-500 ease-in-out lg:translate-x-0
         lg:sticky lg:top-0 lg:h-screen
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
           {/* Brand Header */}
-          <div className="h-20 flex items-center px-8 border-b border-white/5 relative bg-white/5">
+          <div className="h-20 flex items-center px-4 border-b border-white/5 relative bg-white/5">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20">
                 <ShieldCheck className="text-white" size={20} />
               </div>
               <div>
                 <h1 className="text-sm font-bold text-white tracking-wider uppercase">Medical Portal</h1>
-                <p className="text-[9px] font-medium text-slate-400 uppercase tracking-widest mt-0.5">Account Dashboard</p>
+                <p className="text-[9px] font-medium text-slate-400 uppercase tracking-normal mt-0.5">Account Dashboard</p>
               </div>
             </div>
             <button 
@@ -86,7 +86,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
 
           {/* Navigation Items */}
-          <nav className="flex-1 px-4 py-8 space-y-1 overflow-y-auto custom-scrollbar">
+          <nav className="flex-1 px-4 py-3 space-y-1 overflow-y-auto custom-scrollbar">
             {menuItems.map((item) => (
               <NavLink
                 key={item.path}
@@ -109,7 +109,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
             
             <div className="pt-6 pb-2">
                <div className="h-px bg-white/5 mx-4" />
-               <p className="px-5 py-4 text-[9px] font-bold text-slate-500 uppercase tracking-widest">Administration</p>
+               <p className="px-5 py-2.5 text-[9px] font-bold text-slate-500 uppercase tracking-normal">Administration</p>
             </div>
 
             <NavLink
@@ -133,10 +133,10 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </nav>
 
           {/* Footer Card */}
-          <div className="p-6">
+          <div className="p-4">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden group mb-4">
               <div className="flex items-center gap-3 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-lg overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-semibold text-xs shadow-lg overflow-hidden">
                   {officerData?.photoURL ? (
                     <img src={officerData.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${officerData.photoURL}` : officerData.photoURL} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
@@ -144,8 +144,8 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-black text-white truncate">{officerData?.name || 'Medical Officer'}</p>
-                  <p className="text-[8px] font-medium text-slate-500 uppercase tracking-widest mt-0.5">Active Session</p>
+                  <p className="text-[10px] font-semibold text-white truncate">{officerData?.name || 'Medical Officer'}</p>
+                  <p className="text-[8px] font-medium text-slate-500 uppercase tracking-normal mt-0.5">Active Session</p>
                 </div>
               </div>
             </div>

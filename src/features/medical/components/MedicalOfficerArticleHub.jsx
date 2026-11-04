@@ -16,7 +16,7 @@ const MedicalOfficerArticleHub = ({ articles, onCreateArticle, onEditArticle }) 
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl flex flex-col h-full border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all duration-300">
+    <div className="bg-white p-6 rounded-3xl flex flex-col h-full border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-sm transition-all duration-300">
       <div className="flex justify-between items-center mb-6 px-1">
         <div>
           <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Medical Knowledge</h3>
@@ -72,7 +72,7 @@ const MedicalOfficerArticleHub = ({ articles, onCreateArticle, onEditArticle }) 
             <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-200 mb-6 shadow-sm">
               <FileText size={28} />
             </div>
-            <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400">No Articles Found</h4>
+            <h4 className="text-[10px] font-bold uppercase tracking-normal text-slate-400">No Articles Found</h4>
             <p className="text-[10px] text-slate-400 font-medium text-center mt-2 max-w-[180px] leading-relaxed">
               Medical documentation has not been shared with the archive yet.
             </p>
@@ -87,7 +87,7 @@ const MedicalOfficerArticleHub = ({ articles, onCreateArticle, onEditArticle }) 
             <span className="text-[9px] font-bold uppercase text-slate-500">Cloud Synced</span>
           </div>
         </div>
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{articles?.length || 0} Records Total</p>
+        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-normal">{articles?.length || 0} Records Total</p>
       </div>
     </div>
   );

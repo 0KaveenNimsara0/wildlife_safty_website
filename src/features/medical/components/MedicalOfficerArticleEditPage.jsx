@@ -167,26 +167,26 @@ const MedicalOfficerArticleEditPage = () => {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-emerald-500 animate-spin mx-auto" />
-          <p className="mt-4 text-slate-500 font-black uppercase tracking-widest text-[10px]">Retrieving Intelligence Node...</p>
+          <p className="mt-4 text-slate-500 font-semibold uppercase tracking-normal text-[10px]">Retrieving Intelligence Node...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-4 lg:px-4">
       <div className="max-w-5xl mx-auto">
         {/* Header and Back Button */}
-        <div className="mb-10 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <div>
             <Link 
               to="/medical-officer/articles" 
               className="flex items-center text-slate-400 hover:text-indigo-600 transition-colors group mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Return to Archive</span>
+              <span className="text-[10px] font-bold uppercase tracking-normal">Return to Archive</span>
             </Link>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-4">
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-4">
                <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600">
                   <FileEdit size={28} />
                </div>
@@ -202,11 +202,11 @@ const MedicalOfficerArticleEditPage = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Main Content Area */}
-          <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
-              <div className="space-y-8">
+          <div className="lg:col-span-2 space-y-5">
+            <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+              <div className="space-y-5">
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-3 ml-1">
                     Article Title
@@ -215,7 +215,7 @@ const MedicalOfficerArticleEditPage = () => {
                     type="text"
                     value={title}
                     onChange={e => setTitle(e.target.value)}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300"
                     placeholder="Enter article title..."
                     required
                   />
@@ -229,7 +229,7 @@ const MedicalOfficerArticleEditPage = () => {
                     value={content}
                     onChange={e => setContent(e.target.value)}
                     rows={12}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300 resize-none"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300 resize-none"
                     placeholder="Write detailed medical information and advice..."
                     required
                   />
@@ -243,7 +243,7 @@ const MedicalOfficerArticleEditPage = () => {
                     value={excerpt}
                     onChange={e => setExcerpt(e.target.value)}
                     rows={3}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300 resize-none"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-300 resize-none"
                     placeholder="Brief overview for the dashboard preview..."
                   />
                 </div>
@@ -252,20 +252,20 @@ const MedicalOfficerArticleEditPage = () => {
           </div>
 
           {/* Sidebar / Metadata */}
-          <div className="lg:col-span-1 space-y-8">
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
-              <h3 className="text-[10px] font-bold uppercase tracking-widest text-indigo-600 mb-6 pb-4 border-b border-slate-50 flex items-center gap-2">
+          <div className="lg:col-span-1 space-y-5">
+            <div className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+              <h3 className="text-[10px] font-bold uppercase tracking-normal text-indigo-600 mb-6 pb-4 border-b border-slate-50 flex items-center gap-2">
                 <Tag size={14} />
                 Article Settings
               </h3>
               
               <div className="space-y-6">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1">Primary Category</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-normal text-slate-400 mb-2 ml-1">Primary Category</label>
                   <select
                     value={category}
                     onChange={e => setCategory(e.target.value)}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all appearance-none cursor-pointer"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all appearance-none cursor-pointer"
                     required
                   >
                     <option value="">Select Category...</option>
@@ -276,26 +276,26 @@ const MedicalOfficerArticleEditPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1">Navigation Tags</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-normal text-slate-400 mb-2 ml-1">Navigation Tags</label>
                   <input
                     type="text"
                     value={tags}
                     onChange={e => setTags(e.target.value)}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all"
                     placeholder="wildlife, first aid, venom..."
                   />
                   <p className="mt-2 text-[10px] text-slate-400 font-medium ml-1">Separate with commas</p>
                 </div>
 
                 <div>
-                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 ml-1">
+                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-normal text-slate-400 mb-2 ml-1">
                     Image Assets (URLs)
                   </label>
                   <textarea
                     value={images}
                     onChange={e => setImages(e.target.value)}
                     rows={3}
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all text-xs resize-none"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-2xl font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all text-xs resize-none"
                     placeholder="https://image-url-1.com, https://..."
                   />
                 </div>
@@ -305,7 +305,7 @@ const MedicalOfficerArticleEditPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-indigo-600 text-white rounded-2xl flex items-center justify-center gap-3 py-4 text-xs font-bold uppercase tracking-widest shadow-lg shadow-indigo-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
+                  className="w-full bg-indigo-600 text-white rounded-2xl flex items-center justify-center gap-3 py-2.5 text-xs font-bold uppercase tracking-normal shadow-lg shadow-indigo-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
                 >
                   {loading ? (
                     <>
@@ -325,7 +325,7 @@ const MedicalOfficerArticleEditPage = () => {
                     type="button"
                     onClick={handleSaveAndSubmit}
                     disabled={loading}
-                    className="w-full mt-4 bg-emerald-600 text-white rounded-2xl flex items-center justify-center gap-3 py-4 text-xs font-bold uppercase tracking-widest shadow-lg shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
+                    className="w-full mt-4 bg-emerald-600 text-white rounded-2xl flex items-center justify-center gap-3 py-2.5 text-xs font-bold uppercase tracking-normal shadow-lg shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95 disabled:opacity-50"
                   >
                     {loading ? (
                       <>
@@ -343,11 +343,11 @@ const MedicalOfficerArticleEditPage = () => {
               </div>
             </div>
 
-            <div className="p-6 bg-slate-900 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+            <div className="p-6 bg-slate-900 rounded-3xl text-white shadow-sm relative overflow-hidden group">
                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-700">
                   <Layers size={60} />
                </div>
-               <h4 className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 flex items-center gap-2 mb-3">
+               <h4 className="text-[10px] font-bold uppercase tracking-normal text-indigo-400 flex items-center gap-2 mb-3">
                 Guidelines
               </h4>
               <p className="text-[11px] text-slate-400 font-medium leading-relaxed">

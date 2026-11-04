@@ -65,17 +65,17 @@ export default function Identifier() {
     };
 
     return (
-        <div className="min-h-screen py-16 px-4">
+        <div className="py-6 sm:py-8">
             <div className="container mx-auto max-w-7xl">
                 {!prediction && (
-                    <header className="text-center mb-16 space-y-4 animate-fade-in">
-                        <div className="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-[11px] font-black uppercase tracking-[0.2em] w-fit mx-auto shadow-sm">
+                    <header className="text-center mb-8 space-y-3 animate-fade-in">
+                        <div className="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] w-fit mx-auto shadow-sm">
                             V2.0 Core Engine
                         </div>
-                        <h1 className="text-6xl lg:text-7xl font-black text-slate-900 tracking-tighter">
+                        <h1 className="text-4xl lg:text-4xl font-semibold text-slate-900 tracking-tight">
                             WildSafe <span className="text-emerald-600">ID</span>
                         </h1>
-                        <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">
+                        <p className="text-base leading-relaxed text-slate-500 font-medium max-w-2xl mx-auto">
                             The world's most advanced Sri Lankan snake identification system, powered by high-precision neural networks.
                         </p>
                     </header>

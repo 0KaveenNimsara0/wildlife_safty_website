@@ -68,7 +68,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
   return (
     <div className="p-6 border-b border-slate-100 bg-emerald-50/20">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Available Officers</h3>
+        <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-600">Available Officers</h3>
         <button
           onClick={fetchMedicalOfficers}
           className="p-2.5 rounded-xl bg-white text-emerald-600 hover:bg-emerald-600 hover:text-white shadow-sm border border-emerald-100 transition-all active:scale-90"
@@ -86,10 +86,10 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
 
       {error && (
         <div className="bg-rose-50 border border-rose-100 rounded-2xl p-4 mb-6 animate-fade-in text-center">
-          <p className="text-rose-600 text-[10px] font-black uppercase tracking-widest mb-3">{error}</p>
+          <p className="text-rose-600 text-[10px] font-semibold uppercase tracking-widest mb-3">{error}</p>
           <button
             onClick={fetchMedicalOfficers}
-            className="text-white bg-rose-500 px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-lg shadow-rose-200"
+            className="text-white bg-rose-500 px-4 py-2 rounded-lg text-[9px] font-semibold uppercase tracking-widest shadow-lg shadow-rose-200"
           >
             Try Again
           </button>
@@ -109,7 +109,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
           >
             <div className="flex gap-4">
               <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xs shadow-lg group-hover:scale-110 transition-transform overflow-hidden">
+                <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-semibold text-xs shadow-lg group-hover:scale-110 transition-transform overflow-hidden">
                   {officer.photoURL ? (
                     <img
                       src={officer.photoURL.startsWith('http') ? officer.photoURL : `${IMAGE_BASE_URL}${officer.photoURL}`}
@@ -124,10 +124,10 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-4 border-white shadow-sm" />
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-black text-slate-800 text-sm tracking-tight">{officer.name}</h4>
+                <h4 className="font-semibold text-slate-800 text-sm tracking-tight">{officer.name}</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <span
-                    className={`px-2 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border ${getSpecializationColor(
+                    className={`px-2 py-1 rounded-lg text-[8px] font-semibold uppercase tracking-widest border ${getSpecializationColor(
                       officer.specialization
                     )}`}
                   >
@@ -147,7 +147,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
         {!loading && medicalOfficers.length === 0 && (
           <div className="text-center py-12 space-y-3 opacity-30">
             <RefreshCcw size={32} className="mx-auto text-slate-200" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">No Specialists Available</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">No Specialists Available</p>
           </div>
         )}
       </div>

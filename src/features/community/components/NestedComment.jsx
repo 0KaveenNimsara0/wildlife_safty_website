@@ -176,7 +176,7 @@ const NestedComment = ({
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-[10px] font-black uppercase tracking-widest">Medical Expert</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-widest">Medical Expert</span>
                     </div>
                   )}
                 </span>

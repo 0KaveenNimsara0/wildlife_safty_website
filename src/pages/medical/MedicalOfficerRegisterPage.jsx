@@ -113,71 +113,71 @@ export default function MedicalOfficerRegisterPage() {
       author="William Osler"
       role="medicalOfficer"
     >
-      <div className="space-y-8 animate-fade-in-up">
+      <div className="space-y-5 animate-fade-in-up">
         {error && (
           <div className="flex items-start gap-4 p-5 bg-rose-50 border border-rose-100 rounded-3xl text-rose-700 animate-shake">
             <Info className="flex-shrink-0 mt-0.5" size={18} />
-            <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">
+            <span className="text-[10px] font-semibold uppercase tracking-widest leading-relaxed">
               {error}
             </span>
           </div>
         )}
 
-        <form className="space-y-8" onSubmit={handleSendOtp}>
-          <div className="space-y-6">
+        <form className="space-y-5" onSubmit={handleSendOtp}>
+          <div className="space-y-4">
             {/* Personnel Core Data */}
             <div className="space-y-5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 pb-2 border-b border-slate-100 ml-5">Core Identification</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-600/60 pb-2 border-b border-slate-100 ml-5">Core Identification</p>
               
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     name="name"
                     type="text"
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                    className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5"
                     placeholder="DR. NAME"
                   />
                 </div>
               </div>
 
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   Registration Key
                 </label>
                 <div className="relative">
-                  <Fingerprint className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <Fingerprint className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     name="securityKey"
                     type="password"
                     required
                     value={formData.securityKey}
                     onChange={handleChange}
-                    className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                    className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5"
                     placeholder="ENTER AUTHORIZATION KEY"
                   />
                 </div>
               </div>
 
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     name="email"
                     type="email"
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                    className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5"
                     placeholder="OFFICER@MED.LINK"
                   />
                 </div>
@@ -185,48 +185,48 @@ export default function MedicalOfficerRegisterPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                     Password
                   </label>
                   <div className="relative group">
-                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={18} />
                     <input
                       name="password"
                       type={showPassword ? "text" : "password"}
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full pl-14 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.2em]"
+                      className="w-full pl-14 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.2em]"
                       placeholder="••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-500 transition-colors focus:outline-none"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                     Confirm Password
                   </label>
                   <div className="relative group">
-                    <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
+                    <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={18} />
                     <input
                       name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
                       required
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="w-full pl-14 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.2em]"
+                      className="w-full pl-14 pr-12 py-4 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.2em]"
                       placeholder="••••"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-500 transition-colors focus:outline-none"
                     >
                       {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -237,21 +237,21 @@ export default function MedicalOfficerRegisterPage() {
 
             {/* Professional Credentials */}
             <div className="space-y-5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600/60 pb-2 border-b border-slate-100 ml-5">Professional Details</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-600/60 pb-2 border-b border-slate-100 ml-5">Professional Details</p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                     Specialization
                   </label>
                   <div className="relative">
-                    <Stethoscope className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                    <Stethoscope className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                     <select
                       name="specialization"
                       required
                       value={formData.specialization}
                       onChange={handleChange}
-                      className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 appearance-none cursor-pointer"
+                      className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 appearance-none cursor-pointer"
                     >
                       <option value="">Select Dept</option>
                       <option value="general">General Medicine</option>
@@ -263,18 +263,18 @@ export default function MedicalOfficerRegisterPage() {
                 </div>
 
                 <div className="space-y-2 group">
-                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                  <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                     License ID
                   </label>
                   <div className="relative">
-                    <FileText className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                    <FileText className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                     <input
                       name="licenseNumber"
                       type="text"
                       required
                       value={formData.licenseNumber}
                       onChange={handleChange}
-                      className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300"
+                      className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500"
                       placeholder="LIC-0000"
                     />
                   </div>
@@ -282,36 +282,36 @@ export default function MedicalOfficerRegisterPage() {
               </div>
 
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   Operational Facility
                 </label>
                 <div className="relative">
-                  <Hospital className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <Hospital className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     name="hospital"
                     type="text"
                     required
                     value={formData.hospital}
                     onChange={handleChange}
-                    className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                    className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5"
                     placeholder="BASE STATION / CLINIC"
                   />
                 </div>
               </div>
 
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   Contact Protocol
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     name="phoneNumber"
                     type="text"
                     required
                     value={formData.phoneNumber}
                     onChange={handleChange}
-                    className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                    className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5"
                     placeholder="+1 000 000 000"
                   />
                 </div>
@@ -322,7 +322,7 @@ export default function MedicalOfficerRegisterPage() {
           <button
             type="submit"
             disabled={otpSending || loading}
-            className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+            className="w-full py-3 bg-slate-900 text-white rounded-xl font-semibold uppercase tracking-wide text-[10px] hover:bg-emerald-600 shadow-sm shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
           >
             {otpSending ? 'Sending OTP...' : 'Register'}
             {!otpSending && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
@@ -332,7 +332,7 @@ export default function MedicalOfficerRegisterPage() {
         <div className="pt-4 text-center">
           <p className="text-slate-400 font-bold text-sm">
             Personnel already Operational? {' '}
-            <Link to="/medical-officer/login" className="text-emerald-600 font-black uppercase tracking-[0.2em] hover:text-emerald-700 underline underline-offset-4 decoration-emerald-500/30 hover:decoration-emerald-500 transition-all text-xs">
+            <Link to="/medical-officer/login" className="text-emerald-600 font-semibold uppercase tracking-[0.2em] hover:text-emerald-700 underline underline-offset-4 decoration-emerald-500/30 hover:decoration-emerald-500 transition-all text-xs">
               Access Terminal
             </Link>
           </p>

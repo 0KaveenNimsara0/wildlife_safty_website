@@ -169,10 +169,10 @@ export default function ForgotPassword({ mode = "user" }) {
       author={config.author}
       role={config.roleId}
     >
-      <div className="space-y-8 animate-fade-in-up">
+      <div className="space-y-5 animate-fade-in-up">
         <button
           onClick={() => navigate(config.backLink)}
-          className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors group"
+          className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-slate-400 hover:text-emerald-600 transition-colors group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
           Back to Login
@@ -181,26 +181,26 @@ export default function ForgotPassword({ mode = "user" }) {
         {error && (
           <div className="flex items-start gap-4 p-5 bg-rose-50 border border-rose-100 rounded-3xl text-rose-700 animate-shake">
             <Info className="flex-shrink-0 mt-0.5" size={18} />
-            <span className="text-[10px] font-black uppercase tracking-widest leading-relaxed">
+            <span className="text-[10px] font-semibold uppercase tracking-widest leading-relaxed">
               {error}
             </span>
           </div>
         )}
 
         {step === 1 ? (
-          <form className="space-y-8" onSubmit={handleSendRequest}>
+          <form className="space-y-5" onSubmit={handleSendRequest}>
             <div className="space-y-2 group">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+              <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-16 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5"
+                  className="w-full pl-16 pr-8 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5"
                   placeholder="agent@wildsafe.gov"
                 />
               </div>
@@ -209,33 +209,33 @@ export default function ForgotPassword({ mode = "user" }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-2xl shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+              className="w-full py-3 bg-slate-900 text-white rounded-xl font-semibold uppercase tracking-wide text-[10px] hover:bg-emerald-600 shadow-sm shadow-slate-200 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
             >
               {loading ? "Sending OTP..." : "Send Verification Code"}
               {!loading && <Fingerprint size={18} className="group-hover:scale-110 transition-transform duration-500" />}
             </button>
           </form>
         ) : (
-          <form className="space-y-6" onSubmit={handleUpdatePassword}>
+          <form className="space-y-4" onSubmit={handleUpdatePassword}>
             <div className="space-y-5">
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   New Password
                 </label>
                 <div className="relative group">
-                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full pl-16 pr-14 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.3em]"
+                    className="w-full pl-16 pr-14 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-wide"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-500 transition-colors focus:outline-none"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -243,23 +243,23 @@ export default function ForgotPassword({ mode = "user" }) {
               </div>
 
               <div className="space-y-2 group">
-                <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
+                <label className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 ml-5 group-focus-within:text-emerald-600 transition-colors">
                   Confirm Password
                 </label>
                 <div className="relative group">
-                  <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={20} />
+                  <CheckCircle className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={20} />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-16 pr-14 py-5 bg-slate-50 border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-300 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-[0.3em]"
+                    className="w-full pl-16 pr-14 py-3 bg-slate-50 border-2 border-transparent rounded-xl focus:bg-white focus:border-emerald-500/30 focus:outline-none transition-all font-bold text-slate-800 placeholder:text-slate-500 shadow-inner group-focus-within:shadow-emerald-500/5 tracking-wide"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-emerald-500 transition-colors focus:outline-none"
+                    className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-500 hover:text-emerald-500 transition-colors focus:outline-none"
                   >
                     {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -270,7 +270,7 @@ export default function ForgotPassword({ mode = "user" }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-6 bg-emerald-600 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-700 shadow-2xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
+              className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold uppercase tracking-wide text-[10px] hover:bg-emerald-700 shadow-sm shadow-emerald-500/20 transition-all flex items-center justify-center gap-4 group active:scale-[0.98] disabled:opacity-50"
             >
               {loading ? "Updating..." : "Update Password"}
               {!loading && <KeyRound size={18} className="group-hover:rotate-12 transition-transform duration-500" />}

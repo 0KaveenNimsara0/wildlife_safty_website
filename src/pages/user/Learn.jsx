@@ -47,11 +47,11 @@ export default function LearnPage() {
         <div className="max-w-7xl mx-auto px-4 py-12 space-y-20 animate-fade-in">
             {/* Elegant Header */}
             <div className="text-center space-y-6 max-w-3xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-sky-50 text-sky-600 rounded-full text-xs font-black uppercase tracking-widest border border-sky-100 shadow-sm">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-sky-50 text-sky-600 rounded-full text-xs font-semibold uppercase tracking-widest border border-sky-100 shadow-sm">
                     <GraduationCap size={14} />
                     <span>Wildlife Academy</span>
                 </div>
-                <h2 className="text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-none">
+                <h2 className="text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-none">
                     Master <span className="text-emerald-600">Species</span> Intelligence
                 </h2>
                 <p className="text-lg text-slate-500 font-medium leading-relaxed">
@@ -79,7 +79,7 @@ export default function LearnPage() {
                                 <div className="p-4 rounded-2xl bg-white shadow-sm w-fit mb-6 group-hover:scale-110 transition-transform duration-300">
                                     <type.icon size={28} />
                                 </div>
-                                <h3 className="text-2xl font-black text-slate-800 mb-2">{type.name}</h3>
+                                <h3 className="text-2xl font-semibold text-slate-800 mb-2">{type.name}</h3>
                                 <p className="text-sm font-bold text-slate-500 uppercase tracking-tight">{type.description}</p>
                             </div>
                             
@@ -92,7 +92,7 @@ export default function LearnPage() {
                                 ))}
                             </ul>
 
-                            <button className="mt-8 flex items-center gap-2 text-sm font-black uppercase tracking-widest group-hover:gap-4 transition-all">
+                            <button className="mt-8 flex items-center gap-2 text-sm font-semibold uppercase tracking-widest group-hover:gap-4 transition-all">
                                 <span>Deep Dive</span>
                                 <ArrowRight size={16} />
                             </button>
@@ -102,7 +102,7 @@ export default function LearnPage() {
             </div>
 
             {/* Expert Insight Section */}
-            <div className="relative overflow-hidden rounded-[3rem] bg-slate-900 p-10 lg:p-20">
+            <div className="relative overflow-hidden rounded-2xl bg-slate-900 p-10 lg:p-20">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
                 <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
                     <div className="space-y-8">
@@ -110,7 +110,7 @@ export default function LearnPage() {
                             <Lightbulb size={24} />
                             <h3 className="text-xl font-bold uppercase tracking-widest">Expert Insights</h3>
                         </div>
-                        <h4 className="text-4xl font-black text-white tracking-tight">Rapid Identification <br/> <span className="text-slate-400">Tactics for the Field</span></h4>
+                        <h4 className="text-4xl font-semibold text-white tracking-tight">Rapid Identification <br/> <span className="text-slate-400">Tactics for the Field</span></h4>
                         
                         <div className="grid gap-4">
                             {[
@@ -132,13 +132,13 @@ export default function LearnPage() {
                     </div>
 
                     <div className="card-premium p-8 bg-white border-0 shadow-2xl relative">
-                        <div className="absolute -top-4 -right-4 bg-emerald-600 text-white w-20 h-20 rounded-full flex items-center justify-center font-black text-xl shadow-xl shadow-emerald-600/30">
+                        <div className="absolute -top-4 -right-4 bg-emerald-600 text-white w-20 h-20 rounded-full flex items-center justify-center font-semibold text-xl shadow-xl shadow-emerald-600/30">
                             ID+
                         </div>
                         <div className="space-y-6">
                             <div className="flex items-center gap-3 text-emerald-600 border-b border-slate-100 pb-4">
                                 <Info size={20} />
-                                <span className="font-black uppercase tracking-widest text-xs">Field Note</span>
+                                <span className="font-semibold uppercase tracking-widest text-xs">Field Note</span>
                             </div>
                             <blockquote className="text-xl font-medium text-slate-800 italic leading-relaxed">
                                 "While visual markers are helpful, they are not infallible. Many harmless species have evolved to mimic the look of deadly vipers perfectly. **Never base a life-safety decision solely on visual mimicry.**"
@@ -146,7 +146,7 @@ export default function LearnPage() {
                             <div className="flex items-center gap-4 pt-4">
                                 <div className="w-12 h-12 rounded-full bg-slate-200" />
                                 <div>
-                                    <p className="font-black text-slate-900 text-sm">Dr. Rohan Sennayake</p>
+                                    <p className="font-semibold text-slate-900 text-sm">Dr. Rohan Sennayake</p>
                                     <p className="text-xs font-bold text-slate-500">Chief Herpetologist</p>
                                 </div>
                             </div>
