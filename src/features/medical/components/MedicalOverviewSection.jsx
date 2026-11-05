@@ -48,7 +48,7 @@ export default function MedicalOverviewSection() {
   if (loading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center space-y-4 opacity-30">
-        <div className="w-10 h-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
+        <div className="w-10 h-10 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
         <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Loading Dashboard...</p>
       </div>
     );
@@ -68,13 +68,13 @@ export default function MedicalOverviewSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="p-5 rounded-3xl bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-sm transition-all duration-300">
                 <div className="relative z-10">
-                   <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                   <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                       <Activity size={24} />
                    </div>
                     <h3 className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Patient Chats</h3>
                     <p className="text-xl font-semibold text-slate-900 leading-tight tracking-tight">24 Active</p>
-                    <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-normal mt-4 flex items-center gap-2">
-                       <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-normal mt-4 flex items-center gap-2">
+                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                        Online
                     </p>
                 </div>
@@ -103,7 +103,7 @@ export default function MedicalOverviewSection() {
                  <div className="absolute top-0 right-0 p-5 opacity-10 group-hover:scale-110 transition-transform duration-700">
                     <Maximize2 size={80} />
                  </div>
-                 <h4 className="text-[10px] font-semibold uppercase tracking-normal text-indigo-400 mb-4">Important Notices</h4>
+                 <h4 className="text-[10px] font-semibold uppercase tracking-normal text-emerald-400 mb-4">Important Notices</h4>
                  <p className="text-base font-medium leading-relaxed mb-6 text-slate-300 italic uppercase tracking-tight">
                     Official messages are for professional use. 
                     Keep data privacy standards high in all messages.
@@ -120,13 +120,13 @@ export default function MedicalOverviewSection() {
 
               <button 
                 onClick={() => navigate('/medical-officer/chat')}
-                className="w-full p-5 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-between group hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-md active:scale-[0.98]"
+                className="w-full p-5 rounded-3xl bg-emerald-50 border border-emerald-100 flex items-center justify-between group hover:bg-emerald-600 hover:text-white transition-all duration-300 shadow-md active:scale-[0.98]"
               >
                  <div className="text-left">
-                    <h4 className="text-[10px] font-semibold uppercase tracking-normal mb-1 text-indigo-600 group-hover:text-indigo-100">Messages</h4>
+                    <h4 className="text-[10px] font-semibold uppercase tracking-normal mb-1 text-emerald-600 group-hover:text-emerald-100">Messages</h4>
                     <p className="text-2xl font-semibold uppercase tracking-tight">View All Chats</p>
                  </div>
-                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-indigo-600 group-hover:bg-indigo-400 group-hover:text-white transition-all duration-300 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-emerald-600 group-hover:bg-emerald-400 group-hover:text-white transition-all duration-300 shadow-sm">
                    <MessageSquare size={24} />
                 </div>
              </button>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 import {
   Shield,
@@ -265,7 +265,7 @@ export default function MedicalProfileSection() {
     return (
       <div className="py-20 flex items-center justify-center bg-transparent">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto"></div>
           <p className="mt-4 text-slate-500 font-semibold uppercase tracking-normal text-[10px]">Verifying Personnel Record...</p>
         </div>
       </div>
@@ -276,10 +276,10 @@ export default function MedicalProfileSection() {
     <div className="space-y-5 animate-fade-in relative">
       {/* Profile Header Hero */}
       <div className="relative overflow-hidden bg-slate-900 rounded-2xl p-5 text-white shadow-sm border border-white/5">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-5">
            <div className="relative group">
-              <div className="w-20 h-20 rounded-xl bg-indigo-600 border-4 border-slate-800 flex items-center justify-center text-2xl font-semibold shadow-sm overflow-hidden shadow-indigo-600/20 relative">
+              <div className="w-20 h-20 rounded-xl bg-emerald-600 border-4 border-slate-800 flex items-center justify-center text-2xl font-semibold shadow-sm overflow-hidden shadow-emerald-600/20 relative">
                  {previewUrl || (activeUser?.photoURL) ? (
                    <img 
                     src={previewUrl || activeUser.photoURL} 
@@ -295,7 +295,7 @@ export default function MedicalProfileSection() {
                    </div>
                  )}
               </div>
-              <label className="absolute -bottom-2 -right-2 p-2.5 bg-indigo-500 rounded-2xl border-4 border-slate-900 shadow-lg cursor-pointer hover:bg-slate-900 hover:scale-110 transition-all active:scale-95 group-hover:shadow-indigo-500/40">
+              <label className="absolute -bottom-2 -right-2 p-2.5 bg-emerald-500 rounded-2xl border-4 border-slate-900 shadow-lg cursor-pointer hover:bg-slate-900 hover:scale-110 transition-all active:scale-95 group-hover:shadow-emerald-500/40">
                  <Camera size={16} className="text-white" />
                  <input 
                   type="file" 
@@ -310,14 +310,14 @@ export default function MedicalProfileSection() {
               <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
                  <h1 className="text-2xl font-semibold tracking-tight text-white">{activeUser?.name || activeUser?.displayName || 'Medical Officer'}</h1>
                  <div className="px-4 py-1.5 bg-white/5 rounded-full border border-white/10 backdrop-blur-md">
-                    <span className="text-[10px] font-semibold uppercase tracking-normal text-indigo-400">Verified Member</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-normal text-emerald-400">Verified Member</span>
                  </div>
               </div>
               <p className="text-slate-400 font-bold uppercase tracking-[0.15em] text-sm mb-6 underline decoration-slate-800 underline-offset-8">{activeUser?.specialization || 'General Practice Specialist'}</p>
               
               <div className="flex flex-wrap gap-4 mt-6 justify-center md:justify-start">
                  <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-normal text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                    <FileText size={14} className="text-indigo-400" /> License: <span className="text-white">{activeUser?.licenseNumber || 'Pending'}</span>
+                    <FileText size={14} className="text-emerald-400" /> License: <span className="text-white">{activeUser?.licenseNumber || 'Pending'}</span>
                  </div>
                  <div className="flex items-center gap-3 text-[10px] font-semibold uppercase tracking-normal text-slate-500 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
                     <ShieldCheck size={14} className="text-emerald-400" /> Operational Status: <span className="text-emerald-400 uppercase">{(activeUser?.isApproved === true || activeUser?.isApproved === 'true') ? 'ACTIVE' : 'PENDING'}</span>
@@ -337,13 +337,13 @@ export default function MedicalProfileSection() {
       <div className="p-5 bg-white shadow-sm shadow-slate-200/50 rounded-2xl border border-slate-100 relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-5 mb-6">
           <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.25em] text-indigo-600 mb-2">Personnel Management</h3>
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.25em] text-emerald-600 mb-2">Personnel Management</h3>
             <p className="text-2xl font-semibold text-slate-900 tracking-tight uppercase">Profile Data <span className="text-slate-200">/</span> Identification</p>
           </div>
           {!isEditing ? (
             <button
               onClick={handleEdit}
-              className="flex items-center gap-3 px-4 py-2.5 bg-slate-900 border border-slate-900 text-[10px] font-semibold uppercase tracking-normal text-white hover:bg-indigo-600 hover:border-indigo-600 rounded-2xl shadow-sm shadow-slate-900/10 transition-all active:scale-95"
+              className="flex items-center gap-3 px-4 py-2.5 bg-slate-900 border border-slate-900 text-[10px] font-semibold uppercase tracking-normal text-white hover:bg-emerald-600 hover:border-emerald-600 rounded-2xl shadow-sm shadow-slate-900/10 transition-all active:scale-95"
             >
               <Edit3 size={16} />
               Edit Personnel File
@@ -352,7 +352,7 @@ export default function MedicalProfileSection() {
             <div className="flex gap-4">
               <button
                 onClick={handleSave}
-                className="flex items-center gap-3 px-4 py-2.5 bg-indigo-600 text-white text-[10px] font-semibold uppercase tracking-normal rounded-2xl shadow-sm shadow-indigo-600/20 active:scale-95 transition-all"
+                className="flex items-center gap-3 px-4 py-2.5 bg-emerald-600 text-white text-[10px] font-semibold uppercase tracking-normal rounded-2xl shadow-sm shadow-emerald-600/20 active:scale-95 transition-all"
               >
                 <Save size={16} />
                 Save Changes
@@ -391,13 +391,13 @@ export default function MedicalProfileSection() {
                 </label>
                 {isEditing && !field.readOnly ? (
                   <div className="relative group">
-                     <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors" size={18} />
+                     <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
                       <input
                       type={field.type || 'text'}
                       name={field.name}
                       value={field.val}
                       onChange={handleInputChange}
-                      className={`w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-lg font-semibold text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-normal text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition-all shadow-inner`}
+                      className={`w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-lg font-semibold text-xs ${field.name !== 'email' && field.name !== 'name' ? 'uppercase' : ''} tracking-normal text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-600 transition-all shadow-inner`}
                     />
                   </div>
                 ) : (
@@ -422,13 +422,13 @@ export default function MedicalProfileSection() {
                 </label>
                 {isEditing && !field.readOnly ? (
                   <div className="relative group">
-                     <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-indigo-500 transition-colors" size={18} />
+                     <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
                      <input
                       type="text"
                       name={field.name}
                       value={field.val}
                       onChange={handleInputChange}
-                      className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-lg font-semibold text-xs uppercase tracking-normal text-slate-900 focus:outline-none focus:bg-white focus:border-indigo-600 transition-all shadow-inner"
+                      className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-lg font-semibold text-xs uppercase tracking-normal text-slate-900 focus:outline-none focus:bg-white focus:border-emerald-600 transition-all shadow-inner"
                     />
                   </div>
                 ) : (
@@ -447,17 +447,17 @@ export default function MedicalProfileSection() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="bg-white border border-slate-100 p-5 flex flex-col justify-between rounded-2xl shadow-sm shadow-slate-200/40 hover:shadow-sm transition-all group">
           <div className="flex items-start justify-between mb-5">
-             <div className="p-3 rounded-xl bg-indigo-600 text-white shadow-sm group-hover:scale-110 transition-transform duration-500">
+             <div className="p-3 rounded-xl bg-emerald-600 text-white shadow-sm group-hover:scale-110 transition-transform duration-500">
                 <Shield size={24} />
              </div>
              <div className="text-right">
-                <h4 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-indigo-600 mb-1">Account Security</h4>
+                <h4 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-emerald-600 mb-1">Account Security</h4>
                 <p className="text-lg font-semibold text-slate-900 uppercase tracking-tight">Security Credentials Update</p>
              </div>
           </div>
           <button 
             onClick={() => setShowSecurityModal(true)}
-            className="w-full py-3 rounded-2xl bg-indigo-600 text-white font-semibold uppercase tracking-normal text-[10px] shadow-sm shadow-indigo-600/20 hover:bg-slate-900 transition-all active:scale-95"
+            className="w-full py-3 rounded-2xl bg-emerald-600 text-white font-semibold uppercase tracking-normal text-[10px] shadow-sm shadow-emerald-600/20 hover:bg-slate-900 transition-all active:scale-95"
           >
             Update Password
           </button>
@@ -469,7 +469,7 @@ export default function MedicalProfileSection() {
                 <Lock size={24} />
              </div>
              <div className="text-right">
-                <h4 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-indigo-600 mb-1">System Status</h4>
+                <h4 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-emerald-600 mb-1">System Status</h4>
                 <p className="text-lg font-semibold text-slate-900 uppercase tracking-tight">Operational Heartbeat</p>
              </div>
           </div>
@@ -488,17 +488,17 @@ export default function MedicalProfileSection() {
            {/* Modal Body */}
            <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-sm overflow-hidden animate-slide-up border border-slate-100">
               <div className="absolute top-0 left-0 right-0 h-2 bg-slate-50 flex">
-                 <div className={`h-full bg-indigo-600 transition-all duration-700 ${securityStep === 1 ? 'w-1/2' : 'w-full'}`} />
+                 <div className={`h-full bg-emerald-600 transition-all duration-700 ${securityStep === 1 ? 'w-1/2' : 'w-full'}`} />
               </div>
 
               <div className="p-5 pt-8 text-center space-y-5">
                  <div className="space-y-4">
-                    <div className={`mx-auto w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-500 ${securityStep === 1 ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600 rotate-[360deg]'}`}>
+                    <div className={`mx-auto w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-500 ${securityStep === 1 ? 'bg-emerald-50 text-emerald-600' : 'bg-emerald-50 text-emerald-600 rotate-[360deg]'}`}>
                        {securityStep === 1 ? <Smartphone size={48} /> : <ShieldCheck size={48} />}
                     </div>
                     <div className="space-y-2">
                        <h2 className="text-xl font-semibold text-slate-900 tracking-tight uppercase">
-                          {securityStep === 1 ? 'Identity' : 'Security'} <span className="text-indigo-600">Verification</span>
+                          {securityStep === 1 ? 'Identity' : 'Security'} <span className="text-emerald-600">Verification</span>
                        </h2>
                        <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-400">
                           {securityStep === 1 ? 'Request a one-time code to authorized email' : 'Verify credentials and apply new security layer'}
@@ -517,7 +517,7 @@ export default function MedicalProfileSection() {
                       <button 
                          onClick={handleRequestOtp}
                          disabled={securityLoading}
-                         className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold uppercase tracking-[0.3em] text-[10px] hover:bg-slate-900 shadow-sm shadow-indigo-600/10 transition-all flex items-center justify-center gap-4 group"
+                         className="w-full py-3 bg-emerald-600 text-white rounded-xl font-semibold uppercase tracking-[0.3em] text-[10px] hover:bg-slate-900 shadow-sm shadow-emerald-600/10 transition-all flex items-center justify-center gap-4 group"
                       >
                          {securityLoading ? <RefreshCw className="animate-spin" size={18} /> : <Mail size={18} className="group-hover:translate-x-1 transition-transform" /> }
                          <span>Dispatch Security Code</span>
@@ -533,7 +533,7 @@ export default function MedicalProfileSection() {
                                <input 
                                   required
                                   type="password"
-                                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-indigo-600 focus:outline-none transition-all font-bold text-sm"
+                                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-emerald-600 focus:outline-none transition-all font-bold text-sm"
                                   placeholder="Confirm Identity"
                                   value={securityFormData.currentPassword}
                                   onChange={(e) => setSecurityFormData({...securityFormData, currentPassword: e.target.value})}
@@ -561,7 +561,7 @@ export default function MedicalProfileSection() {
                                <input 
                                   required
                                   type="password"
-                                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-indigo-600 focus:outline-none transition-all font-bold text-sm"
+                                  className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-emerald-600 focus:outline-none transition-all font-bold text-sm"
                                   placeholder="Repeat New Password"
                                   value={securityFormData.confirmPassword}
                                   onChange={(e) => setSecurityFormData({...securityFormData, confirmPassword: e.target.value})}
@@ -577,7 +577,7 @@ export default function MedicalProfileSection() {
                                      required
                                      maxLength={6}
                                      type="text"
-                                     className="w-full pl-14 pr-6 py-3 bg-indigo-50/50 border-2 border-indigo-100 rounded-3xl focus:bg-white focus:border-indigo-600 focus:outline-none transition-all font-semibold text-center tracking-[0.5em] text-lg text-indigo-600"
+                                     className="w-full pl-14 pr-6 py-3 bg-emerald-50/50 border-2 border-emerald-100 rounded-3xl focus:bg-white focus:border-emerald-600 focus:outline-none transition-all font-semibold text-center tracking-[0.5em] text-lg text-emerald-600"
                                      placeholder="000000"
                                      value={securityFormData.otp}
                                      onChange={(e) => setSecurityFormData({...securityFormData, otp: e.target.value})}
@@ -604,7 +604,7 @@ export default function MedicalProfileSection() {
                          <button 
                             type="submit"
                             disabled={securityLoading}
-                            className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-semibold uppercase tracking-[0.3em] text-[10px] hover:bg-indigo-600 shadow-sm transition-all flex items-center justify-center gap-4"
+                            className="flex-1 py-3 bg-slate-900 text-white rounded-xl font-semibold uppercase tracking-[0.3em] text-[10px] hover:bg-emerald-600 shadow-sm transition-all flex items-center justify-center gap-4"
                          >
                             {securityLoading ? <RefreshCw className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
                             <span>Apply Changes</span>
@@ -619,7 +619,7 @@ export default function MedicalProfileSection() {
                  <div className="flex gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
                     <div className="w-1.5 h-1.5 rounded-full bg-slate-200" />
-                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                  </div>
               </div>
            </div>

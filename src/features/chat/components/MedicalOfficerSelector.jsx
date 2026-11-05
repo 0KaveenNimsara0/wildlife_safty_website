@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 import { RefreshCcw, Loader2 } from 'lucide-react';
 
 import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
@@ -66,9 +66,9 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
   };
 
   return (
-    <div className="p-6 border-b border-slate-100 bg-emerald-50/20">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-600">Available Officers</h3>
+    <div className="p-4 border-b border-slate-100 bg-emerald-50/20">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-semibold text-slate-800">Start a conversation</h3>
         <button
           onClick={fetchMedicalOfficers}
           className="p-2.5 rounded-xl bg-white text-emerald-600 hover:bg-emerald-600 hover:text-white shadow-sm border border-emerald-100 transition-all active:scale-90"
@@ -98,12 +98,13 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
 
       <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-2">
         {medicalOfficers.map((officer) => (
-          <div
+          <button
+            type="button"
             key={officer._id}
             onClick={() => onSelect(officer)}
-            className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer group ${
+            className={`w-full text-left p-3 rounded-xl border transition-all duration-300 cursor-pointer group ${
               selectedMedicalOfficer?._id === officer._id
-                ? 'border-emerald-500 bg-white shadow-xl shadow-emerald-900/5 ring-4 ring-emerald-50'
+                ? 'border-emerald-500 bg-white bg-emerald-50'
                 : 'border-slate-100 bg-white/50 hover:bg-white hover:border-emerald-200 hover:shadow-lg'
             }`}
           >
@@ -121,33 +122,33 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
                     officer.name?.charAt(0) || 'O'
                   )}
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-4 border-white shadow-sm" />
+
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="font-semibold text-slate-800 text-sm tracking-tight">{officer.name}</h4>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <span
-                    className={`px-2 py-1 rounded-lg text-[8px] font-semibold uppercase tracking-widest border ${getSpecializationColor(
+                    className={`px-2 py-1 rounded-lg text-xs font-medium border ${getSpecializationColor(
                       officer.specialization
                     )}`}
                   >
-                    {officer.specialization.replace('_', ' ')}
+                    {(officer.specialization || 'general').replaceAll('_', ' ')}
                   </span>
                 </div>
                 {officer.hospital && (
-                   <div className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-2 flex items-center gap-1">
+                   <div className="text-xs text-slate-500 mt-2 flex items-center gap-1">
                       <div className="w-1 h-1 rounded-full bg-slate-300" /> {officer.hospital}
                    </div>
                 )}
               </div>
             </div>
-          </div>
+          </button>
         ))}
 
-        {!loading && medicalOfficers.length === 0 && (
-          <div className="text-center py-12 space-y-3 opacity-30">
+        {!loading && !error && medicalOfficers.length === 0 && (
+          <div className="text-center py-6 space-y-3">
             <RefreshCcw size={32} className="mx-auto text-slate-200" />
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">No Specialists Available</p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">No medical officers found</p>
           </div>
         )}
       </div>

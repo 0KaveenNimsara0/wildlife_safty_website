@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaHeart, FaRegHeart, FaReply, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 import api from '../../../services/api';
 import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 
@@ -147,7 +147,7 @@ const NestedComment = ({
         {/* Comment Header */}
         <div className="flex items-start gap-3">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-medium shadow-sm overflow-hidden ${
-            isPostAuthor ? 'bg-green-600' : comment.authorRole === 'medicalOfficer' ? 'bg-emerald-600 ring-2 ring-emerald-100 ring-offset-2' : 'bg-blue-600'
+            isPostAuthor ? 'bg-green-600' : comment.authorRole === 'medicalOfficer' ? 'bg-emerald-600 ring-2 ring-emerald-100 ring-offset-2' : 'bg-emerald-600'
           }`}>
             {comment.authorAvatar ? (
               <img 
@@ -212,7 +212,7 @@ const NestedComment = ({
                     <>
                       <button 
                         onClick={() => setIsEditing(true)}
-                        className="p-1 text-blue-600 hover:text-blue-700 rounded-full hover:bg-blue-50"
+                        className="p-1 text-emerald-600 hover:text-emerald-700 rounded-full hover:bg-emerald-50"
                         aria-label="Edit comment"
                       >
                         <FaEdit size={14} />
@@ -235,7 +235,7 @@ const NestedComment = ({
               <textarea
                 value={editingText}
                 onChange={(e) => setEditingText(e.target.value)}
-                className="w-full mt-2 p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full mt-2 p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 rows="3"
                 autoFocus
               />
@@ -253,7 +253,7 @@ const NestedComment = ({
                   <button
                     onClick={() => setActiveReaction(activeReaction ? null : 'like')}
                     className={`flex items-center gap-1 text-xs px-3 py-1 rounded-full ${
-                      userReaction ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      userReaction ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                     disabled={!activeUser || loading}
                   >
@@ -278,7 +278,7 @@ const NestedComment = ({
                           onClick={() => handleReaction(type)}
                           className={`text-lg p-1 rounded-full transform transition ${
                             userReaction === type 
-                              ? 'scale-125 bg-blue-50' 
+                              ? 'scale-125 bg-emerald-50' 
                               : 'hover:scale-110 hover:bg-gray-100'
                           }`}
                           title={type}
@@ -317,7 +317,7 @@ const NestedComment = ({
                       setTimeout(() => document.getElementById(`reply-input-${comment._id}`)?.focus(), 100);
                     }
                   }}
-                  className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 px-3 py-1 rounded-full hover:bg-blue-50"
+                  className="text-xs text-emerald-600 hover:text-emerald-700 flex items-center gap-1 px-3 py-1 rounded-full hover:bg-emerald-50"
                   disabled={loading}
                 >
                   <FaReply size={12} />
@@ -337,12 +337,12 @@ const NestedComment = ({
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleReplySubmit()}
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                   />
                   <button
                     onClick={handleReplySubmit}
                     disabled={!replyText.trim() || loading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg transition disabled:opacity-50"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-lg transition disabled:opacity-50"
                   >
                     Post
                   </button>

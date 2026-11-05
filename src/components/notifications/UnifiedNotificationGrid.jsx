@@ -16,7 +16,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { notificationApi } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { formatDate, formatTime } from '../../utils/formatters';
 
 const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
@@ -135,7 +135,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
       case 'POST_VERIFIED': return <CheckCircle2 className="text-emerald-500" size={18} />;
       case 'POST_REJECTED': return <XCircle className="text-rose-500" size={18} />;
       case 'POST_REACTED': return <Heart className="text-pink-500" size={18} fill="currentColor" />;
-      case 'POST_COMMENTED': return <MessageSquare className="text-indigo-500" size={18} />;
+      case 'POST_COMMENTED': return <MessageSquare className="text-emerald-500" size={18} />;
       case 'ARTICLE_SUBMITTED': return <TrendingUp className="text-amber-500" size={18} />;
       case 'ARTICLE_APPROVED': return <CheckCircle2 className="text-emerald-500" size={18} />;
       case 'ARTICLE_REJECTED': return <XCircle className="text-rose-500" size={18} />;

@@ -69,7 +69,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           {/* Brand Header */}
           <div className="h-20 flex items-center px-4 border-b border-white/5 relative bg-white/5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg shadow-emerald-600/20">
                 <ShieldCheck className="text-white" size={20} />
               </div>
               <div>
@@ -95,14 +95,14 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 className={({ isActive }) => `
                   flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-200 group
                   ${isActive 
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' 
                     : 'text-slate-400 hover:text-white hover:bg-white/5'}
                 `}
               >
                 <item.icon size={18} className="opacity-70 group-hover:opacity-100 transition-opacity" />
                 <span className="text-xs font-semibold">{item.name}</span>
                 {item.name === 'Message Center' && (
-                   <div className="ml-auto w-2 h-2 rounded-full bg-indigo-400" />
+                   <div className="ml-auto w-2 h-2 rounded-full bg-emerald-400" />
                 )}
               </NavLink>
             ))}
@@ -116,7 +116,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
               to="/medical-officer/profile"
               className={({ isActive }) => `
                 flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-200 group
-                ${isActive ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}
+                ${isActive ? 'bg-emerald-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}
               `}
             >
               <User size={18} />
@@ -136,7 +136,7 @@ const MedicalOfficerSidebar = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="p-4">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5 relative overflow-hidden group mb-4">
               <div className="flex items-center gap-3 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-semibold text-xs shadow-lg overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-semibold text-xs shadow-lg overflow-hidden">
                   {officerData?.photoURL ? (
                     <img src={officerData.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${officerData.photoURL}` : officerData.photoURL} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (

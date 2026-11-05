@@ -19,7 +19,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 
 const ActionIcon = ({ action }) => {
-    if (action.includes('LOGIN') || action.includes('REGISTER')) return <Key size={14} className="text-indigo-600" />;
+    if (action.includes('LOGIN') || action.includes('REGISTER')) return <Key size={14} className="text-emerald-600" />;
     if (action.includes('PREDICTION')) return <Zap size={14} className="text-amber-600" />;
     if (action.includes('POST') || action.includes('COMMENT')) return <MessageSquare size={14} className="text-emerald-600" />;
     if (action.includes('PASSWORD') || action.includes('VERIF')) return <ShieldCheck size={14} className="text-rose-600" />;
@@ -31,7 +31,7 @@ const ActivityTimeline = ({ logs, loading }) => {
     if (loading) {
         return (
             <div className="py-20 flex flex-col items-center justify-center gap-4 text-slate-300">
-                <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">Synchronizing Audit Logs...</span>
             </div>
         );
@@ -70,7 +70,7 @@ const ActivityTimeline = ({ logs, loading }) => {
                         </div>
 
                         {/* Content */}
-                        <div className="p-5 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow group-hover:border-indigo-100">
+                        <div className="p-5 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow group-hover:border-emerald-100">
                             <p className="text-xs font-bold text-slate-600 leading-relaxed">
                                 {log.details}
                             </p>

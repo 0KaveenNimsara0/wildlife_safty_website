@@ -158,7 +158,7 @@ export default function AdminArticleSection() {
         <div className="flex items-center justify-between">
            <button 
              onClick={() => setIsFullViewOpen(false)}
-             className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-2xl text-[10px] font-semibold uppercase tracking-normal text-slate-400 hover:text-indigo-600 transition-all active:scale-95 shadow-sm"
+             className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-2xl text-[10px] font-semibold uppercase tracking-normal text-slate-400 hover:text-emerald-600 transition-all active:scale-95 shadow-sm"
            >
               <ArrowLeft size={14} />
               Return to Database

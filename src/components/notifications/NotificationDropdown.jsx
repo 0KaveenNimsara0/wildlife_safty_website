@@ -15,7 +15,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { notificationApi } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { formatDate, formatTime } from '../../utils/formatters';
 
 const NotificationDropdown = ({ role }) => {
@@ -130,7 +130,7 @@ const NotificationDropdown = ({ role }) => {
       case 'POST_VERIFIED': return <CheckCircle2 className="text-emerald-500" size={16} />;
       case 'POST_REJECTED': return <XCircle className="text-rose-500" size={16} />;
       case 'POST_REACTED': return <Heart className="text-pink-500" size={16} fill="currentColor" />;
-      case 'POST_COMMENTED': return <MessageSquare className="text-indigo-500" size={16} />;
+      case 'POST_COMMENTED': return <MessageSquare className="text-emerald-500" size={16} />;
       case 'ARTICLE_SUBMITTED': return <TrendingUp className="text-amber-500" size={16} />;
       case 'MESSAGE_RECEIVED': return <MessageSquare className="text-sky-500" size={16} />;
       default: return <Bell className="text-slate-400" size={16} />;

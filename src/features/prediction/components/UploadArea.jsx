@@ -18,7 +18,7 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
     };
 
     return (
-        <div className="grid lg:grid-cols-2 gap-8 items-stretch animate-fade-in">
+        <div className="grid lg:grid-cols-2 gap-8 rounded-3xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-sm items-stretch animate-fade-in">
             {/* Left: Interactive Dropzone */}
             <div
                 onDragEnter={(e) => handleDrag(e, true)}
@@ -49,8 +49,8 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
                             <UploadCloud className="w-9 h-9 text-emerald-600" />
                         </div>
                         <div className="space-y-1">
-                            <h4 className="text-xl font-semibold text-slate-800 tracking-tight">Image Submission</h4>
-                            <p className="text-slate-500 text-sm font-medium">Drag-and-drop or select manually</p>
+                            <h4 className="text-xl font-semibold text-slate-800 tracking-tight">Upload a snake photo</h4>
+                            <p className="text-slate-500 text-sm font-medium">Drag a photo here, or use the button beside it</p>
                         </div>
                         <div className="pt-4 flex justify-center">
                             <div className="w-10 h-[2px] bg-slate-200 rounded-full" />
@@ -64,7 +64,7 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
                 <div className="space-y-3">
                     <div className="flex items-center space-x-2 text-emerald-600">
                         <Sparkles size={16} />
-                        <span className="text-[10px] font-semibold uppercase tracking-widest">AI Vision Engine</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-widest">Photo identification</span>
                     </div>
                     <h2 className="text-2xl lg:text-3xl font-semibold text-slate-900 tracking-tight leading-tight">
                         Identify Species <br/> with <span className="text-emerald-600 underline decoration-emerald-200 decoration-8 underline-offset-4">Confidence</span>

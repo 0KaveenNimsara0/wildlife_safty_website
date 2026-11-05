@@ -59,7 +59,7 @@ export default function MedicalArticleSection() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-           <h1 className="text-xl font-semibold tracking-tight text-slate-900 uppercase">Article <span className="text-indigo-600">Hub</span></h1>
+           <h1 className="text-xl font-semibold tracking-tight text-slate-900 uppercase">Article <span className="text-emerald-600">Hub</span></h1>
            <p className="text-slate-400 font-bold text-[10px] uppercase tracking-normal mt-1">Medical Research & Help Guides</p>
         </div>
 
@@ -72,7 +72,7 @@ export default function MedicalArticleSection() {
                 <button
                    key={tab.id}
                    onClick={() => setActiveTab(tab.id)}
-                   className={`px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-normal transition-all ${activeTab === tab.id ? 'bg-white text-indigo-600 shadow-md border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                   className={`px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-normal transition-all ${activeTab === tab.id ? 'bg-white text-emerald-600 shadow-md border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                    {tab.label}
                 </button>
@@ -81,7 +81,7 @@ export default function MedicalArticleSection() {
            
            <button 
              onClick={() => navigate('/medical-officer/articles/create')}
-             className="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl flex items-center gap-3 shadow-sm shadow-indigo-900/10 hover:bg-indigo-500 transition-all active:scale-95 group"
+             className="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl flex items-center gap-3 shadow-sm shadow-emerald-900/10 hover:bg-emerald-500 transition-all active:scale-95 group"
            >
              <Plus size={18} />
              <span className="text-[10px] font-semibold uppercase tracking-normal">Add Article</span>
@@ -91,13 +91,13 @@ export default function MedicalArticleSection() {
 
       {loading ? (
         <div className="py-32 flex flex-col items-center justify-center space-y-4 opacity-30">
-           <div className="w-10 h-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
+           <div className="w-10 h-10 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
            <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Loading Articles...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
            {articles.map((article) => (
-             <div key={article._id} className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm shadow-slate-200/40 hover:shadow-sm hover:shadow-indigo-500/10 transition-all duration-500 group">
+             <div key={article._id} className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm shadow-slate-200/40 hover:shadow-sm hover:shadow-emerald-500/10 transition-all duration-500 group">
                 <div className="relative h-56 overflow-hidden">
                    {article.image_url ? (
                      <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
@@ -130,7 +130,7 @@ export default function MedicalArticleSection() {
                        </span>
                     </div>
                    
-                   <h3 className="text-lg font-semibold text-slate-900 leading-tight mb-4 group-hover:text-indigo-600 transition-colors line-clamp-2 uppercase">
+                   <h3 className="text-lg font-semibold text-slate-900 leading-tight mb-4 group-hover:text-emerald-600 transition-colors line-clamp-2 uppercase">
                       {article.title}
                    </h3>
                    
@@ -150,7 +150,7 @@ export default function MedicalArticleSection() {
                    
                    <div className="flex items-center justify-between pt-8 border-t border-slate-50">
                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-semibold overflow-hidden shadow-sm">
+                         <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-[10px] font-semibold overflow-hidden shadow-sm">
                             {article.author?.photoURL ? (
                               <img 
                                 src={article.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${article.author.photoURL}` : article.author.photoURL} 
@@ -168,14 +168,14 @@ export default function MedicalArticleSection() {
                          {activeTab === 'my' && (
                            <button 
                              onClick={(e) => { e.stopPropagation(); navigate(`/medical-officer/articles/edit/${article._id}`); }}
-                             className="p-2.5 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                             className="p-2.5 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
                            >
                              <Edit3 size={16} />
                            </button>
                          )}
                          <button 
                            onClick={() => handlePreview(article)}
-                           className="p-2.5 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                           className="p-2.5 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
                          >
                             <ChevronRight size={16} />
                          </button>
@@ -202,7 +202,7 @@ export default function MedicalArticleSection() {
         actionButton={
           <button 
             onClick={() => { setIsPreviewOpen(false); navigate(`/medical-officer/articles/${selectedArticle?._id}`); }}
-            className="flex items-center gap-2 px-4 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
+            className="flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-emerald-500 transition-all active:scale-95 shadow-lg shadow-emerald-600/20"
           >
             <ExternalLink size={14} />
             Read Full Article

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { BASE_URL, IMAGE_BASE_URL } from '../../config/constants';
 import NestedComment from '../../features/community/components/NestedComment';
 import api from '../../services/api';
@@ -625,7 +625,7 @@ const CommunityFeed = () => {
                 </div>
                 <h2 className="text-2xl font-semibold text-slate-900 tracking-tight uppercase leading-tight mt-2">{popupArticle.title}</h2>
                 <div className="flex items-center gap-4 mt-6">
-                   <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg overflow-hidden border-2 border-white shadow-indigo-200">
+                   <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg overflow-hidden border-2 border-white shadow-emerald-200">
                       {popupArticle.author?.photoURL ? (
                         <img src={popupArticle.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${popupArticle.author.photoURL}` : popupArticle.author.photoURL} alt="Author" className="w-full h-full object-cover" />
                       ) : (

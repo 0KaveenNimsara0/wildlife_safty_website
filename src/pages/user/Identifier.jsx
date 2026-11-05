@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import UploadArea from '../../features/prediction/components/UploadArea';
 import PredictionResults from '../../features/prediction/components/PredictionResults';
 import ErrorCard from '../../features/prediction/components/ErrorCard';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { predictSpecies, savePrediction } from '../../features/prediction/api';
 
 export default function Identifier() {
@@ -68,15 +68,15 @@ export default function Identifier() {
         <div className="py-6 sm:py-8">
             <div className="container mx-auto max-w-7xl">
                 {!prediction && (
-                    <header className="text-center mb-8 space-y-3 animate-fade-in">
+                    <header className="text-center mb-10 space-y-5 animate-fade-in">
                         <div className="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] w-fit mx-auto shadow-sm">
-                            V2.0 Core Engine
+                            Wildlife safety • Sri Lanka
                         </div>
-                        <h1 className="text-4xl lg:text-4xl font-semibold text-slate-900 tracking-tight">
-                            WildSafe <span className="text-emerald-600">ID</span>
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-slate-900 tracking-tight">
+                            Understand wildlife.<br /><span className="text-emerald-600">Stay a step safer.</span>
                         </h1>
                         <p className="text-base leading-relaxed text-slate-500 font-medium max-w-2xl mx-auto">
-                            The world's most advanced Sri Lankan snake identification system, powered by high-precision neural networks.
+                            Explore Sri Lankan snake species with a photo. Get identification insights and learn how to stay safe around wildlife.
                         </p>
                     </header>
                 )}

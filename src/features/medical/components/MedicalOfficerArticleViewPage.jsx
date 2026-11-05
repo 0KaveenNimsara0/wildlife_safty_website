@@ -47,7 +47,7 @@ export default function MedicalOfficerArticleViewPage() {
   if (loading) {
     return (
       <div className="min-h-screen py-20 flex flex-col items-center justify-center space-y-4 opacity-30">
-        <div className="w-10 h-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
+        <div className="w-10 h-10 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
         <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Loading Content...</p>
       </div>
     );
@@ -63,7 +63,7 @@ export default function MedicalOfficerArticleViewPage() {
         <p className="text-slate-500 font-medium mb-8 max-w-md">{error || 'We could not find the article you are looking for.'}</p>
         <button 
           onClick={() => navigate('/medical-officer/articles')}
-          className="px-4 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-indigo-600 transition-all flex items-center gap-3"
+          className="px-4 py-2.5 bg-slate-900 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-emerald-600 transition-all flex items-center gap-3"
         >
           <ArrowLeft size={16} />
           Back to Hub
@@ -77,9 +77,9 @@ export default function MedicalOfficerArticleViewPage() {
       {/* Back Navigation */}
       <button 
         onClick={() => navigate('/medical-officer/articles')}
-        className="group mb-6 flex items-center gap-3 text-slate-400 hover:text-indigo-600 transition-all"
+        className="group mb-6 flex items-center gap-3 text-slate-400 hover:text-emerald-600 transition-all"
       >
-        <div className="p-2.5 rounded-xl bg-slate-50 group-hover:bg-indigo-50 transition-all">
+        <div className="p-2.5 rounded-xl bg-slate-50 group-hover:bg-emerald-50 transition-all">
           <ArrowLeft size={18} />
         </div>
         <span className="text-[10px] font-semibold uppercase tracking-normal">Back to Article Hub</span>
@@ -88,7 +88,7 @@ export default function MedicalOfficerArticleViewPage() {
       {/* Article Header Section */}
       <div className="space-y-5 mb-16">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="px-4 py-1.5 bg-indigo-500 text-white rounded-full text-[9px] font-semibold uppercase tracking-normal">
+          <span className="px-4 py-1.5 bg-emerald-500 text-white rounded-full text-[9px] font-semibold uppercase tracking-normal">
             {article.category || 'Clinical Research'}
           </span>
           <span className={`px-4 py-1.5 rounded-full text-[9px] font-semibold uppercase tracking-normal border ${
@@ -104,7 +104,7 @@ export default function MedicalOfficerArticleViewPage() {
 
         <div className="flex flex-wrap items-center gap-5 pt-4 border-t border-slate-100">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-semibold text-sm shadow-lg shadow-indigo-600/20">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-semibold text-sm shadow-lg shadow-emerald-600/20">
               {article.author?.name?.charAt(0).toUpperCase()}
             </div>
             <div>
@@ -146,7 +146,7 @@ export default function MedicalOfficerArticleViewPage() {
               prose-headings:font-semibold prose-headings:uppercase prose-headings:tracking-tight
               prose-p:text-slate-600 prose-p:leading-relaxed
               prose-strong:text-slate-900 prose-strong:font-semibold
-              pt-4 border-t-4 border-indigo-600 w-24 mb-6"
+              pt-4 border-t-4 border-emerald-600 w-24 mb-6"
           >
             {/* Full Content Rendering */}
             <div className="text-xl font-medium text-slate-700 leading-loose space-y-5" 
@@ -171,7 +171,7 @@ export default function MedicalOfficerArticleViewPage() {
         {/* Sidebar Info */}
         <div className="lg:col-span-4 space-y-6">
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-            <h4 className="text-[11px] font-semibold uppercase tracking-normal text-indigo-600 mb-6">Medical Oversight</h4>
+            <h4 className="text-[11px] font-semibold uppercase tracking-normal text-emerald-600 mb-6">Medical Oversight</h4>
             <div className="space-y-6">
               <div className="flex items-center gap-4 text-slate-600">
                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-emerald-500 shadow-sm">
@@ -182,7 +182,7 @@ export default function MedicalOfficerArticleViewPage() {
                  </div>
               </div>
               <div className="flex items-center gap-4 text-slate-600">
-                 <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-indigo-500 shadow-sm">
+                 <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-emerald-500 shadow-sm">
                     <Share2 size={20} />
                  </div>
                  <div className="text-[10px] font-bold uppercase tracking-normal">
@@ -192,7 +192,7 @@ export default function MedicalOfficerArticleViewPage() {
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/20">
+          <div className="p-5 rounded-2xl bg-emerald-600 text-white shadow-sm shadow-emerald-600/20">
              <h4 className="text-[10px] font-semibold uppercase tracking-normal mb-4 opacity-60">Legal Disclaimer</h4>
              <p className="text-xs font-medium leading-relaxed opacity-90 italic">
                 This content is for clinical and identification support. Always verify field data with physical evidence before proceeding with medical response protocols.

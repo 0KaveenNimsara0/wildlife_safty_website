@@ -6,7 +6,7 @@ export default function AuthLayout({ children, title, subtitle, quote, author, r
   const roleColors = {
     user: 'text-emerald-600',
     admin: 'text-rose-600',
-    medicalOfficer: 'text-indigo-600'
+    medicalOfficer: 'text-emerald-600'
   };
 
   return (

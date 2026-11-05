@@ -77,6 +77,7 @@ export default function AppRoutes() {
       {/* Protected User Dashboard */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />}>
+           <Route path=":section" element={null} />
            <Route path="articles/:articleId" element={<UserArticleViewPage />} />
         </Route>
       </Route>

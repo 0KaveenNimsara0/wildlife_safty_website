@@ -93,7 +93,7 @@ const ContactPage = () => {
                     </div>
 
                     <div className="flex items-start gap-4">
-                       <div className="w-10 h-10 rounded-2xl bg-indigo-500 flex items-center justify-center text-white shadow-lg flex-shrink-0">
+                       <div className="w-10 h-10 rounded-2xl bg-emerald-500 flex items-center justify-center text-white shadow-lg flex-shrink-0">
                           <MapPin size={24} />
                        </div>
                        <div>

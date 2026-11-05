@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { Link } from 'react-router-dom';
 import MedicalOfficerSelector from '../../features/chat/components/MedicalOfficerSelector';
 import ChatInterface from '../../features/chat/components/ChatInterface';
@@ -153,7 +153,7 @@ const UserChatPage = () => {
 
             <div className="space-y-4">
               <h2 className="text-4xl font-semibold text-slate-900 tracking-tight">
-                Access <span className="text-emerald-600">Restricted</span>
+                Sign in to <span className="text-emerald-600">chat</span>
               </h2>
               <p className="text-slate-500 font-medium leading-relaxed">
                 Log in to establish a secure connection with our medical professionals and receive real-time species guidance.
@@ -165,11 +165,11 @@ const UserChatPage = () => {
                 to="/login"
                 className="btn-primary w-full py-4 flex items-center justify-center gap-3 group"
               >
-                <span>Establish Connection</span>
+                <span>Sign in</span>
                 <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Authorized Personnel Only
+                Your conversations, in one place
               </p>
             </div>
           </div>
@@ -179,56 +179,33 @@ const UserChatPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-8 animate-fade-in">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="card-premium overflow-hidden bg-white/70 backdrop-blur-md border-slate-100 flex flex-col h-[85vh] shadow-2xl">
-          <header className="bg-slate-900 px-8 py-6 text-white flex justify-between items-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full -mr-32 -mt-32 blur-3xl" />
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="p-3 bg-emerald-600 rounded-2xl shadow-lg">
-                <MessageCircle size={24} />
-              </div>
-              <div>
-                <h1 className="text-2xl text-white tracking-tight uppercase">Talk to <span className="text-emerald-400">Specialist</span></h1>
-                <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-500/80">
-                  <Shield size={12} />
-                  <span>Medical Support Chat</span>
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:flex items-center gap-6 relative z-10">
-               <div className="text-right">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Terminal Status</p>
-                  <p className="text-xs font-bold text-emerald-400">ACTIVE CONNECTION</p>
-               </div>
-               <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
-                  <Activity size={18} className="text-emerald-500 animate-pulse" />
-               </div>
-            </div>
-          </header>
-
-          <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-            <aside className="w-full md:w-[400px] border-r border-slate-100 flex flex-col bg-slate-50/30">
-              <div className="flex-1 overflow-y-auto custom-scrollbar flex flex-col">
+    <div className="flex flex-1 min-h-0 flex-col">
+      <div className="flex flex-1 min-h-0 flex-col">
+        <div className="overflow-hidden bg-white flex flex-col flex-1 min-h-0">
+          <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
+            <aside className={`w-full md:w-80 shrink-0 min-h-0 border-r border-slate-200 bg-white ${selectedMedicalOfficer ? "hidden md:flex" : "flex"} flex-col`}>
+              <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar flex flex-col">
+                <div className="px-5 pt-5 pb-2"><h1 className="text-xl font-semibold text-slate-900">Messages</h1><p className="mt-1 text-sm text-slate-500">Your medical support conversations</p></div>
                 <MedicalOfficerSelector
                   onSelect={handleMedicalOfficerSelect}
                   selectedMedicalOfficer={selectedMedicalOfficer}
                 />
 
-                <div className="p-6 border-b border-slate-100 bg-white/50 backdrop-blur-sm">
+                <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
                   <div className="flex items-center gap-2">
                     <Users size={16} className="text-slate-400" />
-                    <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Active Channels</h3>
+                    <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Your conversations</h3>
                   </div>
                 </div>
                 
                 <div className="divide-y divide-slate-50">
                   {conversations.length > 0 ? (
                     conversations.map((conversation) => (
-                      <div
+                      <button
+                        type="button"
                         key={conversation._id}
                         onClick={() => handleConversationSelect(conversation)}
-                        className={`p-6 cursor-pointer transition-all duration-300 group ${
+                        className={`w-full text-left p-4 cursor-pointer transition-all duration-300 group ${
                           currentConversation?._id === conversation._id 
                             ? 'bg-white border-l-4 border-emerald-500 shadow-inner' 
                             : 'hover:bg-white/80'
@@ -252,7 +229,7 @@ const UserChatPage = () => {
                               {conversation.medicalOfficer?.name || 'Medical Officer'}
                             </p>
                             <p className="text-xs text-slate-400 font-medium truncate mt-0.5">
-                              {conversation.lastMessage?.message || 'Initiate connection...'}
+                              {conversation.lastMessage?.message || 'Start a conversation'}
                             </p>
                           </div>
                           <div className="flex flex-col items-end gap-2">
@@ -264,21 +241,23 @@ const UserChatPage = () => {
                             <ChevronRight size={14} className="text-slate-300 group-hover:text-emerald-400 transition-colors" />
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))
                   ) : (
-                    <div className="p-12 text-center space-y-4 opacity-50">
+                    <div className="p-6 text-center space-y-3">
                       <Search size={32} className="mx-auto text-slate-200" />
-                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">No active channels</p>
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">No conversations yet</p>
                     </div>
                   )}
                 </div>
               </div>
             </aside>
 
-            <main className="flex-1 flex flex-col">
+            <main className={`flex-1 min-w-0 min-h-0 ${selectedMedicalOfficer ? 'flex' : 'hidden md:flex'} flex-col`}>
+              {selectedMedicalOfficer && <button onClick={()=>setSelectedMedicalOfficer(null)} className="md:hidden shrink-0 border-b border-slate-200 px-4 py-3 text-left text-sm font-semibold text-emerald-700">← All conversations</button>}
               {selectedMedicalOfficer ? (
                 <ChatInterface
+                  key={selectedMedicalOfficer._id}
                   participant={selectedMedicalOfficer}
                   messages={messages}
                   onSendMessage={sendMessage}
@@ -288,11 +267,11 @@ const UserChatPage = () => {
                   currentSenderId={currentUser?.uid}
                 />
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gray-50">
-                  <div className="text-4xl text-green-300 mb-4 animate-bounce">💬</div>
-                  <h3 className="text-2xl font-semibold text-gray-700 mb-2">Welcome to the Chat</h3>
-                  <p className="text-gray-500 max-w-sm">
-                    Choose a medical officer from the list on the left or select an existing conversation to continue your chat.
+                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-slate-50">
+                  <div className="rounded-2xl bg-emerald-100 p-5 text-emerald-700 mb-5"><MessageCircle size={32}/></div>
+                  <h3 className="text-2xl font-semibold text-slate-800 mb-2">Who would you like to talk to?</h3>
+                  <p className="text-slate-500 max-w-sm text-sm leading-relaxed">
+                    Choose a medical officer to start a conversation, or open a previous chat. Your messages will appear here.
                   </p>
                 </div>
               )}

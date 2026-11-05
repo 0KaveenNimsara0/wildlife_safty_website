@@ -93,7 +93,7 @@ const ChatInterface = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white relative rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div className="flex flex-col flex-1 min-h-0 h-full bg-white relative overflow-hidden">
       {/* Node Selector Row (Optional) */}
       {admins.length > 0 && (
         <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center gap-3 overflow-x-auto no-scrollbar">
@@ -108,7 +108,7 @@ const ChatInterface = ({
                className={`relative shrink-0 transition-all duration-300 ${selectedAdminId === admin._id ? 'scale-110' : 'opacity-40 hover:opacity-100 scale-90'}`}
              >
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-semibold text-xs border-2 transition-all overflow-hidden ${
-                   selectedAdminId === admin._id ? 'bg-slate-900 text-white border-indigo-500 shadow-lg shadow-indigo-500/20' : 'bg-white text-slate-400 border-slate-100'
+                   selectedAdminId === admin._id ? 'bg-slate-900 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-white text-slate-400 border-slate-100'
                  }`}>
                    {admin.photoURL ? (
                      <img
@@ -122,7 +122,7 @@ const ChatInterface = ({
                    )}
                  </div>
                 {selectedAdminId === admin._id && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-indigo-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,1)]" />
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,1)]" />
                 )}
              </button>
            ))}
@@ -130,7 +130,7 @@ const ChatInterface = ({
       )}
 
       {/* Chat Header */}
-      <div className="px-4 sm:px-6 py-3 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/90">
+      <div className="shrink-0 px-4 sm:px-6 py-3 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/90">
         <div className="flex items-center gap-4">
           <div className="relative">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-xl translate-y-[-2px] transition-all duration-500 overflow-hidden ${participant ? 'bg-emerald-700' : 'bg-slate-300 animate-pulse'}`}>
@@ -145,30 +145,20 @@ const ChatInterface = ({
                 participant?.name?.charAt(0).toUpperCase() || '?'
               )}
             </div>
-            {participant && (
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-indigo-500 rounded-full border-4 border-white shadow-sm" />
-            )}
+
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 tracking-tight uppercase truncate max-w-[150px]">
+            <h3 className="text-base font-semibold text-slate-900 truncate max-w-[240px]">
               {participant?.name || 'Awaiting Selection...'}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
-                <span className={`text-xs font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md border italic ${participant ? 'text-emerald-600 bg-indigo-50 border-indigo-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-md border ${participant ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
                    {participant ? (selectedAdminId ? 'Admin Support' : 'Messaging') : 'Selecting Contact...'}
                 </span>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex flex-col items-end mr-2">
-             <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-500">Conversation</p>
-             <p className="text-xs font-bold text-slate-400 uppercase">Messages sync automatically</p>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-colors cursor-pointer border border-slate-100">
-             <Shield size={18} />
-          </div>
-        </div>
+
       </div>
 
       {/* Error Message */}
@@ -177,7 +167,7 @@ const ChatInterface = ({
           <div className="flex items-center justify-between max-w-2xl mx-auto">
             <div className="flex items-center gap-3">
               <AlertCircle className="text-rose-500" size={18} />
-              <p className="text-[10px] font-semibold text-rose-600 uppercase tracking-widest">{error}</p>
+              <p className="text-sm text-rose-700">{error}</p>
             </div>
             <button
               onClick={onClearError}
@@ -193,7 +183,7 @@ const ChatInterface = ({
       {newMessagesCount > 0 && (
         <button 
           onClick={scrollToBottom}
-          className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-emerald-700 text-white px-6 py-2.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] shadow-sm shadow-emerald-900/40 flex items-center gap-2 z-20 animate-bounce hover:bg-indigo-500 transition-all active:scale-95"
+          className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-emerald-700 text-white px-6 py-2.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] shadow-sm shadow-emerald-900/40 flex items-center gap-2 z-20 animate-bounce hover:bg-emerald-500 transition-all active:scale-95"
         >
            <ChevronDown size={14} className="stroke-[3px]" />
            {newMessagesCount} New Messages
@@ -202,7 +192,7 @@ const ChatInterface = ({
 
       {/* Messages Area */}
       <div 
-        className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2 custom-scrollbar bg-[#efeae2]" 
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-2 custom-scrollbar bg-slate-50" 
         ref={messagesContainerRef}
         onScroll={handleScroll}
       >
@@ -210,8 +200,8 @@ const ChatInterface = ({
           <div className="h-full flex flex-col items-center justify-center space-y-4">
             <MessageSquare size={64} className="text-slate-200" />
             <div className="text-center">
-                <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400">Start a conversation</h3>
-                <p className="text-xs font-bold text-slate-500 mt-2">Type a message to start the conversation.</p>
+                <h3 className="text-base font-semibold text-slate-700">Start a conversation</h3>
+                <p className="text-sm text-slate-500 mt-2">Type a message to start the conversation.</p>
             </div>
           </div>
         )}
@@ -239,9 +229,9 @@ const ChatInterface = ({
 
         {loading && (
           <div className="flex justify-center py-8">
-            <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
-            <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s] mx-1" />
-            <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.15s] mx-1" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
           </div>
         )}
       </div>
@@ -250,7 +240,7 @@ const ChatInterface = ({
       <ChatInput 
         onSendMessage={onSendMessage} 
         loading={loading} 
-        placeholder={`Message: ${participant?.name?.split(' ')[0] || 'User'}...`} 
+        placeholder="Write a message…" 
       />
     </div>
   );

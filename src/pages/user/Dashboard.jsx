@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
-import { Menu, Award, ArrowLeft, Globe } from 'lucide-react';
 import { FaExclamationTriangle, FaCheckCircle } from 'react-icons/fa';
 
 // User Feature Components
@@ -11,14 +10,12 @@ import PredictionHistorySection from '../../features/user/components/PredictionH
 import SavedArticlesSection from '../../features/user/components/SavedArticlesSection';
 import ActivitySection from '../../features/user/components/ActivitySection';
 import UnifiedNotificationGrid from '../../components/notifications/UnifiedNotificationGrid';
-import UserSidebar from '../../features/user/components/UserSidebar';
-import NotificationDropdown from '../../components/notifications/NotificationDropdown';
+import DashboardLayout from '../../layouts/DashboardLayout';
 
 const Dashboard = () => {
   const { 
     currentUser, 
     activeUser, 
-    logout, 
     updateEmail, 
     updatePassword, 
     sendEmailVerification, 
@@ -31,19 +28,13 @@ const Dashboard = () => {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [activeTab, setActiveTab] = useState('profile');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const isArticleView = location.pathname.includes('/dashboard/articles/');
-
-  // Handle URL segments and query params for tab switching
+  const activeTab = location.pathname.split('/')[2] || 'profile';
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const tabParam = queryParams.get('tab');
-    if (tabParam && ['profile', 'security', 'history', 'activity', 'articles', 'notifications'].includes(tabParam)) {
-      setActiveTab(tabParam);
-    }
-  }, [location.search]);
+    const tab = new URLSearchParams(location.search).get('tab');
+    if (['profile','security','history','activity','articles','notifications'].includes(tab)) navigate(`/dashboard/${tab}`, {replace:true});
+  }, [location.search, navigate]);
 
   // Handle identity synchronization on mount to ensure verified status is current
   useEffect(() => {
@@ -52,61 +43,8 @@ const Dashboard = () => {
     }
   }, []); // Only on mount
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (err) {
-      setError('System lockout failure.');
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50/50 flex flex-col lg:flex-row animate-fade-in">
-      <UserSidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        activeUser={activeUser} 
-        handleLogout={handleLogout}
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-      />
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-100 px-4 py-3 flex items-center justify-between lg:px-6">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2.5 bg-slate-100 rounded-xl text-slate-600 hover:bg-slate-200 transition-all"
-            >
-              <Menu size={20} />
-            </button>
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-600">
-                <Award size={12} />
-                <span>Account Overview</span>
-              </div>
-              <h2 className="text-xl font-semibold text-slate-900 tracking-tight flex items-center gap-2">
-                User <span className="text-emerald-600">Dashboard</span>
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <NotificationDropdown role="user" />
-            
-            <button 
-              onClick={() => navigate('/home')}
-              className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-emerald-600 transition-all duration-300 group shadow-xl shadow-slate-900/10"
-            >
-              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-              <span className="text-[10px] font-semibold uppercase tracking-widest hidden sm:inline">Return to Site</span>
-              <Globe size={14} className="opacity-50 ml-1" />
-            </button>
-          </div>
-        </header>
-
-        <main className="flex-1 p-4 lg:px-6 lg:pt-5 lg:pb-6 max-w-7xl lg:mx-auto w-full">
+    <DashboardLayout role="user">
           <div className="space-y-8">
             {error && (
               <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-sm font-bold animate-shake">
@@ -153,7 +91,7 @@ const Dashboard = () => {
                   )}
 
                   {activeTab === 'activity' && (
-                    <ActivitySection userId={currentUser?.uid} />
+                    <ActivitySection userId={activeUser?.uid || currentUser?.uid} />
                   )}
 
                   {activeTab === 'articles' && (
@@ -167,9 +105,7 @@ const Dashboard = () => {
               )}
             </div>
           </div>
-        </main>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

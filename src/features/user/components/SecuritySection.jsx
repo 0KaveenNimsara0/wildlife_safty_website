@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Key, Mail, Lock } from 'lucide-react';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 
 const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
   const { activeUser, sendEmailVerification, refreshUser } = useAuth();

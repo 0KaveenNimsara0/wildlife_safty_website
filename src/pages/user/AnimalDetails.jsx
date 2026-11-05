@@ -146,7 +146,7 @@ const AnimalDetails = () => {
                 {selectedAnimal['Global IUCN Red List Status']}
               </span>
               {selectedAnimal['Endemic Status'] === 'Endemic to Sri Lanka' && (
-                <span className="px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest bg-purple-100 text-purple-800 border-2 border-purple-200 flex items-center gap-2">
+                <span className="px-5 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest bg-emerald-100 text-emerald-800 border-2 border-emerald-200 flex items-center gap-2">
                   <Heart size={12} />
                   Native / Endemic
                 </span>
