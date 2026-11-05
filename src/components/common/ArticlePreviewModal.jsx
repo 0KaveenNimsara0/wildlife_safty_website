@@ -1,3 +1,4 @@
+import ModalLayer from '../ui/ModalLayer';
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { IMAGE_BASE_URL } from '../../config/constants';
@@ -7,7 +8,7 @@ const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
   if (!isOpen || !article) return null;
 
   return createPortal(
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-5 animate-in fade-in duration-300">
+    <ModalLayer onClose={onClose} className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 lg:p-5 animate-in fade-in duration-300">
       <div className="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden shadow-lg border border-white/20 flex flex-col relative animate-scale-in">
         
         {/* Modal Header */}
@@ -118,7 +119,7 @@ const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
           {actionButton}
         </div>
       </div>
-    </div>,
+    </ModalLayer>,
     document.body
   );
 };

@@ -1,3 +1,4 @@
+import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../../context/useAuth';
@@ -167,7 +168,7 @@ const PredictionHistorySection = () => {
 
             {/* Detailed Modal Overlay using React Portal for true full-screen depth */}
             {selectedPrediction && createPortal(
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-5 bg-slate-900/40 backdrop-blur-3xl animate-fade-in">
+                <ModalLayer onClose={() => setSelectedPrediction(null)} className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-5 bg-slate-900/40 backdrop-blur-3xl animate-fade-in">
                     <div className="bg-white rounded-2xl w-full max-w-6xl h-full max-h-[90vh] overflow-hidden shadow-sm relative flex flex-col lg:flex-row">
                         <button 
                             onClick={() => setSelectedPrediction(null)}
@@ -258,7 +259,7 @@ const PredictionHistorySection = () => {
                             </div>
                         </div>
                     </div>
-                </div>,
+                </ModalLayer>,
                 document.body
             )}
         </div>

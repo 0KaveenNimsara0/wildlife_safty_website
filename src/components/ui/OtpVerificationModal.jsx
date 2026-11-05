@@ -1,3 +1,4 @@
+import ModalLayer from './ModalLayer';
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ShieldCheck, RefreshCw, AlertCircle, Info, ShieldAlert } from 'lucide-react';
@@ -93,7 +94,7 @@ export default function OtpVerificationModal({
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <ModalLayer onClose={() => { if (!isVerifying) onClose(); }} className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-fade-in"
@@ -207,7 +208,7 @@ export default function OtpVerificationModal({
            </div>
         </div>
       </div>
-    </div>,
+    </ModalLayer>,
     document.body
   );
 }

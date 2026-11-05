@@ -1,3 +1,4 @@
+import ModalLayer from './ModalLayer';
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Camera, Upload, Check, AlertCircle, RefreshCw, Image as ImageIcon } from 'lucide-react';
@@ -81,7 +82,7 @@ export default function ProfilePhotoModal({ isOpen, onClose, currentPhoto, onUpl
   if (!isOpen) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+    <ModalLayer onClose={() => { if (!isUploading) onClose(); }} className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-fade-in"
@@ -214,7 +215,7 @@ export default function ProfilePhotoModal({ isOpen, onClose, currentPhoto, onUpl
           </div>
         </div>
       </div>
-    </div>,
+    </ModalLayer>,
     document.body
   );
 }

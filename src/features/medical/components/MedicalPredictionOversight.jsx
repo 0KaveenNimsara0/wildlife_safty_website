@@ -1,3 +1,4 @@
+import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { 
     Clock, 
@@ -220,7 +221,7 @@ export default function MedicalPredictionOversight() {
 
             {/* Verification Modal Portal */}
             {selectedItem && createPortal(
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-5 bg-slate-900/40 backdrop-blur-3xl animate-fade-in">
+                <ModalLayer onClose={() => setSelectedItem(null)} className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-5 bg-slate-900/40 backdrop-blur-3xl animate-fade-in">
                     <div className="bg-white rounded-2xl w-full max-w-5xl h-full max-h-[90vh] overflow-hidden shadow-sm relative flex flex-col lg:flex-row border border-white/20">
                         <button 
                             onClick={() => setSelectedItem(null)}
@@ -319,7 +320,7 @@ export default function MedicalPredictionOversight() {
                             )}
                         </div>
                     </div>
-                </div>,
+                </ModalLayer>,
                 document.body
             )}
         </div>

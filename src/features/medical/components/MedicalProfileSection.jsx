@@ -1,3 +1,4 @@
+import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/useAuth';
@@ -481,7 +482,7 @@ export default function MedicalProfileSection() {
 
       {/* Security Verification Modal */}
       {showSecurityModal && createPortal(
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+        <ModalLayer onClose={() => { if (!securityLoading) setShowSecurityModal(false); }} className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
            {/* Backdrop */}
            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-xl animate-fade-in" onClick={() => !securityLoading && setShowSecurityModal(false)} />
            
@@ -623,7 +624,7 @@ export default function MedicalProfileSection() {
                  </div>
               </div>
            </div>
-        </div>,
+        </ModalLayer>,
         document.body
       )}
     </div>

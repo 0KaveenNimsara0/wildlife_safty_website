@@ -1,3 +1,4 @@
+import ModalLayer from '../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/useAuth';
 import { BASE_URL, IMAGE_BASE_URL } from '../../config/constants';
@@ -587,7 +588,7 @@ const CommunityFeed = () => {
       </div>
 
       {showMyPosts && (
-        <div className="fixed inset-0 z-[1000] flex justify-start">
+        <ModalLayer onClose={() => setShowMyPosts(false)} className="fixed inset-0 z-[1000] flex justify-start">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowMyPosts(false)} />
           <div className="relative w-full max-w-md h-full bg-slate-50 shadow-lg flex flex-col animate-slide-in-left">
             <header className="p-5 border-b border-slate-100 flex items-center justify-between">
@@ -611,11 +612,11 @@ const CommunityFeed = () => {
                <UserPosts />
             </div>
           </div>
-        </div>
+        </ModalLayer>
       )}
 
       {showPopup && popupArticle && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[1000] p-4 animate-in fade-in duration-300">
+        <ModalLayer onClose={() => { setShowPopup(false); setPopupArticle(null); }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-[1000] p-4 animate-in fade-in duration-300">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-lg border-4 border-white flex flex-col relative group">
             <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
               <div className="space-y-1">
@@ -681,11 +682,11 @@ const CommunityFeed = () => {
               </button>
             </div>
           </div>
-        </div>
+        </ModalLayer>
       )}
 
       {showCommentsModal && selectedPost && (
-        <div className="fixed inset-0 z-[1000] flex justify-end">
+        <ModalLayer onClose={() => setShowCommentsModal(false)} className="fixed inset-0 z-[1000] flex justify-end">
           <div 
             className="absolute inset-0 bg-slate-900/80 backdrop-blur-md animate-fade-in" 
             onClick={() => setShowCommentsModal(false)} 
@@ -790,7 +791,7 @@ const CommunityFeed = () => {
               </div>
             )}
           </div>
-        </div>
+        </ModalLayer>
       )}
     </>
   );

@@ -1,3 +1,4 @@
+import ModalLayer from '../../../components/ui/ModalLayer';
 import Avatar from '../../../components/ui/Avatar';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -438,7 +439,7 @@ export default function AdminProfileSection() {
 
       {/* Password Reset Modal */}
       {isPasswordModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+        <ModalLayer onClose={() => setIsPasswordModalOpen(false)} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
            <div className="bg-white w-full max-w-md rounded-2xl p-5 shadow-sm animate-in zoom-in-95 duration-300">
               <div className="flex items-center gap-4 mb-8">
                  <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
@@ -515,7 +516,7 @@ export default function AdminProfileSection() {
                  </button>
               </div>
            </div>
-        </div>
+        </ModalLayer>
       )}
     </div>
   );

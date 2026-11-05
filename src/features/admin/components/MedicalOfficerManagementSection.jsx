@@ -1,3 +1,4 @@
+import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
@@ -326,7 +327,7 @@ export default function MedicalOfficerManagementSection() {
       )}
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <ModalLayer onClose={() => { setShowAddModal(false); setEditingOfficer(null); }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
            <div className="bg-white rounded-3xl w-full max-w-2xl shadow-sm border border-slate-100 overflow-hidden animate-scale-in">
               <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                  <div>
@@ -389,11 +390,11 @@ export default function MedicalOfficerManagementSection() {
                  </div>
               </form>
            </div>
-        </div>
+        </ModalLayer>
       )}
 
       {viewingOfficer && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
+        <ModalLayer onClose={() => setViewingOfficer(null)} className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] flex items-center justify-center p-4">
            <div className="bg-white rounded-[40px] w-full max-w-lg shadow-sm overflow-hidden animate-slide-up">
               <div className="relative h-32 bg-slate-900">
                  <div className="absolute -bottom-12 left-10">
@@ -435,7 +436,7 @@ export default function MedicalOfficerManagementSection() {
                  </div>
               </div>
            </div>
-        </div>
+        </ModalLayer>
       )}
     </div>
   );
