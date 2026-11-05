@@ -1,7 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ShieldCheck, LogOut, Home, ChevronRight } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
+import api from '../services/api';
+import { subscribeNotifications } from '../services/notificationStream';
+import { BASE_URL } from '../config/constants';
 import NotificationDropdown from '../components/notifications/NotificationDropdown';
 
 const menus = {
@@ -17,6 +20,40 @@ export default function DashboardLayout({ role = 'user', children }) {
  const drawer = useRef(null);
  const [error,setError] = useState('');
  const [busy,setBusy] = useState(false);
+ const [counts, setCounts] = useState({});
+ useEffect(() => {
+  let disposed=false, pending=false;
+  const refresh=async()=>{
+   if(pending) return; pending=true;
+   try {const {data}=await api.get('/notifications/sidebar-counts'); if(!disposed && data.success) setCounts(data.counts);} catch {} finally {pending=false;}
+  };
+  refresh(); const unsubscribe=subscribeNotifications(refresh); const timer=setInterval(refresh,15000);
+  return ()=>{disposed=true;unsubscribe();clearInterval(timer);};
+ },[role,location.pathname]);
+ const [unreadMessages, setUnreadMessages] = useState(0);
+ useEffect(() => {
+  if (role !== 'medical') return;
+  const controller = new AbortController();
+  let pending = false;
+  async function refresh() {
+   if (pending || document.visibilityState === 'hidden') return;
+   const token = localStorage.getItem('medicalOfficerToken');
+   if (!token) { setUnreadMessages(0); return; }
+   pending = true;
+   try {
+    const response = await fetch(`${BASE_URL}/medical-officer/chat/conversations`, {headers:{Authorization:`Bearer ${token}`}, signal:controller.signal});
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data.success && !controller.signal.aborted) setUnreadMessages(data.conversations.reduce((sum, item)=>sum + Math.max(0, Number(item.unreadCount) || 0),0));
+   } catch { /* Keep the last known count during a temporary connection failure. */ }
+   finally { pending = false; }
+  }
+  refresh();
+  const timer = setInterval(refresh, 10000);
+  window.addEventListener('chat-messages-read', refresh);
+  document.addEventListener('visibilitychange', refresh);
+  return () => { controller.abort(); clearInterval(timer); window.removeEventListener('chat-messages-read',refresh); document.removeEventListener('visibilitychange',refresh); };
+ }, [role]);
  const root = roots[role];
  const groups = menus[role];
  const active = groups.flatMap(([,items])=>items).find(([,path])=>location.pathname === `${root}/${path}` || location.pathname.startsWith(`${root}/${path}/`));
@@ -30,8 +67,8 @@ export default function DashboardLayout({ role = 'user', children }) {
  }
  function navigation(mobile = false) { return <div className="flex h-full flex-col">
   <div className="h-20 px-6 flex items-center gap-3 border-b border-slate-200"><ShieldCheck className="text-emerald-700" size={28}/><div><Link to="/home" className="font-bold text-slate-900">WildLife Safety</Link><p className="text-xs text-slate-500">{roleName}</p></div>{mobile && <button aria-label="Close navigation" onClick={()=>drawer.current.close()} className="ml-auto p-2"><X size={20}/></button>}</div>
-  <nav aria-label={`${roleName} navigation`} className="flex-1 overflow-y-auto px-4 py-6 space-y-7">{groups.map(([label,items])=><div key={label}><p className="px-3 mb-2 text-xs font-semibold text-slate-500">{label}</p><div className="space-y-1">{items.map(([name,path])=><NavLink key={path} to={`${root}/${path}`} onClick={()=>drawer.current?.close()} className={({isActive})=>`flex min-h-11 items-center justify-between gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${isActive ? 'bg-emerald-100 text-emerald-800' : 'text-slate-600 hover:bg-slate-100'}`}>{name}<ChevronRight size={14}/></NavLink>)}</div></div>)}</nav>
-  <div className="border-t border-slate-200 p-4 space-y-3"><Link to={`${root}/profile`} className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700">My profile</Link>{error && <p role="alert" className="text-sm text-red-700">{error}</p>}<button disabled={busy} onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-50"><LogOut size={18}/>{busy ? 'Signing out…' : 'Sign out'}</button></div>
+  <nav aria-label={`${roleName} navigation`} className="flex-1 overflow-y-auto px-4 py-6 space-y-7">{groups.map(([label,items])=><div key={label}><p className="px-3 mb-2 text-xs font-semibold text-slate-500">{label}</p><div className="space-y-1">{items.map(([name,path])=><NavLink key={path} to={`${root}/${path}`} onClick={()=>drawer.current?.close()} className={({isActive})=>`flex min-h-11 items-center justify-between gap-2 rounded-lg px-3 py-3 text-sm font-medium transition-colors ${isActive ? 'bg-emerald-100 text-emerald-800' : 'text-slate-600 hover:bg-slate-100'}`}><span>{name}</span>{(path === 'chat' ? unreadMessages : counts[path]) > 0 ? <span aria-label={`${path === 'chat' ? unreadMessages : counts[path]} items needing attention`} className="ml-auto min-w-6 rounded-full bg-emerald-700 px-2 py-0.5 text-center text-xs font-semibold text-white">{(path === 'chat' ? unreadMessages : counts[path]) > 99 ? '99+' : (path === 'chat' ? unreadMessages : counts[path])}</span> : <ChevronRight size={14}/>}</NavLink>)}</div></div>)}</nav>
+  <div className="border-t border-slate-200 p-4 space-y-3"><Link to={`${root}/profile`} className="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-700">My profile</Link>{error && <p role="alert" className="text-sm text-red-700">{error}</p>}<button disabled={busy} onClick={signOut} className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-sm text-slate-600 hover:bg-slate-100 disabled:opacity-50"><LogOut size={18}/>{busy ? 'Signing outÃ¢â‚¬Â¦' : 'Sign out'}</button></div>
  </div>; }
  return <div className="min-h-screen bg-slate-50 lg:flex">
   <aside className="hidden lg:block sticky top-0 h-screen w-64 shrink-0 border-r border-slate-200 bg-white">{navigation()}</aside>

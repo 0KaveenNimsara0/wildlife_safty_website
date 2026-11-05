@@ -1,3 +1,4 @@
+import Avatar from '../../../components/ui/Avatar';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -241,7 +242,7 @@ export default function AdminProfileSection() {
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-5">
            <div className="relative group">
               <div className="w-32 h-32 rounded-xl bg-emerald-600 border-4 border-slate-800 flex items-center justify-center text-2xl font-semibold shadow-sm overflow-hidden shadow-emerald-900/40 transition-transform duration-500 group-hover:scale-105">
-                 {adminData?.name?.charAt(0) || 'A'}
+                 <Avatar src={adminData?.photoURL} name={adminData?.name || 'Admin'} />
                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                     <Edit3 size={24} className="text-white" />
                  </div>

@@ -111,7 +111,7 @@ const ChatInterface = ({
                    selectedAdminId === admin._id ? 'bg-slate-900 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-white text-slate-400 border-slate-100'
                  }`}>
                    {admin.photoURL ? (
-                     <img
+                     <img referrerPolicy="no-referrer"
                        src={admin.photoURL.startsWith('http') ? admin.photoURL : `${IMAGE_BASE_URL}${admin.photoURL}`}
                        alt={admin.name?.charAt(0) || 'A'}
                        className="w-full h-full object-cover"
@@ -135,7 +135,7 @@ const ChatInterface = ({
           <div className="relative">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-xl translate-y-[-2px] transition-all duration-500 overflow-hidden ${participant ? 'bg-emerald-700' : 'bg-slate-300 animate-pulse'}`}>
               {participant?.photoURL ? (
-                <img
+                <img referrerPolicy="no-referrer"
                   src={participant.photoURL.startsWith('http') ? participant.photoURL : `${IMAGE_BASE_URL}${participant.photoURL}`}
                   alt={participant.name?.charAt(0) || '?'}
                   className="w-full h-full object-cover"

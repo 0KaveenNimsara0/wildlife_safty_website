@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { IMAGE_BASE_URL } from '../../config/constants';
 export default function Avatar({ src, name = 'User' }) {
   const [failedSource, setFailedSource] = useState(null);
-  return src && failedSource !== src
-    ? <img referrerPolicy="no-referrer" src={src} alt={name} onError={() => setFailedSource(src)} className="w-full h-full object-cover" />
+  const imageSource = src?.startsWith('/uploads') ? `${IMAGE_BASE_URL}${src}` : src;
+  return imageSource && failedSource !== imageSource
+    ? <img referrerPolicy="no-referrer" src={imageSource} alt={name} onError={() => setFailedSource(imageSource)} className="w-full h-full object-cover" />
     : <span aria-label={name} className="text-lg font-semibold">{name.trim().charAt(0).toUpperCase() || 'U'}</span>;
 }

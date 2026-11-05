@@ -1,3 +1,4 @@
+import Avatar from '../../../components/ui/Avatar';
 import React, { useState, useEffect, useRef } from 'react';
 import { Loader2, MessageSquare, ChevronDown, Activity } from 'lucide-react';
 import MessageBubble from '../../chat/components/MessageBubble';
@@ -153,6 +154,7 @@ const ConsultationsSection = () => {
       const data = await response.json();
       if (data.success) {
         setMessages(data.messages);
+        window.dispatchEvent(new Event("chat-messages-read"));
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -270,7 +272,7 @@ const ConsultationsSection = () => {
                           <div className="flex items-center gap-4 flex-1 min-w-0">
                             <div className="w-10 h-10 rounded-xl bg-slate-200 flex-shrink-0 overflow-hidden flex items-center justify-center text-[10px] font-semibold text-slate-400">
                                {conversation.user?.photoURL ? (
-                                 <img src={conversation.user.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${conversation.user.photoURL}` : conversation.user.photoURL} alt="User" className="w-full h-full object-cover" />
+                                 <Avatar src={conversation.user.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${conversation.user.photoURL}` : conversation.user.photoURL} name="User" />
                                ) : (
                                  conversation.user?.displayName?.charAt(0).toUpperCase() || 'U'
                                )}
@@ -302,7 +304,7 @@ const ConsultationsSection = () => {
                              <div className="flex items-center gap-3">
                                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-semibold shadow-inner overflow-hidden flex-shrink-0 ${currentConversation?.admin?._id === admin._id ? 'bg-white text-emerald-600' : 'bg-slate-900 text-white'}`}>
                                    {admin.photoURL ? (
-                                      <img src={admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${admin.photoURL}` : admin.photoURL} alt="Admin" className="w-full h-full object-cover" />
+                                      <Avatar src={admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${admin.photoURL}` : admin.photoURL} name="Admin" />
                                    ) : admin.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="min-w-0">
@@ -331,11 +333,11 @@ const ConsultationsSection = () => {
                         <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-sm overflow-hidden ${currentConversation.admin ? 'bg-slate-900 shadow-slate-900/10' : 'bg-emerald-600 shadow-emerald-500/10'}`}>
                            {currentConversation.admin ? (
                               currentConversation.admin.photoURL ? (
-                                <img src={currentConversation.admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.admin.photoURL}` : currentConversation.admin.photoURL} alt="Admin" className="w-full h-full object-cover" />
+                                <Avatar src={currentConversation.admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.admin.photoURL}` : currentConversation.admin.photoURL} name="Admin" />
                               ) : currentConversation.admin.name?.charAt(0).toUpperCase()
                            ) : (
                               currentConversation.user?.photoURL ? (
-                                <img src={currentConversation.user.photoURL?.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.user.photoURL}` : currentConversation.user.photoURL} alt="User" className="w-full h-full object-cover" />
+                                <Avatar src={currentConversation.user.photoURL?.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.user.photoURL}` : currentConversation.user.photoURL} name="User" />
                               ) : currentConversation.user?.displayName?.charAt(0).toUpperCase() || 'U'
                            )}
                         </div>
