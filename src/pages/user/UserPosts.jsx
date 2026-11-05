@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { IMAGE_BASE_URL } from '../../config/constants';
 import api from '../../services/api';
 import { formatDistanceToNow } from 'date-fns';
@@ -109,14 +109,14 @@ const UserPosts = () => {
     return (
       <div className="flex flex-col items-center justify-center p-20 gap-4">
         <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-        <span className="text-xs font-black uppercase tracking-widest text-slate-400">Syncing Personnel Data</span>
+        <span className="text-xs font-semibold uppercase tracking-normal text-slate-400">Syncing Personnel Data</span>
       </div>
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-10 py-6 animate-fade-in">
-      <div className="card-premium p-8 relative overflow-hidden bg-white/50 backdrop-blur-sm border-emerald-100">
+    <div className="max-w-3xl mx-auto space-y-5 py-1 animate-fade-in">
+      <div className="card-premium p-5 relative overflow-hidden bg-white/50 backdrop-blur-sm border-emerald-100">
         <div className="absolute top-0 left-0 w-2 h-full bg-emerald-500" />
         <div className="space-y-6">
           <div className="flex items-center gap-3">
@@ -124,8 +124,8 @@ const UserPosts = () => {
               <Plus size={20} />
             </div>
             <div>
-              <h3 className="text-xl font-black text-slate-900 tracking-tight">Share Your Experience</h3>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Global Sighting Database</p>
+              <h3 className="text-base font-semibold text-slate-900 tracking-tight">Share Your Experience</h3>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-normal">Share a wildlife sighting</p>
             </div>
           </div>
 
@@ -136,7 +136,7 @@ const UserPosts = () => {
                 placeholder="Species Identified (e.g., Spectacled Cobra)"
                 value={newPost.animalName}
                 onChange={(e) => setNewPost({ ...newPost, animalName: e.target.value })}
-                className="w-full px-6 py-4 bg-white border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:outline-none transition-all font-bold text-slate-800"
+                className="w-full px-3 py-2.5 text-sm bg-white border-2 border-slate-50 rounded-xl focus:border-emerald-500 focus:outline-none transition-all font-medium text-slate-800"
                 required
               />
               <textarea
@@ -144,17 +144,17 @@ const UserPosts = () => {
                 value={newPost.experience}
                 onChange={(e) => setNewPost({ ...newPost, experience: e.target.value })}
                 rows="4"
-                className="w-full px-6 py-4 bg-white border-2 border-slate-50 rounded-2xl focus:border-emerald-500 focus:outline-none transition-all font-medium text-slate-600"
+                className="w-full px-3 py-2.5 text-sm bg-white border-2 border-slate-50 rounded-xl focus:border-emerald-500 focus:outline-none transition-all font-medium text-slate-600"
                 required
               />
             </div>
 
-            <div className="flex items-center justify-between gap-4 pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
               <label className="flex items-center gap-2 cursor-pointer group">
-                <div className="p-3 bg-slate-100 rounded-2xl text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
+                <div className="p-3 bg-slate-100 rounded-xl text-slate-500 group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-all">
                   <FaCamera size={18} />
                 </div>
-                <span className="text-sm font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-700">Attach Evidence</span>
+                <span className="text-sm font-semibold uppercase tracking-normal text-slate-400 group-hover:text-emerald-700">Add photo</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -164,14 +164,14 @@ const UserPosts = () => {
               </label>
               
               {newPost.photo && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-[10px] font-semibold uppercase tracking-normal border border-emerald-100">
                   <CheckCircle size={10} /> Asset Staged
                 </div>
               )}
 
               <button
                 type="submit"
-                className="btn-primary py-4 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-emerald-200 active:scale-95 transition-transform"
+                className="btn-primary py-2.5 px-5 rounded-xl font-semibold uppercase tracking-normal text-xs shadow-lg shadow-emerald-200 active:scale-95 transition-transform"
                 disabled={loading}
               >
                 {loading ? 'Transmitting...' : 'Publish'}
@@ -182,7 +182,7 @@ const UserPosts = () => {
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-2xl flex items-center gap-3 text-rose-700 text-sm font-bold">
+        <div className="p-4 bg-rose-50 border-2 border-rose-100 rounded-xl flex items-center gap-3 text-rose-700 text-sm font-bold">
           <XCircle size={18} /> {error}
         </div>
       )}
@@ -190,19 +190,19 @@ const UserPosts = () => {
       <div className="space-y-6">
         <div className="flex items-center gap-3 px-2">
           <FaHistory className="text-slate-300" />
-          <h4 className="text-sm font-black uppercase tracking-[0.3em] text-slate-400">Operation History</h4>
+          <h4 className="text-sm font-semibold uppercase tracking-normal text-slate-400">Your posts</h4>
         </div>
 
         {userPosts.length === 0 ? (
-          <div className="text-center py-20 card-premium border-dashed border-2 border-slate-200">
-            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs italic">No personal records found in current sector</p>
+          <div className="text-center py-10 card-premium border-dashed border-2 border-slate-200">
+            <p className="text-slate-400 font-bold uppercase tracking-normal text-xs italic">No personal records found in current sector</p>
           </div>
         ) : (
           userPosts.map((post) => (
             <div key={post._id} className="card-premium p-0 overflow-hidden group hover:border-emerald-200 transition-all">
               <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-black text-sm overflow-hidden">
+                  <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-semibold text-sm overflow-hidden">
                     {post.authorAvatar ? (
                       <img src={post.authorAvatar} alt="Author" className="w-full h-full object-cover" />
                     ) : (
@@ -215,17 +215,17 @@ const UserPosts = () => {
                         type="text"
                         value={editPostData.animalName}
                         onChange={(e) => setEditPostData({...editPostData, animalName: e.target.value})}
-                        className="font-black text-slate-900 bg-white border-2 border-emerald-500 px-3 py-1 rounded-lg outline-none"
+                        className="font-semibold text-slate-900 bg-white border-2 border-emerald-500 px-3 py-1 rounded-lg outline-none"
                       />
                     ) : (
                       <div className="flex items-center gap-2">
-                        <h4 className="font-black text-slate-800">{post.animalName}</h4>
-                        {post.status === 'verified' && <span className="text-[9px] bg-sky-50 text-sky-600 px-2 py-0.5 rounded border border-sky-100 font-black uppercase tracking-widest flex items-center gap-1"><Shield size={10}/> Verified</span>}
-                        {post.status === 'rejected' && <span className="text-[9px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded font-black uppercase tracking-widest flex items-center gap-1"><XCircle size={10}/> Rejected</span>}
-                        {post.status === 'pending' && <span className="text-[9px] bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded border border-yellow-100 font-black uppercase tracking-widest flex items-center gap-1">Pending</span>}
+                        <h4 className="font-semibold text-slate-800">{post.animalName}</h4>
+                        {post.status === 'verified' && <span className="text-[9px] bg-sky-50 text-sky-600 px-2 py-0.5 rounded border border-sky-100 font-semibold uppercase tracking-normal flex items-center gap-1"><Shield size={10}/> Verified</span>}
+                        {post.status === 'rejected' && <span className="text-[9px] bg-slate-100 text-slate-400 px-2 py-0.5 rounded font-semibold uppercase tracking-normal flex items-center gap-1"><XCircle size={10}/> Rejected</span>}
+                        {post.status === 'pending' && <span className="text-[9px] bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded border border-yellow-100 font-semibold uppercase tracking-normal flex items-center gap-1">Pending</span>}
                       </div>
                     )}
-                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-tight">
                       {post.createdAt ? (() => { try { return formatDistanceToNow(new Date(post.createdAt), { addSuffix: true }); } catch { return 'Recent'; } })() : 'Historical'}
                       {post.updatedAt && post.updatedAt !== post.createdAt && " • EDITED"}
                     </p>
@@ -247,20 +247,20 @@ const UserPosts = () => {
                 </div>
               </div>
 
-              <div className="p-8 space-y-6">
+              <div className="p-5 space-y-6">
                 {editingPostId === post._id ? (
                   <textarea
                     value={editPostData.experience}
                     onChange={(e) => setEditPostData({...editPostData, experience: e.target.value})}
                     rows="4"
-                    className="w-full px-4 py-3 bg-white border-2 border-emerald-500 rounded-2xl outline-none font-medium"
+                    className="w-full px-4 py-3 bg-white border-2 border-emerald-500 rounded-xl outline-none font-medium"
                   />
                 ) : (
                   <p className="text-slate-600 font-medium leading-relaxed italic border-l-4 border-slate-100 pl-6 break-all">"{post.experience}"</p>
                 )}
                 
                 {post.photoUrl && (
-                  <div className="rounded-2xl overflow-hidden border-2 border-slate-50 shadow-inner group">
+                  <div className="rounded-xl overflow-hidden border-2 border-slate-50 shadow-inner group">
                     <img src={`${IMAGE_BASE_URL}${post.photoUrl}`} alt="Sighting Evidence" className="w-full h-auto max-h-80 object-cover group-hover:scale-102 transition-transform duration-700" />
                   </div>
                 )}
@@ -269,11 +269,11 @@ const UserPosts = () => {
               <div className="p-4 bg-slate-50/30 flex gap-6 px-8 border-t border-slate-100">
                 <div className="flex items-center gap-2 text-slate-400 group/label hover:text-rose-500 transition-colors">
                   <FaHeart className="text-rose-400 group-hover/label:scale-110 transition-transform" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{post.likes || 0} LIKES</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-normal">{post.likes || 0} LIKES</span>
                 </div>
                 <div className="flex items-center gap-2 text-slate-400 group/label hover:text-sky-500 transition-colors">
                   <FaComment className="text-sky-400 group-hover/label:scale-110 transition-transform" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">{post.comments?.length || 0} COMMENTS</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-normal">{post.comments?.length || 0} COMMENTS</span>
                 </div>
               </div>
             </div>

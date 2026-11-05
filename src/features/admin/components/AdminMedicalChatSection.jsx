@@ -180,7 +180,7 @@ export default function AdminMedicalChatSection() {
   };
 
   const onSendMessage = async (messageText) => {
-    if (!messageText.trim() || !currentOfficer) return;
+    if (!messageText.trim() || !currentOfficer) return false;
 
     const officerId = currentOfficer._id;
 
@@ -210,9 +210,11 @@ export default function AdminMedicalChatSection() {
         setTimeout(scrollToBottom, 100);
       } else {
         alert('Failed to send message: ' + (data.message || 'Unknown protocol error'));
+        return false;
       }
     } catch (err) {
       alert('Failed to send message');
+      return false;
     }
   };
 
@@ -226,9 +228,9 @@ export default function AdminMedicalChatSection() {
 
   return (
     <div className="h-[calc(100vh-220px)] flex gap-6 animate-fade-in">
-      <div className="w-80 flex flex-col bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+      <div className="w-80 flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-50 bg-slate-50/30">
-           <h2 className="text-lg font-black uppercase tracking-tight mb-4 flex items-center gap-2">
+           <h2 className="text-lg font-semibold uppercase tracking-tight mb-4 flex items-center gap-2">
               <Activity size={18} className="text-emerald-500" />
               Tactical <span className="text-emerald-500">Comms</span>
            </h2>
@@ -239,7 +241,7 @@ export default function AdminMedicalChatSection() {
                 placeholder="Scan frequencies..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-slate-100 focus:border-emerald-500 focus:outline-none text-[10px] font-black uppercase tracking-widest placeholder:text-slate-300 transition-all font-sans" 
+                className="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-slate-100 focus:border-emerald-500 focus:outline-none text-[10px] font-semibold uppercase tracking-normal placeholder:text-slate-300 transition-all font-sans" 
               />
            </div>
         </div>
@@ -248,12 +250,12 @@ export default function AdminMedicalChatSection() {
            {convLoading ? (
              <div className="flex flex-col items-center justify-center py-10 opacity-30">
                 <Loader2 size={24} className="animate-spin text-emerald-600 mb-2" />
-                <span className="text-[9px] font-black uppercase tracking-widest">Syncing Nodes...</span>
+                <span className="text-[9px] font-semibold uppercase tracking-normal">Syncing Nodes...</span>
              </div>
            ) : filteredConversations.length === 0 ? (
              <div className="text-center py-10 opacity-40">
                 <MessageSquare size={32} className="mx-auto mb-2 text-slate-300" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">No signals detected</p>
+                <p className="text-[9px] font-semibold uppercase tracking-normal text-slate-500">No signals detected</p>
              </div>
            ) : (
              filteredConversations.map((conv) => (
@@ -267,7 +269,7 @@ export default function AdminMedicalChatSection() {
                  }`}
                >
                  <div className="relative">
-                    <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-black text-xs shadow-md overflow-hidden">
+                    <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-semibold text-xs shadow-md overflow-hidden">
                        {conv.medicalOfficer?.photoURL ? (
                          <img 
                            src={conv.medicalOfficer.photoURL.startsWith('http') ? conv.medicalOfficer.photoURL : `${IMAGE_BASE_URL}${conv.medicalOfficer.photoURL}`} 
@@ -279,21 +281,21 @@ export default function AdminMedicalChatSection() {
                        )}
                     </div>
                     {conv.unreadCount > 0 && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] font-black text-white">
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-[10px] font-semibold text-white">
                          {conv.unreadCount}
                       </div>
                     )}
                  </div>
                  <div className="flex-1 text-left min-w-0">
                     <div className="flex justify-between items-start mb-0.5">
-                       <h3 className="text-xs font-black text-slate-900 tracking-tight truncate">
+                       <h3 className="text-xs font-semibold text-slate-900 tracking-tight truncate">
                           {conv.medicalOfficer?.name}
                        </h3>
                        <span className="text-[8px] font-bold text-slate-400 uppercase">
                           {formatTime(conv.lastMessage.createdAt)}
                        </span>
                     </div>
-                    <p className={`text-[10px] truncate ${conv.unreadCount > 0 ? 'font-black text-slate-600' : 'font-medium text-slate-400 italic'}`}>
+                    <p className={`text-[10px] truncate ${conv.unreadCount > 0 ? 'font-semibold text-slate-600' : 'font-medium text-slate-400 italic'}`}>
                        {conv.lastMessage.message}
                     </p>
                  </div>
@@ -303,12 +305,12 @@ export default function AdminMedicalChatSection() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden relative">
+      <div className="flex-1 flex flex-col bg-white rounded-[32px] border border-slate-100 shadow-sm shadow-slate-200/50 overflow-hidden relative">
         {currentOfficer ? (
           <>
             <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white/50 backdrop-blur-md z-10">
                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-emerald-500/20 overflow-hidden">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-semibold text-sm shadow-lg shadow-emerald-500/20 overflow-hidden">
                      {currentOfficer.photoURL ? (
                        <img 
                          src={currentOfficer.photoURL.startsWith('http') ? currentOfficer.photoURL : `${IMAGE_BASE_URL}${currentOfficer.photoURL}`} 
@@ -320,11 +322,11 @@ export default function AdminMedicalChatSection() {
                      )}
                   </div>
                   <div>
-                     <h3 className="text-sm font-black text-slate-900 tracking-tight leading-none mb-1.5">{currentOfficer.name}</h3>
+                     <h3 className="text-sm font-semibold text-slate-900 tracking-tight leading-none mb-1.5">{currentOfficer.name}</h3>
                      <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Tactical Uplink Active</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500 ml-2 border-l border-slate-200 pr-2">
+                        <span className="text-[9px] font-semibold uppercase tracking-normal text-slate-400">Tactical Uplink Active</span>
+                        <span className="text-[9px] font-semibold uppercase tracking-normal text-emerald-500 ml-2 border-l border-slate-200 pr-2">
                            {currentOfficer.specialization?.replace('_', ' ')}
                         </span>
                      </div>
@@ -332,8 +334,8 @@ export default function AdminMedicalChatSection() {
                </div>
                <div className="flex items-center gap-2">
                   <div className="flex flex-col items-end mr-4">
-                     <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Authority</p>
-                     <p className="text-[10px] font-black text-slate-900 uppercase tracking-tight">Level 4 Admin</p>
+                     <p className="text-[9px] font-semibold uppercase tracking-normal text-slate-400">Authority</p>
+                     <p className="text-[10px] font-semibold text-slate-900 uppercase tracking-tight">Level 4 Admin</p>
                   </div>
                   <button className="p-2.5 text-slate-400 hover:text-slate-900 transition-colors">
                      <MoreVertical size={20} />
@@ -343,7 +345,7 @@ export default function AdminMedicalChatSection() {
 
             <div 
               ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-6 bg-slate-50/30"
+              className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6 bg-slate-50/30"
             >
                {msgLoading ? (
                  <div className="flex items-center justify-center h-full opacity-30">
@@ -354,7 +356,7 @@ export default function AdminMedicalChatSection() {
                     <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
                        <MessageSquare size={32} className="text-slate-300" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Initiate Communication Protocol</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Initiate Communication Protocol</p>
                  </div>
                ) : (
                  messages.map((msg, i) => {
@@ -374,7 +376,7 @@ export default function AdminMedicalChatSection() {
             {newMessagesCount > 0 && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl animate-bounce flex items-center gap-2 z-20"
+                className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-4 py-2.5 rounded-full text-[10px] font-semibold uppercase tracking-normal shadow-sm animate-bounce flex items-center gap-2 z-20"
               >
                  <ChevronDown size={14} />
                  {newMessagesCount} New Transmissions
@@ -388,18 +390,18 @@ export default function AdminMedicalChatSection() {
             />
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center bg-slate-50/30 p-12 text-center">
-             <div className="w-32 h-32 rounded-[40px] bg-white shadow-2xl flex items-center justify-center mb-8 animate-pulse border border-slate-100">
+          <div className="flex-1 flex flex-col items-center justify-center bg-slate-50/30 p-6 text-center">
+             <div className="w-32 h-32 rounded-[40px] bg-white shadow-sm flex items-center justify-center mb-8 animate-pulse border border-slate-100">
                 <Shield size={48} className="text-emerald-500 opacity-20" />
              </div>
-             <h3 className="text-2xl font-black uppercase tracking-tight text-slate-800 mb-4">Secure Link Required</h3>
-             <p className="text-xs font-medium text-slate-400 max-w-sm leading-relaxed uppercase tracking-widest">
+             <h3 className="text-2xl font-semibold uppercase tracking-tight text-slate-800 mb-4">Secure Link Required</h3>
+             <p className="text-xs font-medium text-slate-400 max-w-sm leading-relaxed uppercase tracking-normal">
                 Select a medical operative from the tactical feed to establish an encrypted end-to-end communication channel.
              </p>
              <div className="mt-12 p-6 bg-amber-50 rounded-3xl border border-amber-100 flex items-start gap-4 text-left max-w-sm">
                 <AlertCircle className="text-amber-500 shrink-0" size={20} />
                 <div>
-                   <p className="text-[10px] font-black uppercase tracking-widest text-amber-800 mb-1">Operational Protocol</p>
+                   <p className="text-[10px] font-semibold uppercase tracking-normal text-amber-800 mb-1">Operational Protocol</p>
                    <p className="text-[9px] font-bold text-amber-600 leading-normal uppercase">All administrative communications are logged and monitored for quality and tactical assurance.</p>
                 </div>
              </div>

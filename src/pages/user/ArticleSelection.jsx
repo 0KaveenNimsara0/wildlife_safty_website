@@ -92,11 +92,11 @@ const ArticleSelection = () => {
       <header className="grid lg:grid-cols-3 gap-8 pb-8 border-b border-slate-200">
         <div className="lg:col-span-2 space-y-6">
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-[0.2em] text-[10px]">
+            <div className="flex items-center gap-2 text-emerald-600 font-semibold uppercase tracking-[0.2em] text-[10px]">
               <BookOpen size={14} />
               <span>Educational Repository</span>
             </div>
-            <h1 className="text-4xl lg:text-6xl font-black text-slate-900 tracking-tighter leading-none">
+            <h1 className="text-4xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-none">
               Knowledge <span className="text-emerald-600">Base</span>
             </h1>
           </div>
@@ -106,7 +106,7 @@ const ArticleSelection = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 whitespace-nowrap ${
+                className={`px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all border-2 whitespace-nowrap ${
                   selectedCategory === category
                     ? 'bg-slate-900 text-white border-slate-900 shadow-lg'
                     : 'bg-white text-slate-400 border-slate-50 hover:border-emerald-300 hover:text-emerald-600 shadow-sm'
@@ -141,12 +141,12 @@ const ArticleSelection = () => {
 
           <div className="grid grid-cols-2 gap-3">
              <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-                <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">Archive Size</p>
-                <p className="text-xl font-black text-slate-900">{articles.length} <span className="text-[10px] text-slate-400 font-bold">Nodes</span></p>
+                <p className="text-[9px] font-semibold text-emerald-600 uppercase tracking-widest mb-1">Archive Size</p>
+                <p className="text-xl font-semibold text-slate-900">{articles.length} <span className="text-[10px] text-slate-400 font-bold">Nodes</span></p>
              </div>
              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Last Update</p>
-                <p className="text-xl font-black text-slate-900">Live <span className="text-[10px] text-emerald-500 font-bold">●</span></p>
+                <p className="text-[9px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Last Update</p>
+                <p className="text-xl font-semibold text-slate-900">Live <span className="text-[10px] text-emerald-500 font-bold">●</span></p>
              </div>
           </div>
         </div>
@@ -155,11 +155,11 @@ const ArticleSelection = () => {
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-4">
           <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-black uppercase tracking-widest text-slate-400">Syncing Intelligence Assets</span>
+          <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">Syncing Intelligence Assets</span>
         </div>
       ) : error ? (
         <div className="card-premium p-12 text-center bg-rose-50 border-rose-100">
-          <p className="text-rose-700 font-black uppercase tracking-widest text-sm">{error}</p>
+          <p className="text-rose-700 font-semibold uppercase tracking-widest text-sm">{error}</p>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -177,7 +177,7 @@ const ArticleSelection = () => {
                   <Award size={18} className="text-slate-100 group-hover:text-emerald-500 transition-colors" />
                 </div>
                 <div className="space-y-3">
-                  <h3 className="text-2xl font-black text-slate-800 leading-tight group-hover:text-emerald-900 transition-colors">
+                  <h3 className="text-2xl font-semibold text-slate-800 leading-tight group-hover:text-emerald-900 transition-colors">
                     {article.title}
                   </h3>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed line-clamp-3 italic">
@@ -187,8 +187,8 @@ const ArticleSelection = () => {
               </div>
 
               <div className="pt-8 mt-8 border-t border-slate-50 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Section Ref: {article.category}</span>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Section Ref: {article.category}</span>
+                <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
                   <span>Access Report</span>
                   <ChevronRight size={12} />
                 </div>
@@ -206,7 +206,7 @@ const ArticleSelection = () => {
         actionButton={
           <button 
             onClick={() => handleReviewLater(popupArticle)}
-            className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 shadow-xl transition-all active:scale-95 flex items-center gap-2"
+            className="bg-slate-900 text-white px-8 py-3 rounded-2xl font-semibold uppercase tracking-widest text-xs hover:bg-emerald-600 shadow-xl transition-all active:scale-95 flex items-center gap-2"
           >
             <Clock size={16} />
             Save For Mission Review

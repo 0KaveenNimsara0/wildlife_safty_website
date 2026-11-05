@@ -41,7 +41,7 @@ const UserFilesSection = ({ userId }) => {
     if (fileType.includes('pdf')) return <FaFilePdf className="text-red-500 text-xl" />;
     if (fileType.includes('word')) return <FaFileWord className="text-blue-600 text-xl" />;
     if (fileType.includes('excel') || fileType.includes('sheet')) return <FaFileExcel className="text-green-600 text-xl" />;
-    if (fileType.includes('zip') || fileType.includes('archive')) return <FaFileArchive className="text-purple-600 text-xl" />;
+    if (fileType.includes('zip') || fileType.includes('archive')) return <FaFileArchive className="text-emerald-600 text-xl" />;
     return <FaFile className="text-gray-500 text-xl" />;
   };
 

@@ -58,12 +58,12 @@ const GlobalAuditOversight = () => {
     };
 
     return (
-        <div className="space-y-10 animate-fade-in">
+        <div className="space-y-6 animate-fade-in">
             {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                 <div>
-                    <h3 className="text-4xl font-black text-slate-900 tracking-tight">System Audit Log</h3>
-                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest mt-1">Global activity oversight & security forensics</p>
+                    <h3 className="text-2xl font-semibold text-slate-900 tracking-tight">System Audit Log</h3>
+                    <p className="text-sm text-slate-400 font-bold uppercase tracking-normal mt-1">Global activity oversight & security forensics</p>
                 </div>
                 
                 <div className="flex items-center gap-4">
@@ -73,7 +73,7 @@ const GlobalAuditOversight = () => {
                     >
                         <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
                     </button>
-                    <button className="px-8 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-600/20">
+                    <button className="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-semibold uppercase tracking-normal text-[10px] flex items-center gap-3 hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-600/20">
                         <Download size={16} />
                         Export Forensic Data
                     </button>
@@ -81,58 +81,58 @@ const GlobalAuditOversight = () => {
             </div>
 
             {/* Advanced Filters */}
-            <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
+            <div className="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-6">
                 <div className="flex items-center gap-2 text-slate-400 mb-2">
                     <Filter size={16} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Advanced Filtering Engine</span>
+                    <span className="text-[10px] font-semibold uppercase tracking-normal">Advanced Filtering Engine</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {/* Actor Details Row */}
                     <div className="relative group">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={14} />
                         <input 
                             name="userName"
                             value={filters.userName}
                             onChange={handleFilterChange}
                             type="text" 
                             placeholder="Search Name..." 
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 transition-all outline-none"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 transition-all outline-none"
                         />
                     </div>
 
                     <div className="relative group">
-                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={14} />
                         <input 
                             name="userEmail"
                             value={filters.userEmail}
                             onChange={handleFilterChange}
                             type="text" 
                             placeholder="Search Email..." 
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 transition-all outline-none"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 transition-all outline-none"
                         />
                     </div>
 
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={14} />
                         <input 
                             name="userId"
                             value={filters.userId}
                             onChange={handleFilterChange}
                             type="text" 
                             placeholder="Actor ID..." 
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 transition-all outline-none"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 transition-all outline-none"
                         />
                     </div>
 
                     {/* Role Filter */}
                     <div className="relative group">
-                        <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
+                        <Shield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={14} />
                         <select 
                             name="role"
                             value={filters.role}
                             onChange={handleFilterChange}
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 outline-none appearance-none transition-all cursor-pointer"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 outline-none appearance-none transition-all cursor-pointer"
                         >
                             <option value="">All Roles</option>
                             <option value="user">Regular Users</option>
@@ -145,12 +145,12 @@ const GlobalAuditOversight = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Action Filter */}
                     <div className="relative group">
-                        <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={14} />
+                        <Zap className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={14} />
                         <select 
                             name="action"
                             value={filters.action}
                             onChange={handleFilterChange}
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 outline-none appearance-none transition-all cursor-pointer"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 outline-none appearance-none transition-all cursor-pointer"
                         >
                             <option value="">All Actions</option>
                             <option value="LOGIN">Logins</option>
@@ -163,30 +163,30 @@ const GlobalAuditOversight = () => {
 
                     {/* Date Filters */}
                     <div className="relative group">
-                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors pointer-events-none" size={14} />
+                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none" size={14} />
                         <input 
                             name="startDate"
                             value={filters.startDate}
                             onChange={handleFilterChange}
                             type="date" 
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 transition-all cursor-pointer outline-none"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 transition-all cursor-pointer outline-none"
                         />
                     </div>
                     <div className="relative group">
-                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors pointer-events-none" size={14} />
+                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none" size={14} />
                         <input 
                             name="endDate"
                             value={filters.endDate}
                             onChange={handleFilterChange}
                             type="date" 
-                            className="w-full pl-11 pr-4 py-4 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-indigo-500 transition-all cursor-pointer outline-none"
+                            className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl text-xs font-bold focus:bg-white focus:border-emerald-500 transition-all cursor-pointer outline-none"
                         />
                     </div>
                 </div>
             </div>
 
             {/* Timeline Results */}
-            <div className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
+            <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm">
                 <ActivityTimeline logs={logs} loading={loading} />
             </div>
         </div>

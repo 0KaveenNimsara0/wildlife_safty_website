@@ -56,11 +56,11 @@ export default function MedicalArticleSection() {
   };
 
   return (
-    <div className="space-y-10 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
-           <h1 className="text-3xl font-black tracking-tight text-slate-900 uppercase">Article <span className="text-indigo-600">Hub</span></h1>
-           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-1">Medical Research & Help Guides</p>
+           <h1 className="text-xl font-semibold tracking-tight text-slate-900 uppercase">Article <span className="text-emerald-600">Hub</span></h1>
+           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-normal mt-1">Medical Research & Help Guides</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -72,7 +72,7 @@ export default function MedicalArticleSection() {
                 <button
                    key={tab.id}
                    onClick={() => setActiveTab(tab.id)}
-                   className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white text-indigo-600 shadow-md border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
+                   className={`px-4 py-2.5 rounded-xl text-[10px] font-semibold uppercase tracking-normal transition-all ${activeTab === tab.id ? 'bg-white text-emerald-600 shadow-md border border-slate-100' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                    {tab.label}
                 </button>
@@ -81,23 +81,23 @@ export default function MedicalArticleSection() {
            
            <button 
              onClick={() => navigate('/medical-officer/articles/create')}
-             className="px-6 py-4 bg-indigo-600 text-white rounded-2xl flex items-center gap-3 shadow-xl shadow-indigo-900/10 hover:bg-indigo-500 transition-all active:scale-95 group"
+             className="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl flex items-center gap-3 shadow-sm shadow-emerald-900/10 hover:bg-emerald-500 transition-all active:scale-95 group"
            >
              <Plus size={18} />
-             <span className="text-[10px] font-black uppercase tracking-widest">Add Article</span>
+             <span className="text-[10px] font-semibold uppercase tracking-normal">Add Article</span>
            </button>
         </div>
       </div>
 
       {loading ? (
         <div className="py-32 flex flex-col items-center justify-center space-y-4 opacity-30">
-           <div className="w-10 h-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-600 animate-spin" />
-           <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Loading Articles...</p>
+           <div className="w-10 h-10 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
+           <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Loading Articles...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
            {articles.map((article) => (
-             <div key={article._id} className="bg-white rounded-[32px] border border-slate-100 overflow-hidden shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 group">
+             <div key={article._id} className="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm shadow-slate-200/40 hover:shadow-sm hover:shadow-emerald-500/10 transition-all duration-500 group">
                 <div className="relative h-56 overflow-hidden">
                    {article.image_url ? (
                      <img src={article.image_url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90 group-hover:opacity-100" />
@@ -107,21 +107,21 @@ export default function MedicalArticleSection() {
                      </div>
                    )}
                     <div className="absolute top-5 left-5">
-                       <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-900 shadow-sm border border-white/20">
+                       <span className="px-3 py-1.5 bg-white/90 backdrop-blur-md rounded-xl text-[9px] font-semibold uppercase tracking-normal text-slate-900 shadow-sm border border-white/20">
                           {article.category || 'GUIDELINE'}
                        </span>
                     </div>
                 </div>
                 
-                <div className="p-8">
+                <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
                        <div className="flex items-center gap-2">
                           <Clock size={12} className="text-slate-300" />
-                          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                          <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-normal">
                              {new Date(article.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
                        </div>
-                       <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${
+                       <span className={`px-2 py-0.5 rounded-lg text-[8px] font-semibold uppercase tracking-normal ${
                          article.status === 'published' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
                          article.status === 'pending_review' ? 'bg-amber-50 text-amber-600 border border-amber-100' :
                          article.status === 'draft' ? 'bg-slate-50 text-slate-500 border border-slate-100' : 'bg-rose-50 text-rose-600 border border-rose-100'
@@ -130,7 +130,7 @@ export default function MedicalArticleSection() {
                        </span>
                     </div>
                    
-                   <h3 className="text-lg font-black text-slate-900 leading-tight mb-4 group-hover:text-indigo-600 transition-colors line-clamp-2 uppercase">
+                   <h3 className="text-lg font-semibold text-slate-900 leading-tight mb-4 group-hover:text-emerald-600 transition-colors line-clamp-2 uppercase">
                       {article.title}
                    </h3>
                    
@@ -142,7 +142,7 @@ export default function MedicalArticleSection() {
                      <div className="mb-6 p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3">
                         <AlertCircle size={14} className="text-rose-500 mt-0.5 flex-shrink-0" />
                         <div className="min-w-0">
-                           <p className="text-[8px] font-black text-rose-700 uppercase tracking-widest mb-1">Rejection Reason</p>
+                           <p className="text-[8px] font-semibold text-rose-700 uppercase tracking-normal mb-1">Rejection Reason</p>
                            <p className="text-[10px] font-bold text-rose-600 line-clamp-2 italic leading-tight">"{article.rejectionReason || 'No feedback provided.'}"</p>
                         </div>
                      </div>
@@ -150,7 +150,7 @@ export default function MedicalArticleSection() {
                    
                    <div className="flex items-center justify-between pt-8 border-t border-slate-50">
                       <div className="flex items-center gap-3">
-                         <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-black overflow-hidden shadow-sm">
+                         <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-[10px] font-semibold overflow-hidden shadow-sm">
                             {article.author?.photoURL ? (
                               <img 
                                 src={article.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${article.author.photoURL}` : article.author.photoURL} 
@@ -161,21 +161,21 @@ export default function MedicalArticleSection() {
                               article.author?.name?.charAt(0).toUpperCase()
                             )}
                          </div>
-                         <span className="text-[10px] font-black text-slate-500 tracking-widest">{article.author?.name}</span>
+                         <span className="text-[10px] font-semibold text-slate-500 tracking-normal">{article.author?.name}</span>
                       </div>
                       
                       <div className="flex items-center gap-2">
                          {activeTab === 'my' && (
                            <button 
                              onClick={(e) => { e.stopPropagation(); navigate(`/medical-officer/articles/edit/${article._id}`); }}
-                             className="p-2.5 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                             className="p-2.5 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
                            >
                              <Edit3 size={16} />
                            </button>
                          )}
                          <button 
                            onClick={() => handlePreview(article)}
-                           className="p-2.5 bg-slate-50 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                           className="p-2.5 bg-slate-50 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
                          >
                             <ChevronRight size={16} />
                          </button>
@@ -188,8 +188,8 @@ export default function MedicalArticleSection() {
            {articles.length === 0 && (
              <div className="col-span-full py-32 text-center opacity-30 select-none">
                 <ShieldAlert size={64} className="mx-auto mb-6 text-slate-300" />
-                <h3 className="text-2xl font-black uppercase tracking-tight text-slate-800">No Articles Found</h3>
-                <p className="text-xs font-bold uppercase tracking-widest mt-2">{activeTab === 'my' ? 'Write your first article to share knowledge' : 'There are no published articles to show right now'}</p>
+                <h3 className="text-2xl font-semibold uppercase tracking-tight text-slate-800">No Articles Found</h3>
+                <p className="text-xs font-bold uppercase tracking-normal mt-2">{activeTab === 'my' ? 'Write your first article to share knowledge' : 'There are no published articles to show right now'}</p>
              </div>
            )}
         </div>
@@ -202,7 +202,7 @@ export default function MedicalArticleSection() {
         actionButton={
           <button 
             onClick={() => { setIsPreviewOpen(false); navigate(`/medical-officer/articles/${selectedArticle?._id}`); }}
-            className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all active:scale-95 shadow-lg shadow-indigo-600/20"
+            className="flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-emerald-500 transition-all active:scale-95 shadow-lg shadow-emerald-600/20"
           >
             <ExternalLink size={14} />
             Read Full Article

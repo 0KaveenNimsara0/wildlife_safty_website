@@ -7,7 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:user": "cypress run --spec cypress/e2e/user.cy.js",
+    "cy:admin": "cypress run --spec cypress/e2e/admin.cy.js",
+    "cy:medical": "cypress run --spec cypress/e2e/medical.cy.js"
   },
   "dependencies": {
     "axios": "^1.11.0",
@@ -27,6 +32,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.21",
+    "cypress": "^16.2.1",
     "eslint": "^9.30.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { 
   auth, 
   googleProvider,
@@ -12,11 +12,8 @@ import { onAuthStateChanged, signOut, updateEmail, updatePassword } from 'fireba
 
 import { BASE_URL, IMAGE_BASE_URL } from '../config/constants';
 
-const AuthContext = createContext();
-
-export function useAuth() {
-  return useContext(AuthContext);
-}
+import { AuthContext } from './auth-context';
+export { useAuth } from './useAuth';
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);

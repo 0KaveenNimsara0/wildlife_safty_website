@@ -1,3 +1,4 @@
+import { subscribeNotifications } from '../../services/notificationStream';
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -14,7 +15,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { notificationApi } from '../../services/api';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
 import { formatDate, formatTime } from '../../utils/formatters';
 
 const NotificationDropdown = ({ role }) => {
@@ -54,8 +55,7 @@ const NotificationDropdown = ({ role }) => {
 
   useEffect(() => {
     fetchSummary();
-    const interval = setInterval(fetchSummary, 60000);
-    return () => clearInterval(interval);
+    return subscribeNotifications(() => { fetchSummary(); });
   }, []);
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const NotificationDropdown = ({ role }) => {
       case 'POST_VERIFIED': return <CheckCircle2 className="text-emerald-500" size={16} />;
       case 'POST_REJECTED': return <XCircle className="text-rose-500" size={16} />;
       case 'POST_REACTED': return <Heart className="text-pink-500" size={16} fill="currentColor" />;
-      case 'POST_COMMENTED': return <MessageSquare className="text-indigo-500" size={16} />;
+      case 'POST_COMMENTED': return <MessageSquare className="text-emerald-500" size={16} />;
       case 'ARTICLE_SUBMITTED': return <TrendingUp className="text-amber-500" size={16} />;
       case 'MESSAGE_RECEIVED': return <MessageSquare className="text-sky-500" size={16} />;
       default: return <Bell className="text-slate-400" size={16} />;
@@ -148,7 +148,7 @@ const NotificationDropdown = ({ role }) => {
       >
         <Bell size={20} className={unreadCount > 0 ? 'animate-bounce' : ''} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-rose-500 border-2 border-white text-[9px] font-black text-white px-1 shadow-lg shadow-rose-200">
+          <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-rose-500 border-2 border-white text-[9px] font-semibold text-white px-1 shadow-lg shadow-rose-200">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -156,11 +156,11 @@ const NotificationDropdown = ({ role }) => {
 
       {/* Dropdown Grid */}
       {isOpen && (
-        <div className="absolute right-0 mt-4 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden animate-fade-in z-[100]">
+        <div className="absolute right-0 mt-4 w-80 sm:w-96 bg-white rounded-3xl shadow-lg shadow-slate-200 border border-slate-100 overflow-hidden animate-fade-in z-[100]">
           {/* Header */}
           <div className="p-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
             <div>
-              <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Intelligence Briefing</h3>
+              <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-tight">Intelligence Briefing</h3>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Global Status Update</p>
             </div>
             {unreadCount > 0 && (
@@ -174,7 +174,7 @@ const NotificationDropdown = ({ role }) => {
                     console.error(err);
                   }
                 }}
-                className="text-[9px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-1 hover:underline"
+                className="text-[9px] font-semibold text-emerald-600 uppercase tracking-widest flex items-center gap-1 hover:underline"
               >
                 <CheckCheck size={12} />
                 Clear All
@@ -185,9 +185,9 @@ const NotificationDropdown = ({ role }) => {
           {/* List Area */}
           <div className="max-h-[400px] overflow-y-auto custom-scrollbar">
             {loading ? (
-              <div className="p-10 flex flex-col items-center justify-center space-y-3 opacity-50">
+              <div className="p-5 flex flex-col items-center justify-center space-y-3 opacity-50">
                 <div className="w-6 h-6 border-2 border-slate-200 border-t-emerald-600 rounded-full animate-spin" />
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Syncing Grid...</span>
+                <span className="text-[9px] font-semibold uppercase tracking-widest text-slate-400">Syncing Grid...</span>
               </div>
             ) : notifications.length > 0 ? (
               <div className="divide-y divide-slate-50">
@@ -228,11 +228,11 @@ const NotificationDropdown = ({ role }) => {
                 ))}
               </div>
             ) : (
-              <div className="p-12 text-center">
+              <div className="p-6 text-center">
                 <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Bell size={24} className="text-slate-300" />
                 </div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No Intelligence Data</p>
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">No Intelligence Data</p>
               </div>
             )}
           </div>
@@ -246,7 +246,7 @@ const NotificationDropdown = ({ role }) => {
             }}
             className="w-full p-4 text-center border-t border-slate-50 bg-slate-50/30 hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 group"
           >
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 group-hover:text-emerald-600 transition-colors">Complete Intel Feed</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-500 group-hover:text-emerald-600 transition-colors">Complete Intel Feed</span>
             <ChevronRight size={14} className="text-slate-300 group-hover:text-emerald-500 transition-all group-hover:translate-x-1" />
           </button>
         </div>

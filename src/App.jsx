@@ -1,4 +1,5 @@
 import React from 'react';
+import NotificationToasts from './components/notifications/NotificationToasts';
 import 'leaflet/dist/leaflet.css';
 import { AuthProvider } from './context/AuthContext';
 import AppRoutes from './routes/AppRoutes';
@@ -8,6 +9,7 @@ export default function App() {
     return (
         <AuthProvider>
             <ScrollToTop />
+            <NotificationToasts />
             <div className="flex flex-col min-h-screen selection:bg-emerald-200 selection:text-emerald-900">
                 <AppRoutes />
             </div>

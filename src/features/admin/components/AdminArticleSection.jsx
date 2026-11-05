@@ -154,11 +154,11 @@ export default function AdminArticleSection() {
 
   if (isFullViewOpen && selectedArticle) {
     return (
-      <div className="space-y-8 animate-fade-in p-2">
+      <div className="space-y-5 animate-fade-in p-2">
         <div className="flex items-center justify-between">
            <button 
              onClick={() => setIsFullViewOpen(false)}
-             className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-all active:scale-95 shadow-sm"
+             className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-100 rounded-2xl text-[10px] font-semibold uppercase tracking-normal text-slate-400 hover:text-emerald-600 transition-all active:scale-95 shadow-sm"
            >
               <ArrowLeft size={14} />
               Return to Database
@@ -168,14 +168,14 @@ export default function AdminArticleSection() {
                  <>
                     <button 
                       onClick={() => handleApprove(selectedArticle._id)}
-                      className="px-6 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/10"
+                      className="px-4 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/10"
                     >
                        <Check size={14} />
                        Approve Intelligence
                     </button>
                     <button 
                       onClick={() => handleReject(selectedArticle._id)}
-                      className="px-6 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-all flex items-center gap-2 shadow-lg shadow-rose-900/10"
+                      className="px-4 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-rose-700 transition-all flex items-center gap-2 shadow-lg shadow-rose-900/10"
                     >
                        <CloseIcon size={14} />
                        Reject Report
@@ -185,14 +185,14 @@ export default function AdminArticleSection() {
            </div>
         </div>
 
-        <div className="card-premium bg-white p-12 lg:p-20 rounded-[3rem] border-slate-100 shadow-2xl">
+        <div className="card-premium bg-white p-6 lg:p-20 rounded-2xl border-slate-100 shadow-sm">
            <div className="max-w-4xl mx-auto space-y-12">
               <div className="space-y-4">
-                 <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-[0.2em] text-[10px]">
+                 <div className="flex items-center gap-2 text-emerald-600 font-semibold uppercase tracking-normal text-[10px]">
                     <Shield size={14} />
                     <span>Intelligence Asset: {selectedArticle.category || 'General Intel'}</span>
                  </div>
-                 <h1 className="text-5xl font-black text-slate-900 tracking-tighter leading-[1.1]">{selectedArticle.title}</h1>
+                 <h1 className="text-xl font-semibold text-slate-900 tracking-tight leading-[1.1]">{selectedArticle.title}</h1>
                  
                  <div className="flex items-center gap-6 pt-4">
                     <div className="flex items-center gap-3">
@@ -204,8 +204,8 @@ export default function AdminArticleSection() {
                           )}
                        </div>
                        <div>
-                          <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">{selectedArticle.author?.name}</p>
-                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Authorized Intelligence Source</p>
+                          <p className="text-[10px] font-semibold text-slate-900 uppercase tracking-normal">{selectedArticle.author?.name}</p>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-normal mt-0.5">Authorized Intelligence Source</p>
                        </div>
                     </div>
                     <div className="h-8 w-px bg-slate-100" />
@@ -214,24 +214,24 @@ export default function AdminArticleSection() {
                           <Clock size={16} />
                        </div>
                        <div>
-                          <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
+                          <p className="text-[10px] font-semibold text-slate-900 uppercase tracking-normal">
                              {new Date(selectedArticle.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                           </p>
-                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-0.5">Deployment Timestamp</p>
+                          <p className="text-[8px] font-bold text-slate-400 uppercase tracking-normal mt-0.5">Deployment Timestamp</p>
                        </div>
                     </div>
                  </div>
               </div>
 
                  <div className="prose prose-slate max-w-none">
-                    <p className="text-2xl text-slate-500 font-medium leading-relaxed italic border-l-4 border-emerald-500 pl-10 py-4 bg-slate-50/50 rounded-r-3xl">
+                    <p className="text-2xl text-slate-500 font-medium leading-relaxed italic border-l-4 border-emerald-500 pl-10 py-2.5 bg-slate-50/50 rounded-r-3xl">
                        "{selectedArticle.excerpt || selectedArticle.content?.substring(0, 200)}..."
                     </p>
                     
                     {/* Image Gallery */}
-                    <div className="my-16 space-y-8">
+                    <div className="my-16 space-y-5">
                        {selectedArticle.image_url && !selectedArticle.images?.length && (
-                          <div className="rounded-[2.5rem] overflow-hidden border-8 border-slate-50 shadow-2xl bg-slate-100">
+                          <div className="rounded-2xl overflow-hidden border-8 border-slate-50 shadow-sm bg-slate-100">
                              <img 
                                src={selectedArticle.image_url.startsWith('http') ? selectedArticle.image_url : `${IMAGE_BASE_URL}${selectedArticle.image_url}`} 
                                alt="" 
@@ -240,7 +240,7 @@ export default function AdminArticleSection() {
                           </div>
                        )}
                        {selectedArticle.images?.map((img, idx) => (
-                          <div key={idx} className="rounded-[2.5rem] overflow-hidden border-8 border-slate-50 shadow-2xl bg-slate-100">
+                          <div key={idx} className="rounded-2xl overflow-hidden border-8 border-slate-50 shadow-sm bg-slate-100">
                              <img 
                                src={(typeof img === 'string' ? img : img.url).startsWith('http') ? (typeof img === 'string' ? img : img.url) : `${IMAGE_BASE_URL}${typeof img === 'string' ? img : img.url}`} 
                                alt={img.alt || ''} 
@@ -248,7 +248,7 @@ export default function AdminArticleSection() {
                              />
                              {img.caption && (
                                <div className="p-6 bg-white border-t border-slate-50">
-                                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">{img.caption}</p>
+                                  <p className="text-xs font-bold text-slate-400 uppercase tracking-normal text-center">{img.caption}</p>
                                </div>
                              )}
                           </div>
@@ -273,7 +273,7 @@ export default function AdminArticleSection() {
   );
 
   return (
-    <div className="space-y-10 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div className="flex-1 w-full max-w-2xl">
           <div className="relative group">
@@ -285,7 +285,7 @@ export default function AdminArticleSection() {
               placeholder="Search Intel Hub: Titles, Authors, or Categories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-4 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-black uppercase tracking-widest text-slate-800 placeholder:text-slate-300 transition-all"
+              className="w-full pl-14 pr-6 py-2.5 bg-white rounded-2xl border border-slate-100 shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-semibold uppercase tracking-normal text-slate-800 placeholder:text-slate-300 transition-all"
             />
           </div>
         </div>
@@ -293,7 +293,7 @@ export default function AdminArticleSection() {
         <div className="flex items-center gap-3">
            <div className="px-5 py-3.5 bg-slate-900 rounded-2xl flex items-center gap-3 shadow-lg shadow-emerald-900/10">
               <FileText size={16} className="text-emerald-400" />
-              <span className="text-[10px] font-black text-white uppercase tracking-widest">{articles.length} Intel Nodes</span>
+              <span className="text-[10px] font-semibold text-white uppercase tracking-normal">{articles.length} Intel Nodes</span>
            </div>
            <button className="p-3.5 rounded-2xl bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 transition-all hover:shadow-lg active:scale-95">
               <Filter size={18} />
@@ -302,50 +302,50 @@ export default function AdminArticleSection() {
       </div>
 
       {error && (
-        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-6 py-4 rounded-2xl shadow-sm animate-shake">
+        <div className="mb-6 flex items-center bg-rose-50 border border-rose-100 text-rose-700 px-4 py-2.5 rounded-2xl shadow-sm animate-shake">
           <AlertCircle className="w-5 h-5 mr-3 text-rose-500" />
-          <span className="text-sm font-black uppercase tracking-widest">{error}</span>
+          <span className="text-sm font-semibold uppercase tracking-normal">{error}</span>
         </div>
       )}
 
-      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-xl shadow-slate-200/50">
+      <div className="card-premium overflow-hidden bg-white border-slate-100 shadow-sm shadow-slate-200/50">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-4 opacity-30">
              <div className="w-8 h-8 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
-             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Scanning Intel Database...</p>
+             <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Scanning Intel Database...</p>
           </div>
         ) : filteredArticles.length === 0 ? (
           <div className="text-center py-20 opacity-40">
             <Shield className="h-12 w-12 mx-auto mb-4 text-slate-300" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">No Intelligence Records Found</p>
+            <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">No Intelligence Records Found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-slate-100">
               <thead>
                 <tr className="bg-slate-50/50">
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Article Information</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Deployment</th>
-                  <th className="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Classification</th>
-                  <th className="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tactical Actions</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Article Information</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Deployment</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Classification</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Tactical Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {filteredArticles.map((article) => (
                   <tr key={article._id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-8 py-6">
+                    <td className="px-4 py-3">
                        <div className="flex items-center gap-4">
                           <div className="w-14 h-14 rounded-2xl bg-slate-900 border-4 border-slate-100 overflow-hidden flex-shrink-0">
                              {article.image_url ? (
                                <img src={article.image_url} alt="" className="w-full h-full object-cover opacity-80" />
                              ) : (
-                               <div className="w-full h-full flex items-center justify-center text-white font-black text-lg">
+                               <div className="w-full h-full flex items-center justify-center text-white font-semibold text-lg">
                                   {article.title?.charAt(0)}
                                </div>
                              )}
                           </div>
                           <div className="min-w-0">
-                             <div className="text-sm font-black text-slate-900 tracking-tight truncate max-w-xs">{article.title}</div>
+                             <div className="text-sm font-semibold text-slate-900 tracking-tight truncate max-w-xs">{article.title}</div>
                              <div className="flex items-center gap-2 mt-1">
                                 <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
                                    {article.author?.photoURL ? (
@@ -358,28 +358,28 @@ export default function AdminArticleSection() {
                                      <UserIcon size={10} className="w-full h-full p-1 text-slate-400" />
                                    )}
                                 </div>
-                                <span className="text-[9px] font-black text-emerald-500 tracking-widest">{article.author?.name}</span>
-                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-2 py-0.5 bg-slate-50 rounded">Expert</span>
+                                <span className="text-[9px] font-semibold text-emerald-500 tracking-normal">{article.author?.name}</span>
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-normal px-2 py-0.5 bg-slate-50 rounded">Expert</span>
                              </div>
                           </div>
                        </div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-4 py-3 whitespace-nowrap">
                        <div className="flex items-center gap-2">
                           <Clock size={12} className="text-slate-300" />
-                          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-normal">
                              {new Date(article.createdAt).toLocaleDateString('en-US', {
                                month: 'short', day: 'numeric', year: 'numeric'
                              })}
                           </span>
                        </div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-4 py-3 whitespace-nowrap">
                        <div className="flex flex-col gap-1.5">
-                          <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-slate-200 w-fit">
+                          <span className="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-semibold uppercase tracking-normal rounded-lg border border-slate-200 w-fit">
                              {article.category || 'GENERAL_INTEL'}
                           </span>
-                          <span className={`px-3 py-1 text-[8px] font-black uppercase tracking-widest rounded-lg w-fit border ${
+                          <span className={`px-3 py-1 text-[8px] font-semibold uppercase tracking-normal rounded-lg w-fit border ${
                              article.status === 'published' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' :
                              article.status === 'pending_review' ? 'bg-amber-50 text-amber-600 border-amber-100' :
                              article.status === 'rejected' ? 'bg-rose-50 text-rose-600 border-rose-100' :
@@ -389,7 +389,7 @@ export default function AdminArticleSection() {
                           </span>
                        </div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap text-right">
+                    <td className="px-4 py-3 whitespace-nowrap text-right">
                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           {(article.status === 'pending_review' || article.status === 'draft') && (
                              <>
@@ -444,7 +444,7 @@ export default function AdminArticleSection() {
             <button
                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                disabled={currentPage === 1}
-               className="relative inline-flex items-center px-4 py-3 rounded-l-2xl border border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+               className="relative inline-flex items-center px-4 py-3 rounded-l-2xl border border-slate-100 bg-white text-[10px] font-semibold uppercase tracking-normal text-slate-400 hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
               Prev
             </button>
@@ -452,7 +452,7 @@ export default function AdminArticleSection() {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`relative inline-flex items-center px-5 py-3 border text-[10px] font-black uppercase tracking-widest transition-all ${
+                className={`relative inline-flex items-center px-5 py-3 border text-[10px] font-semibold uppercase tracking-normal transition-all ${
                   page === currentPage
                     ? 'z-10 bg-emerald-600 border-emerald-600 text-white shadow-lg shadow-emerald-900/20'
                     : 'bg-white border-slate-100 text-slate-400 hover:bg-slate-50'
@@ -464,7 +464,7 @@ export default function AdminArticleSection() {
             <button
                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                disabled={currentPage === totalPages}
-               className="relative inline-flex items-center px-4 py-3 rounded-r-2xl border border-slate-100 bg-white text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+               className="relative inline-flex items-center px-4 py-3 rounded-r-2xl border border-slate-100 bg-white text-[10px] font-semibold uppercase tracking-normal text-slate-400 hover:bg-slate-50 disabled:opacity-50 transition-colors"
             >
               Next
             </button>
@@ -485,7 +485,7 @@ export default function AdminArticleSection() {
                         handleApprove(selectedArticle?._id);
                         setIsPreviewOpen(false);
                       }}
-                      className="px-6 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 flex items-center gap-2"
+                      className="px-4 py-3 bg-emerald-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-emerald-700 transition-all active:scale-95 flex items-center gap-2"
                    >
                       <Check size={14} />
                       Approve Intelligence
@@ -495,7 +495,7 @@ export default function AdminArticleSection() {
                         handleReject(selectedArticle?._id);
                         setIsPreviewOpen(false);
                       }}
-                      className="px-6 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-700 transition-all active:scale-95 flex items-center gap-2"
+                      className="px-4 py-3 bg-rose-600 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-rose-700 transition-all active:scale-95 flex items-center gap-2"
                    >
                       <CloseIcon size={14} />
                       Reject Report
@@ -508,7 +508,7 @@ export default function AdminArticleSection() {
                     handleUnpublish(selectedArticle?._id);
                     setIsFullViewOpen(false);
                   }}
-                  className="px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg"
+                  className="px-4 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg"
                 >
                    <RotateCcw size={14} />
                    Revert to Draft
@@ -519,7 +519,7 @@ export default function AdminArticleSection() {
                  setIsPreviewOpen(false);
                  setIsFullViewOpen(true);
                }}
-               className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-xl shadow-slate-200"
+               className="flex items-center gap-2 px-4 py-3 bg-slate-900 text-white rounded-2xl text-[10px] font-semibold uppercase tracking-normal hover:bg-emerald-600 transition-all active:scale-95 shadow-sm shadow-slate-200"
              >
                <Eye size={14} />
                View Full Detail

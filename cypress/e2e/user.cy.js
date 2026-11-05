@@ -1,0 +1,2 @@
+import { roleSuite } from '../support/role-suite';
+roleSuite({"name": "User", "id": "user", "login": "/login", "title": "Welcome", "endpoint": "**/api/auth/user/login", "recovery": "/forgot-password", "register": "/register", "token": "userToken", "storage": "mongoUser", "routes": ["/", "/home", "/emergency", "/learning", "/map", "/animalDetail", "/communityFeed", "/article-selection", "/contact", "/dashboard"]});

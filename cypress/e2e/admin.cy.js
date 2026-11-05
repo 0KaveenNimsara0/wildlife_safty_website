@@ -1,0 +1,2 @@
+import { roleSuite } from '../support/role-suite';
+roleSuite({"name": "Admin", "id": "admin", "login": "/admin/login", "title": "Admin", "endpoint": "**/api/admin/auth/login", "recovery": "/admin/forgot-password", "register": "/admin/register", "token": "adminToken", "storage": "adminData", "routes": ["/admin", "/admin/dashboard", "/admin/users", "/admin/medical-officers", "/admin/predictions", "/admin/audit-logs", "/admin/articles", "/admin/profile", "/admin/notifications", "/admin/contact-tickets"]});

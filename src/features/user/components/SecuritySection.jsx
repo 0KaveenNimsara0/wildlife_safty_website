@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Key, Mail, Lock } from 'lucide-react';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/useAuth';
 
 const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
   const { activeUser, sendEmailVerification, refreshUser } = useAuth();
@@ -72,22 +72,22 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div className="flex items-center gap-4 pb-8 border-b border-slate-50">
         <div className="p-3 bg-rose-50 rounded-2xl text-rose-600">
           <Shield size={24} />
         </div>
         <div>
-          <h3 className="text-2xl font-black text-slate-900">Security & Password</h3>
-          <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">Manage your account access keys</p>
+          <h3 className="text-2xl font-semibold text-slate-900">Security & Password</h3>
+          <p className="text-xs text-slate-400 font-bold uppercase tracking-normal">Manage your account access keys</p>
         </div>
       </div>
 
-      <form onSubmit={handleUpdatePassword} className="space-y-8 max-w-lg">
+      <form onSubmit={handleUpdatePassword} className="space-y-5 max-w-lg">
         {/* Step 1: OTP Requirement */}
         <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-slate-900 font-black text-xs uppercase tracking-widest">
+            <div className="flex items-center gap-2 text-slate-900 font-semibold text-xs uppercase tracking-normal">
               <Mail size={14} className="text-emerald-500" />
               Identity Verification
             </div>
@@ -96,7 +96,7 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
                type="button"
                onClick={handleSendCode}
                disabled={otpLoading}
-               className="px-4 py-2 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-xl hover:bg-emerald-100 transition-colors disabled:opacity-50 border border-emerald-100"
+               className="px-4 py-2 bg-emerald-50 text-emerald-600 text-[10px] font-semibold rounded-xl hover:bg-emerald-100 transition-colors disabled:opacity-50 border border-emerald-100"
              >
                {otpLoading ? 'Re-sending...' : 'Resend Security Code'}
              </button>
@@ -105,7 +105,7 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
                 type="button"
                 onClick={handleSendCode}
                 disabled={otpLoading}
-                className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-black rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-emerald-600 text-white text-[10px] font-semibold rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50"
               >
                 {otpLoading ? 'Sending...' : 'Send Security Code'}
               </button>
@@ -113,14 +113,14 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
           </div>
           
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-2">Security Code</label>
+            <label className="text-[9px] font-semibold uppercase tracking-normal text-slate-400 ml-2">Security Code</label>
             <input
               type="text"
               placeholder="Enter 6-digit code"
               value={otp}
               maxLength={6}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="w-full px-4 py-3 bg-white border-2 border-slate-100 rounded-xl focus:border-emerald-500 focus:outline-none transition-all font-black text-slate-800 tracking-[0.5em] text-center"
+              className="w-full px-4 py-3 bg-white border-2 border-slate-100 rounded-xl focus:border-emerald-500 focus:outline-none transition-all font-semibold text-slate-800 tracking-[0.5em] text-center"
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
         <div className="space-y-6 pt-4">
           {hasPassword && (
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Current Password</label>
+              <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">Current Password</label>
               <div className="relative">
                 <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                 <input
@@ -137,14 +137,14 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
                   placeholder="Verify existing key"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+                  className="w-full pl-14 pr-6 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
                 />
               </div>
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">New Password</label>
+            <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">New Password</label>
             <div className="relative">
               <Key className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
               <input
@@ -152,13 +152,13 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
                 placeholder="New security key"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+                className="w-full pl-14 pr-6 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Confirm New Password</label>
+            <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">Confirm New Password</label>
             <div className="relative">
               <Key className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
               <input
@@ -166,7 +166,7 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
                 placeholder="Verify new key"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+                className="w-full pl-14 pr-6 py-2.5 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-rose-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
               />
             </div>
           </div>
@@ -175,7 +175,7 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
         <button 
           type="submit" 
           disabled={loading} 
-          className="w-full py-4 bg-rose-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-rose-700 shadow-xl shadow-rose-200 transition-all active:scale-[0.98] disabled:opacity-50"
+          className="w-full py-2.5 bg-rose-600 text-white rounded-2xl font-semibold uppercase tracking-normal text-xs hover:bg-rose-700 shadow-sm shadow-rose-200 transition-all active:scale-[0.98] disabled:opacity-50"
         >
           {loading ? 'Updating Credentials...' : 'Update Password'}
         </button>

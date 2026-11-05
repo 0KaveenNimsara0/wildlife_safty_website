@@ -19,7 +19,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 
 const ActionIcon = ({ action }) => {
-    if (action.includes('LOGIN') || action.includes('REGISTER')) return <Key size={14} className="text-indigo-600" />;
+    if (action.includes('LOGIN') || action.includes('REGISTER')) return <Key size={14} className="text-emerald-600" />;
     if (action.includes('PREDICTION')) return <Zap size={14} className="text-amber-600" />;
     if (action.includes('POST') || action.includes('COMMENT')) return <MessageSquare size={14} className="text-emerald-600" />;
     if (action.includes('PASSWORD') || action.includes('VERIF')) return <ShieldCheck size={14} className="text-rose-600" />;
@@ -31,8 +31,8 @@ const ActivityTimeline = ({ logs, loading }) => {
     if (loading) {
         return (
             <div className="py-20 flex flex-col items-center justify-center gap-4 text-slate-300">
-                <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Synchronizing Audit Logs...</span>
+                <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em]">Synchronizing Audit Logs...</span>
             </div>
         );
     }
@@ -60,7 +60,7 @@ const ActivityTimeline = ({ logs, loading }) => {
                     <div className="space-y-2">
                         {/* Header */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <h4 className="text-sm font-black text-slate-900 tracking-tight">
+                            <h4 className="text-sm font-semibold text-slate-900 tracking-tight">
                                 {log.action.replace(/_/g, ' ')}
                             </h4>
                             <div className="flex items-center gap-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
@@ -70,23 +70,23 @@ const ActivityTimeline = ({ logs, loading }) => {
                         </div>
 
                         {/* Content */}
-                        <div className="p-5 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow group-hover:border-indigo-100">
+                        <div className="p-5 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow group-hover:border-emerald-100">
                             <p className="text-xs font-bold text-slate-600 leading-relaxed">
                                 {log.details}
                             </p>
 
                             <div className="mt-4 pt-4 border-t border-slate-50 flex flex-wrap gap-4 items-center">
-                                <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                <div className="flex items-center gap-1.5 text-[9px] font-semibold text-slate-400 uppercase tracking-widest">
                                     <Monitor size={10} />
                                     {log.userAgent.includes('Windows') ? 'Desktop' : 'Mobile'}
                                 </div>
-                                <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                <div className="flex items-center gap-1.5 text-[9px] font-semibold text-slate-400 uppercase tracking-widest">
                                     <Globe size={10} />
                                     {log.ipAddress}
                                 </div>
                                 
                                 <div className="ml-auto flex items-center gap-2">
-                                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">{log.entityType}</span>
+                                    <span className="text-[9px] font-semibold text-slate-300 uppercase tracking-widest">{log.entityType}</span>
                                     <span className="text-[9px] font-mono text-slate-200">#{(log.entityId || '').slice(-6)}</span>
                                 </div>
                             </div>

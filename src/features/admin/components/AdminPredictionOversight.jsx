@@ -102,26 +102,26 @@ const AdminPredictionOversight = () => {
     );
 
     return (
-        <div className="space-y-10 animate-fade-in">
+        <div className="space-y-6 animate-fade-in">
             {/* Header / Stats */}
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                 <div>
-                    <h3 className="text-4xl font-black text-slate-900 tracking-tight">Prediction Oversight</h3>
-                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest mt-1">Expert verification & Accuracy tuning hub</p>
+                    <h3 className="text-2xl font-semibold text-slate-900 tracking-tight">Prediction Oversight</h3>
+                    <p className="text-sm text-slate-400 font-bold uppercase tracking-normal mt-1">Expert verification & Accuracy tuning hub</p>
                 </div>
                 
                 <div className="flex flex-wrap gap-4">
-                    <div className="px-6 py-4 bg-slate-900 text-white rounded-3xl">
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-50">Total Samples</p>
-                        <p className="text-2xl font-black">{stats.total}</p>
+                    <div className="px-4 py-2.5 bg-slate-900 text-white rounded-3xl">
+                        <p className="text-[10px] font-semibold uppercase tracking-normal opacity-50">Total Samples</p>
+                        <p className="text-2xl font-semibold">{stats.total}</p>
                     </div>
-                    <div className="px-6 py-4 bg-amber-500 text-white rounded-3xl">
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Pending</p>
-                        <p className="text-2xl font-black">{stats.pending}</p>
+                    <div className="px-4 py-2.5 bg-amber-500 text-white rounded-3xl">
+                        <p className="text-[10px] font-semibold uppercase tracking-normal opacity-80">Pending</p>
+                        <p className="text-2xl font-semibold">{stats.pending}</p>
                     </div>
                     <button 
                         onClick={handleExport}
-                        className="px-8 py-4 bg-emerald-600 text-white rounded-3xl font-black uppercase tracking-widest text-[10px] flex items-center gap-3 hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-600/20"
+                        className="px-4 py-2.5 bg-emerald-600 text-white rounded-3xl font-semibold uppercase tracking-normal text-[10px] flex items-center gap-3 hover:bg-emerald-700 transition-all shadow-sm shadow-emerald-600/20"
                     >
                         <Download size={16} />
                         Export Training Data
@@ -138,7 +138,7 @@ const AdminPredictionOversight = () => {
                         placeholder="Search by Species or User Email..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-6 py-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-emerald-500 transition-all font-bold"
+                        className="w-full pl-12 pr-6 py-2.5 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-emerald-500 transition-all font-bold"
                     />
                 </div>
                 <div className="flex gap-2 p-1 bg-slate-50 rounded-2xl">
@@ -146,7 +146,7 @@ const AdminPredictionOversight = () => {
                         <button
                             key={status}
                             onClick={() => setFilterStatus(status)}
-                            className={`px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                            className={`px-4 py-3 rounded-xl text-[10px] font-semibold uppercase tracking-normal transition-all ${
                                 filterStatus === status 
                                     ? 'bg-white text-emerald-600 shadow-sm' 
                                     : 'text-slate-400 hover:text-slate-600'
@@ -159,33 +159,33 @@ const AdminPredictionOversight = () => {
             </div>
 
             {loading ? (
-                <div className="py-40 flex flex-col items-center justify-center text-slate-300 gap-4">
+                <div className="py-2.50 flex flex-col items-center justify-center text-slate-300 gap-4">
                     <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-xs font-black uppercase tracking-widest">Scanning Databases...</span>
+                    <span className="text-xs font-semibold uppercase tracking-normal">Scanning Databases...</span>
                 </div>
             ) : (
-                <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-slate-50">
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Identity Sample</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Source / Reporter</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">ML Classification</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Verification Status</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Actions</th>
+                                <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-normal text-slate-400">Identity Sample</th>
+                                <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-normal text-slate-400">Source / Reporter</th>
+                                <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-normal text-slate-400">ML Classification</th>
+                                <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-normal text-slate-400">Verification Status</th>
+                                <th className="px-4 py-3 text-[10px] font-semibold uppercase tracking-normal text-slate-400">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
                             {filtered.map(item => (
                                 <tr key={item._id} className="hover:bg-slate-50/50 transition-colors group">
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 py-3">
                                         <div className="relative h-16 w-16 overflow-hidden rounded-2xl ring-4 ring-slate-50 transition-all group-hover:scale-110">
                                             <img src={`${IMAGE_BASE_URL}${item.imagePath}`} className="h-full w-full object-cover" />
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 py-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-slate-100 border-2 border-slate-50 flex items-center justify-center text-slate-400 font-black text-[10px] overflow-hidden">
+                                            <div className="w-10 h-10 rounded-xl bg-slate-100 border-2 border-slate-50 flex items-center justify-center text-slate-400 font-semibold text-[10px] overflow-hidden">
                                                 {!item.isAnonymous && item.user ? (
                                                     item.user.photoURL ? (
                                                         <img 
@@ -201,19 +201,19 @@ const AdminPredictionOversight = () => {
                                                 )}
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-black text-slate-900 leading-tight">
+                                                <span className="text-sm font-semibold text-slate-900 leading-tight">
                                                     {item.isAnonymous ? 'Anonymous Guest' : (item.user?.displayName || item.user?.name || 'Field Agent')}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-normal mt-0.5">
                                                     {item.isAnonymous ? 'Public Gateway' : (item.user?.email || 'Authenticated User')}
                                                 </span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 py-3">
                                         <div className="flex flex-col gap-1">
                                             <div className="flex items-center gap-2">
-                                                <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                                                <span className={`px-2 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider ${
                                                     item.venom?.toLowerCase().includes('venomous') && !item.venom?.toLowerCase().includes('non') 
                                                         ? 'bg-rose-50 text-rose-600' 
                                                         : 'bg-emerald-50 text-emerald-600'
@@ -225,8 +225,8 @@ const AdminPredictionOversight = () => {
                                             <span className="text-xs font-bold text-slate-500">{item.commonName}</span>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-6">
-                                        <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] inline-flex items-center gap-2 ${
+                                    <td className="px-4 py-3">
+                                        <span className={`px-4 py-2 rounded-xl text-[9px] font-semibold uppercase tracking-normal inline-flex items-center gap-2 ${
                                             item.verificationStatus === 'pending' ? 'bg-amber-50 text-amber-600' :
                                             item.verificationStatus === 'verified' ? 'bg-emerald-50 text-emerald-600' :
                                             'bg-sky-50 text-sky-600'
@@ -237,7 +237,7 @@ const AdminPredictionOversight = () => {
                                             {item.verificationStatus}
                                         </span>
                                     </td>
-                                    <td className="px-8 py-6">
+                                    <td className="px-4 py-3">
                                         <div className="flex items-center gap-3">
                                             {item.verificationStatus === 'pending' ? (
                                                 <>
@@ -259,12 +259,12 @@ const AdminPredictionOversight = () => {
                                                 </>
                                             ) : (
                                                 <div className="flex flex-col items-end opacity-60">
-                                                    <span className="text-[7px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Authenticated By</span>
+                                                    <span className="text-[7px] font-semibold uppercase tracking-normal text-slate-400 mb-1">Authenticated By</span>
                                                     <div className="flex flex-col items-end leading-tight">
-                                                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-tight">
+                                                        <span className="text-[10px] font-semibold text-slate-900 uppercase tracking-tight">
                                                             {item.verifiedBy?.name || 'System Authority'}
                                                         </span>
-                                                        <span className="text-[7px] font-bold text-emerald-600 uppercase tracking-widest mt-0.5">
+                                                        <span className="text-[7px] font-bold text-emerald-600 uppercase tracking-normal mt-0.5">
                                                             {item.verifierRole === 'medical_officer' ? 'Medical Expert' : 'Administrator'}
                                                         </span>
                                                     </div>

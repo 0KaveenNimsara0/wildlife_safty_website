@@ -1,6 +1,6 @@
 import React from 'react';
 import UnifiedNotificationGrid from '../components/notifications/UnifiedNotificationGrid';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const NotificationsPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#fcfdfd] py-12 px-6 lg:px-12 animate-fade-in">
+        <div className="min-h-screen bg-slate-50 py-12 px-6 lg:px-12 animate-fade-in">
             <div className="max-w-5xl mx-auto">
                 <header className="mb-12 flex items-center justify-between">
                     <button 

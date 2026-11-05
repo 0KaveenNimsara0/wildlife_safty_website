@@ -1,3 +1,4 @@
+import Avatar from '../../../components/ui/Avatar';
 import React, { useState, useEffect } from 'react';
 import { Camera, CheckCircle, XCircle, Mail } from 'lucide-react';
 import { FaEnvelope } from 'react-icons/fa';
@@ -97,12 +98,12 @@ const ProfileSection = ({
   };
 
   return (
-    <div className="space-y-10">
-      <div className="flex items-center gap-8 pb-10 border-b border-slate-50">
+    <div className="space-y-6 max-w-4xl">
+      <div className="flex items-center gap-4 pb-5 border-b border-slate-50">
         <div className="relative group">
-          <div className="w-24 h-24 rounded-[2rem] bg-emerald-600 flex items-center justify-center text-white font-black text-4xl shadow-xl ring-8 ring-emerald-50 group-hover:scale-105 transition-transform duration-500 overflow-hidden relative z-10">
+          <div className="w-16 h-16 shrink-0 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-semibold text-2xl shadow-sm ring-4 ring-emerald-50 group-hover:scale-105 transition-transform duration-500 overflow-hidden relative z-10">
             {activeUser?.photoURL ? (
-              <img src={activeUser.photoURL} alt="Profile Asset" className="w-full h-full object-cover" />
+              <Avatar src={activeUser.photoURL} name={activeUser?.displayName || activeUser?.name || "User"} />
             ) : (
               displayName?.charAt(0) || activeUser?.email?.charAt(0).toUpperCase()
             )}
@@ -116,50 +117,50 @@ const ProfileSection = ({
           </button>
         </div>
         <div>
-          <h3 className="text-3xl font-black text-slate-900 tracking-tight">{activeUser?.displayName || 'Agent Unnamed'}</h3>
+          <h3 className="text-xl font-semibold text-slate-900 tracking-tight">{activeUser?.displayName || 'User'}</h3>
           <div className="space-y-1">
-            <p className="text-slate-400 font-bold uppercase tracking-widest text-xs flex items-center gap-2 mt-1">
+            <p className="text-slate-500 font-medium break-all tracking-normal text-xs flex items-center gap-2 mt-1">
               <FaEnvelope className="text-emerald-500" /> {activeUser?.email}
             </p>
-            <div className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+            <div className="text-xs font-semibold uppercase tracking-normal flex items-center gap-2">
               {activeUser?.emailVerified ? (
-                <span className="text-emerald-600 flex items-center gap-1"><CheckCircle size={12} /> Verified Identity</span>
+                <span className="text-emerald-600 flex items-center gap-1"><CheckCircle size={12} /> Email verified</span>
               ) : (
                 <>
                   <span className="text-rose-500 flex items-center gap-1"><XCircle size={12} /> Unverified Email Address</span>
-                  <button type="button" onClick={handleSendVerificationCode} className="text-emerald-600 hover:scale-105 transition-transform font-black">Verify Email</button>
+                  <button type="button" onClick={handleSendVerificationCode} className="text-emerald-600 hover:scale-105 transition-transform font-semibold">Verify Email</button>
                 </>
               )}
             </div>
-            <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.2em]">
-              Enlisted: {(activeUser?.createdAt || activeUser?.metadata?.creationTime) ? new Date(activeUser?.createdAt || activeUser?.metadata?.creationTime).toLocaleDateString() : 'Active Agent'}
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-normal">
+              Joined: {(activeUser?.createdAt || activeUser?.metadata?.creationTime) ? new Date(activeUser?.createdAt || activeUser?.metadata?.creationTime).toLocaleDateString() : 'Active Agent'}
             </p>
           </div>
         </div>
       </div>
 
-      <form onSubmit={handleUpdateProfile} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <form onSubmit={handleUpdateProfile} className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Codename</label>
+          <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">Full name</label>
           <input
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
-            className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+            className="w-full px-3 py-2.5 text-sm bg-slate-50 border-2 border-transparent rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
           />
         </div>
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Authorized Email Address</label>
+          <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">Email address</label>
           <input
             type="email"
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}
-            className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
+            className="w-full px-3 py-2.5 text-sm bg-slate-50 border-2 border-transparent rounded-2xl focus:border-emerald-500 focus:bg-white focus:outline-none transition-all font-bold text-slate-800"
           />
         </div>
         <div className="md:col-span-2 pt-4">
-          <button type="submit" disabled={loading} className="btn-primary py-4 px-12 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-emerald-200">
-            Sync Intelligence Data
+          <button type="submit" disabled={loading} className="btn-primary py-2.5 px-5 rounded-2xl font-semibold uppercase tracking-normal text-xs shadow-lg shadow-emerald-200">
+            Save changes
           </button>
         </div>
       </form>

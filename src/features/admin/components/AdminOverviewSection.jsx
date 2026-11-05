@@ -61,34 +61,34 @@ export default function AdminOverviewSection() {
     return (
       <div className="py-20 flex flex-col items-center justify-center space-y-4 opacity-30">
         <div className="w-12 h-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-600 animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Synchronizing Global Ops...</p>
+        <p className="text-[10px] font-semibold uppercase tracking-normal text-slate-500">Synchronizing Global Ops...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-10">
-      <div className="relative overflow-hidden bg-slate-900 rounded-[2.5rem] p-10 text-white shadow-2xl">
+    <div className="space-y-6">
+      <div className="relative overflow-hidden bg-slate-900 rounded-2xl p-5 text-white shadow-sm">
         <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full -mr-48 -mt-48 blur-3xl animate-pulse" />
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
           <div>
              <div className="flex items-center gap-3 mb-4">
                 <div className="px-3 py-1 bg-emerald-500/20 rounded-full border border-emerald-500/30">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">System Nominal</span>
+                   <span className="text-[10px] font-semibold uppercase tracking-normal text-emerald-400">System Nominal</span>
                 </div>
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
              </div>
-             <h1 className="text-4xl text-white tracking-tight uppercase">Admin <span className="text-emerald-400">Dashboard</span></h1>
+             <h1 className="text-2xl text-white tracking-tight uppercase">Admin <span className="text-emerald-400">Dashboard</span></h1>
              <p className="text-slate-400 font-medium mt-2 max-w-md">Overseeing the Wildlife Safety infrastructure. Comprehensive control over users, medical users, and intel articles.</p>
           </div>
           <div className="flex gap-4">
-             <div className="px-6 py-4 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 text-center min-w-[120px]">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500 mb-1">Local Time</p>
-                <p className="text-xl font-black tracking-tight">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+             <div className="px-4 py-2.5 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 text-center min-w-[120px]">
+                <p className="text-[9px] font-semibold uppercase tracking-normal text-slate-500 mb-1">Local Time</p>
+                <p className="text-xl font-semibold tracking-tight">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
              </div>
-             <div className="px-6 py-4 bg-emerald-600 rounded-3xl text-center min-w-[120px] shadow-lg shadow-emerald-900/40">
-                <p className="text-[9px] font-black uppercase tracking-widest text-emerald-200 mb-1">Operations</p>
-                <p className="text-xl font-black tracking-tight italic">ACTIVE</p>
+             <div className="px-4 py-2.5 bg-emerald-600 rounded-3xl text-center min-w-[120px] shadow-lg shadow-emerald-900/40">
+                <p className="text-[9px] font-semibold uppercase tracking-normal text-emerald-200 mb-1">Operations</p>
+                <p className="text-xl font-semibold tracking-tight italic">ACTIVE</p>
              </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function AdminOverviewSection() {
           };
           const cls = colorClasses[card.color];
           return (
-            <div key={idx} className="card-premium group relative overflow-hidden p-8 bg-white border-slate-100">
+            <div key={idx} className="card-premium group relative overflow-hidden p-5 bg-white border-slate-100">
                <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:scale-125 transition-transform duration-700">
                   <card.icon size={82} />
                </div>
@@ -124,14 +124,14 @@ export default function AdminOverviewSection() {
                   <div className={`p-4 rounded-2xl ${cls.bg} ${cls.text}`}>
                      <card.icon size={20} />
                   </div>
-                  <span className={`text-[10px] font-black px-2 py-1 rounded-lg ${cls.trend} tracking-widest`}>
+                  <span className={`text-[10px] font-semibold px-2 py-1 rounded-lg ${cls.trend} tracking-normal`}>
                      {card.trend}
                   </span>
                </div>
                <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">{card.label}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 mb-1">{card.label}</p>
                   <div className="flex items-baseline gap-2">
-                     <h3 className="text-3xl font-black text-slate-900 tracking-tighter">{card.val}</h3>
+                     <h3 className="text-xl font-semibold text-slate-900 tracking-tight">{card.val}</h3>
                      <span className="text-[10px] text-slate-400 font-bold">Units</span>
                   </div>
                </div>
@@ -140,10 +140,10 @@ export default function AdminOverviewSection() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="card-premium p-10 bg-white">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="card-premium p-5 bg-white">
           <div className="flex items-center justify-between mb-8">
-             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Management Channels</h3>
+             <h3 className="text-[10px] font-semibold uppercase tracking-normal text-slate-400">Management Channels</h3>
              <ArrowUpRight size={16} className="text-slate-300" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -161,17 +161,17 @@ export default function AdminOverviewSection() {
                 <div className="p-3 bg-white rounded-2xl w-fit shadow-sm group-hover:bg-emerald-500 group-hover:text-white transition-colors mb-4">
                    <action.icon size={20} />
                 </div>
-                <p className="font-black text-slate-900 uppercase tracking-tight text-sm group-hover:text-white">{action.label}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 group-hover:text-emerald-100">{action.sub}</p>
+                <p className="font-semibold text-slate-900 uppercase tracking-tight text-sm group-hover:text-white">{action.label}</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-normal mt-1 group-hover:text-emerald-100">{action.sub}</p>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="card-premium p-10 bg-slate-900 text-white relative overflow-hidden border-none shadow-emerald-900/10">
+        <div className="card-premium p-5 bg-slate-900 text-white relative overflow-hidden border-none shadow-emerald-900/10">
            <div className="absolute bottom-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full -mr-32 -mb-32 blur-3xl" />
            <div className="relative z-10 flex flex-col h-full">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400/60 mb-8">Security Overview</h3>
+              <h3 className="text-[10px] font-semibold uppercase tracking-normal text-emerald-400/60 mb-8">Security Overview</h3>
               <div className="flex-1 space-y-6">
                  {[
                    { label: 'Admin Access', status: 'ROOT_AUTHORITY', color: 'emerald' },
@@ -180,8 +180,8 @@ export default function AdminOverviewSection() {
                  ].map((stat, idx) => (
                    <div key={idx} className="flex justify-between items-center border-b border-white/5 pb-4">
                       <div>
-                         <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">{stat.label}</p>
-                         <p className="text-xs font-black tracking-tight uppercase text-white mt-1">{stat.status}</p>
+                         <p className="text-[9px] font-semibold uppercase tracking-normal text-slate-500">{stat.label}</p>
+                         <p className="text-xs font-semibold tracking-tight uppercase text-white mt-1">{stat.status}</p>
                       </div>
                       <div className={`w-2 h-2 rounded-full bg-${stat.color}-500`} />
                    </div>

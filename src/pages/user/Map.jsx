@@ -102,11 +102,11 @@ export default function MapPage() {
       {/* Premium Header */}
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-8 border-b border-slate-200">
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-emerald-600 font-black uppercase tracking-[0.2em] text-xs">
+          <div className="flex items-center gap-2 text-emerald-600 font-semibold uppercase tracking-[0.2em] text-xs">
             <MapIcon size={16} />
             <span>Regional intelligence</span>
           </div>
-          <h1 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter leading-none">
+          <h1 className="text-3xl lg:text-4xl font-semibold text-slate-900 tracking-tight leading-none">
             Wildlife <span className="text-emerald-600">Hotspots</span>
           </h1>
           <p className="text-lg text-slate-500 font-medium max-w-xl">
@@ -154,11 +154,11 @@ export default function MapPage() {
         {/* Information Sidebar */}
         <div className="lg:col-span-5 space-y-6">
           <div className="flex items-center justify-between px-2">
-            <h3 className="text-xl font-black text-slate-900 tracking-tight">
+            <h3 className="text-xl font-semibold text-slate-900 tracking-tight">
               Found {filteredLocations.length} <span className="text-slate-400 font-medium">sites</span>
             </h3>
             {selectedLocation && (
-              <button onClick={() => setSelectedLocation(null)} className="text-xs font-black uppercase text-emerald-600 tracking-widest hover:underline">
+              <button onClick={() => setSelectedLocation(null)} className="text-xs font-semibold uppercase text-emerald-600 tracking-widest hover:underline">
                 Reset Selection
               </button>
             )}
@@ -178,13 +178,13 @@ export default function MapPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-widest ${
                         location.type === 'park' ? 'bg-sky-100 text-sky-700' : 'bg-amber-100 text-amber-700'
                       }`}>
                         {location.type}
                       </span>
                       {location.guideRequired && (
-                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black uppercase tracking-widest">
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-700 text-[10px] font-semibold uppercase tracking-widest">
                           <AlertCircle size={10} />
                           Guide Mandatory
                         </span>
@@ -192,7 +192,7 @@ export default function MapPage() {
                     </div>
                     
                     <div>
-                      <h4 className="text-xl font-black text-slate-900 leading-none group-hover:text-emerald-700 transition-colors">
+                      <h4 className="text-xl font-semibold text-slate-900 leading-none group-hover:text-emerald-700 transition-colors">
                         {location.title}
                       </h4>
                       <p className="mt-2 text-sm text-slate-500 font-medium leading-relaxed italic">
@@ -258,7 +258,7 @@ export default function MapPage() {
             ].map((stat, i) => (
               <div key={i} className="card-premium p-4 flex flex-col items-center justify-center text-center gap-1 border-slate-100">
                 <span className="text-slate-400 font-bold uppercase text-[9px] tracking-widest">{stat.label}</span>
-                <span className="text-sm font-black text-slate-800">{stat.val}</span>
+                <span className="text-sm font-semibold text-slate-800">{stat.val}</span>
               </div>
             ))}
           </div>
