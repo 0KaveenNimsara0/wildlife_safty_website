@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Shield, ArrowUpRight, ScanLine, BookOpen, Users, MapPin, MessageSquare, ArrowUp } from 'lucide-react';
 
 const exploreLinks = [
-  ['Identify a snake', '/'], ['Animal details', '/animalDetail'],
+  ['Identify a snake', '/identify'], ['Animal details', '/animalDetail'],
   ['Learning centre', '/learning'], ['Wildlife map', '/map'],
 ];
 const communityLinks = [
@@ -31,7 +31,7 @@ export default function Footer() {
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.8fr_0.9fr_1.1fr]">
           <div className="space-y-4 max-w-sm">
             <Link to="/" className="inline-flex items-center gap-2 text-lg font-semibold text-emerald-800"><Shield size={24} />WildLife Safety</Link>
-            <p className="text-sm leading-relaxed">Helping people and wildlife coexist safely. Identify species, explore educational resources and connect with a community that cares about Sri Lanka’s biodiversity.</p>
+            <p className="text-sm leading-relaxed">Helping people and wildlife coexist safely. Identify species, explore educational resources and connect with a community that cares about Sri Lankaâ€™s biodiversity.</p>
             <span className="inline-flex items-center gap-2 text-xs text-slate-500"><MapPin size={15} />Made for Sri Lanka</span>
           </div>
           {[["Explore", exploreLinks], ["Community & support", communityLinks]].map(([title, links]) => (
@@ -53,11 +53,11 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 rounded-xl bg-emerald-50 border border-emerald-100 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3"><MessageSquare size={20} className="text-emerald-700 shrink-0" /><p className="text-sm text-emerald-950"><span className="font-semibold">Have a question or suggestion?</span> We’d like to hear from you.</p></div>
+          <div className="flex items-center gap-3"><MessageSquare size={20} className="text-emerald-700 shrink-0" /><p className="text-sm text-emerald-950"><span className="font-semibold">Have a question or suggestion?</span> Weâ€™d like to hear from you.</p></div>
           <Link to="/contact" className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-800 whitespace-nowrap hover:underline">Get in touch <ArrowUpRight size={16} /></Link>
         </div>
         <div className="mt-6 pt-5 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-          <span>© {new Date().getFullYear()} WildLife Safety. All rights reserved.</span>
+          <span>Â© {new Date().getFullYear()} WildLife Safety. All rights reserved.</span>
           <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })} className="inline-flex items-center gap-2 py-2 hover:text-emerald-700">Back to top <ArrowUp size={14} /></button>
         </div>
       </div>

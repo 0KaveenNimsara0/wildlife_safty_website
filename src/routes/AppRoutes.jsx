@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import UserLayout from '../layouts/UserLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import MedicalOfficerLayout from '../layouts/MedicalLayout';
-import AuthLayout from '../layouts/AuthLayout';
+import Landing from '../pages/user/Landing';
 
 // Public User Pages
 import Dashboard from '../pages/user/Dashboard';
@@ -15,7 +15,6 @@ import Learn from '../pages/user/Learn';
 import Map from '../pages/user/Map';
 import AnimalDetails from '../pages/user/AnimalDetails';
 import CommunityFeed from '../pages/user/CommunityFeed';
-import ArticleSelection from '../pages/user/ArticleSelection';
 import UserPosts from '../pages/user/UserPosts';
 import Chat from '../pages/user/Chat';
 import NotificationsPage from '../pages/NotificationsPage';
@@ -60,14 +59,15 @@ export default function AppRoutes() {
     <Routes>
       {/* Public & General User Site - Wrapped in UserLayout */}
       <Route element={<UserLayout />}>
-        <Route path="/" element={<Identifier />} />
-        <Route path="/home" element={<Identifier />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/home" element={<Landing />} />
+        <Route path="/identify" element={<Identifier />} />
         <Route path="/emergency" element={<Emergency />} />
         <Route path="/learning" element={<Learn />} />
         <Route path="/map" element={<Map />} />
         <Route path="/animalDetail" element={<AnimalDetails />} />
         <Route path="/communityFeed" element={<CommunityFeed />} />
-        <Route path="/article-selection" element={<ArticleSelection />} />
+        <Route path="/article-selection" element={<Navigate to="/learning" replace />} />
         <Route path="/my-posts" element={<UserPosts />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/notifications" element={<NotificationsPage />} />
@@ -83,7 +83,7 @@ export default function AppRoutes() {
       </Route>
 
       {/* Authentication Layer */}
-      <Route element={<AuthLayout />}>
+      <Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword mode="user" />} />

@@ -1,9 +1,8 @@
 import { BASE_URL } from '../config/constants';
 // Reconnect refreshes the persisted count, recovering missed events.
-export function subscribeNotifications(onChange) {
+function openStream(token, onChange) {
  let stopped=false, controller, timer, delay=1000;
  async function connect() {
-  const token=localStorage.getItem('adminToken') || localStorage.getItem('medicalOfficerToken') || localStorage.getItem('userToken');
   if (!token || stopped) return;
   controller=new AbortController();
   try {
@@ -27,4 +26,30 @@ export function subscribeNotifications(onChange) {
  }
  connect();
  return ()=>{stopped=true;clearTimeout(timer);controller?.abort();};
+}
+
+// One authenticated connection per session, shared by every mounted consumer.
+const streams = new Map();
+export function subscribeNotifications(onChange) {
+ const token = localStorage.getItem('adminToken') || localStorage.getItem('medicalOfficerToken') || localStorage.getItem('userToken');
+ if (!token) return () => {};
+ let stream = streams.get(token);
+ if (!stream) {
+  stream = { listeners: new Set(), stop: null };
+  streams.set(token, stream);
+  stream.stop = openStream(token, () => {
+   for (const listener of stream.listeners) {
+    try { Promise.resolve(listener()).catch(() => {}); } catch { /* Isolate consumers. */ }
+   }
+  });
+ }
+ const listener = () => onChange();
+ stream.listeners.add(listener);
+ let removed = false;
+ return () => {
+  if (removed) return;
+  removed = true;
+  stream.listeners.delete(listener);
+  if (!stream.listeners.size) { stream.stop(); streams.delete(token); }
+ };
 }

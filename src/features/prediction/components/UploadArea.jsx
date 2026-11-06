@@ -13,6 +13,7 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
 
     const handleDrop = (e) => {
         handleDrag(e, false);
+        if (isLoading) return;
         const file = e.dataTransfer.files[0];
         if (file) onImageSelect(file);
     };
@@ -31,14 +32,23 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
                         : 'border-slate-200 bg-white/50 hover:border-emerald-400 hover:bg-emerald-50/20'
                 }`}
             >
+                <button
+                    type="button"
+                    aria-label={imageURL ? 'Change snake photo' : 'Upload a snake photo'}
+                    disabled={isLoading}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute inset-0 z-10 cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-600 disabled:cursor-wait"
+                />
                 {imageURL ? (
                     <>
                         <img src={imageURL} alt="Subject" className="absolute inset-0 object-cover w-full h-full group-hover:scale-105 transition-transform duration-700" />
                         <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/30 transition-colors duration-300" />
                         <button
                             aria-label="Remove selected image"
+                            type="button"
+                            disabled={isLoading}
                             onClick={clearImage}
-                            className="absolute top-6 right-6 p-3 bg-white/90 backdrop-blur-md text-rose-500 rounded-2xl shadow-xl hover:bg-rose-500 hover:text-white transition-all duration-300 transform translate-y-[-10px] opacity-100"
+                            className="absolute z-20 top-6 right-6 p-3 bg-white/90 backdrop-blur-md text-rose-500 rounded-2xl shadow-xl hover:bg-rose-500 hover:text-white transition-all duration-300 transform translate-y-[-10px] opacity-100"
                         >
                             <Trash2 size={20} />
                         </button>
@@ -50,7 +60,7 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
                         </div>
                         <div className="space-y-1">
                             <h4 className="text-xl font-semibold text-slate-800 tracking-tight">Upload a snake photo</h4>
-                            <p className="text-slate-500 text-sm font-medium">Drag a photo here, or use the button beside it</p>
+                            <p className="text-slate-500 text-sm font-medium">Click here or drag a photo · JPG or PNG, up to 5 MB</p>
                         </div>
                         <div className="pt-4 flex justify-center">
                             <div className="w-10 h-[2px] bg-slate-200 rounded-full" />
@@ -76,18 +86,21 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
                     <input
                         type="file"
                         ref={fileInputRef}
-                        onChange={(e) => onImageSelect(e.target.files[0])}
+                        onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ''; if (file) onImageSelect(file); }}
                         className="hidden"
-                        accept="image/*"
+                        accept="image/jpeg,image/png"
+                        disabled={isLoading}
                     />
                     
                     <div className="flex flex-col sm:flex-row gap-4">
                         <button
+                            type="button"
+                            disabled={isLoading}
                             onClick={() => fileInputRef.current.click()}
                             className="btn-secondary flex-1 py-3 flex items-center justify-center gap-3 border-2"
                         >
                             <Camera size={20} />
-                            <span>{imageFile ? 'Repick Image' : 'Select Source'}</span>
+                            <span>{imageFile ? 'Change photo' : 'Choose photo'}</span>
                         </button>
                         
                         <button
@@ -102,7 +115,7 @@ const UploadArea = ({ onImageSelect, onPredict, isLoading, imageFile, imageURL, 
                                 </>
                             ) : (
                                 <>
-                                    <span>Initiate Scan</span>
+                                    <span>Identify snake</span>
                                     <Activity size={20} />
                                 </>
                             )}

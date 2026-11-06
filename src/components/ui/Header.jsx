@@ -12,14 +12,14 @@ export default function Header() {
     const navigate = useNavigate();
 
     const navigation = [
-        { id: 'home', name: 'Identifier', icon: Camera, path: '/home' },
+        { id: 'home', name: 'Home', icon: Shield, path: '/home' },
+        { id: 'identify', name: 'Identify', icon: Camera, path: '/identify' },
         { id: 'emergency', name: 'Emergency', icon: Phone, path: '/emergency' },
         { id: 'learning', name: 'Learn', icon: BookOpen, path: '/learning' },
         { id: 'map', name: 'Map', icon: MapPin, path: '/map' },
-        { id: 'animalDetail', name: 'Wildlife', icon: Search, path: '/animalDetail' },
         { id: 'communityFeed', name: 'Community', icon: User, path: '/communityFeed' },
         { id: 'chat', name: 'Chat', icon: MessageCircle, path: '/chat' },
-        { id: 'contact', name: 'Contact', icon: Mail, path: '/contact' }
+
     ];
 
     // Helper functions to check login state
