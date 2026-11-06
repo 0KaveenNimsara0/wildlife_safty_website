@@ -96,6 +96,7 @@ export default function AppRoutes() {
       </Route>
 
       {/* Admin Portal Layer - Wrapped in AdminLayout */}
+      <Route element={<ProtectedRoute role="admin" />}>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminOverviewSection />} />
         <Route path="dashboard" element={<AdminOverviewSection />} />
@@ -110,7 +111,10 @@ export default function AppRoutes() {
         <Route path="contact-tickets" element={<AdminContactSection />} />
       </Route>
 
+      </Route>
+
       {/* Medical Officer Portal Layer - Wrapped in MedicalOfficerLayout */}
+      <Route element={<ProtectedRoute role="medical" />}>
       <Route path="/medical-officer" element={<MedicalOfficerLayout />}>
         <Route index element={<MedicalOverviewSection />} />
         <Route path="dashboard" element={<MedicalOverviewSection />} />
@@ -123,6 +127,8 @@ export default function AppRoutes() {
         <Route path="articles/:articleId" element={<MedicalOfficerArticleViewPage />} />
         <Route path="articles/create" element={<MedicalArticleCreate />} />
         <Route path="articles/edit/:articleId" element={<MedicalArticleEdit />} />
+      </Route>
+
       </Route>
 
       {/* Fallback */}

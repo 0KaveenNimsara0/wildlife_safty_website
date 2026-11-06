@@ -1,12 +1,13 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import { getRole } from '../app/roles';
 
-const ProtectedRoute = () => {
-  const { currentUser, activeUser } = useAuth();
-
-  // Allow access if either a Firebase session or a MongoDB-based activeUser exists
-  return (currentUser || activeUser) ? <Outlet /> : <Navigate to="/login" />;
-};
-
-export default ProtectedRoute;
+export default function ProtectedRoute({role}) {
+ const {currentUser,activeUser}=useAuth();
+ const location=useLocation();
+ if(!role) return (currentUser || activeUser) ? <Outlet/> : <Navigate to="/login" replace state={{from:location.pathname}}/>;
+ const config=getRole(role);
+ const permitted=activeUser && config.identityRoles.includes(activeUser.role);
+ return permitted ? <Outlet/> : <Navigate to={config.login} replace state={{from:location.pathname}}/>;
+}
