@@ -14,10 +14,10 @@ Updated: 2026-11-06. Checked items are implemented; runtime verification is trac
 - [x] Isolate notification subscriber failures and stop the stream after the last subscriber unmounts.
 
 ## Remaining cleanup
-- [ ] Consolidate ConsultationsSection message presentation with ChatInterface while preserving role APIs and read state.
-- [ ] Extract shared profile form presentation without merging distinct verification workflows.
-- [ ] Trace generated password-reset links before removing apparently unused ResetPasswordPage.
-- [ ] Consolidate repeated notification data fetches; shared transport alone does not eliminate these.
+- [x] Consolidate ConsultationsSection message presentation with ChatInterface while preserving role APIs and read state.
+- [x] Extract shared profile inputs and consolidate base appearance, focus and disabled states; retain distinct verification workflows.
+- [x] Trace reset flows: ForgotPassword uses shared-auth OTP endpoints; removed unreferenced legacy ResetPasswordPage.
+- [x] Coalesce concurrent notification-list requests per credential; preserve fresh reads after completion.
 - [ ] Audit remaining imports/assets and backend duplication.
 - [ ] Audit mobile app separately.
 
@@ -31,3 +31,9 @@ UserPosts is used by community and its own route. MedicalOfficerArticleHub is us
 
 ## Optional content
 - [ ] Add a concise How it works/FAQ section once reviewed content is available.
+
+## Audit follow-up (2026-11-06)
+- Exact-content source scan completed across website (98), Node API (92), mobile (62), AI backend (10). No exact duplicate source files found; see cross-project-audit.md.
+- This scan does not prove semantic feature duplication is absent. Broader backend/mobile workflow review remains open.
+- Browser verification attempted through computer-use tooling; inventory and tab creation timed out. Browser checks remain unchecked.
+- Targeted lint exposed unused imports/parameters in medical chat; removed them. Existing effect dependency warning remains to resolve with polling lifecycle work.

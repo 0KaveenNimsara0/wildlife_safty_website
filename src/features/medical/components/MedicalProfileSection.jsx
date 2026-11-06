@@ -1,3 +1,4 @@
+import ProfileInput from '../../../components/ui/ProfileInput';
 import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -393,7 +394,7 @@ export default function MedicalProfileSection() {
                 {isEditing && !field.readOnly ? (
                   <div className="relative group">
                      <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
-                      <input
+                      <ProfileInput
                       type={field.type || 'text'}
                       name={field.name}
                       value={field.val}
@@ -424,7 +425,7 @@ export default function MedicalProfileSection() {
                 {isEditing && !field.readOnly ? (
                   <div className="relative group">
                      <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-emerald-500 transition-colors" size={18} />
-                     <input
+                     <ProfileInput
                       type="text"
                       name={field.name}
                       value={field.val}
@@ -531,7 +532,7 @@ export default function MedicalProfileSection() {
                             <label className="text-[9px] font-semibold uppercase tracking-normal text-slate-400 mb-2 block ml-4">Current Verified Password</label>
                             <div className="relative">
                                <Key className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                               <input 
+                               <ProfileInput 
                                   required
                                   type="password"
                                   className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-emerald-600 focus:outline-none transition-all font-bold text-sm"
@@ -545,7 +546,7 @@ export default function MedicalProfileSection() {
                             <label className="text-[9px] font-semibold uppercase tracking-normal text-slate-400 mb-2 block ml-4">New Security Protocol (Password)</label>
                             <div className="relative">
                                <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                               <input 
+                               <ProfileInput 
                                   required
                                   type="password"
                                   className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-emerald-500 focus:outline-none transition-all font-bold text-sm"
@@ -559,7 +560,7 @@ export default function MedicalProfileSection() {
                             <label className="text-[9px] font-semibold uppercase tracking-normal text-slate-400 mb-2 block ml-4">Confirm New Security Protocol</label>
                             <div className="relative">
                                <ShieldCheck className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                               <input 
+                               <ProfileInput 
                                   required
                                   type="password"
                                   className="w-full pl-14 pr-6 py-3 bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white focus:border-emerald-600 focus:outline-none transition-all font-bold text-sm"
@@ -574,7 +575,7 @@ export default function MedicalProfileSection() {
                             <div className="grid grid-cols-2 gap-4">
                                <div className="relative col-span-2">
                                   <Smartphone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={16} />
-                                  <input 
+                                  <ProfileInput 
                                      required
                                      maxLength={6}
                                      type="text"

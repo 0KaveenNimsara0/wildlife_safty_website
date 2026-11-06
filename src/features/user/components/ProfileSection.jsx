@@ -1,3 +1,4 @@
+import ProfileInput from '../../../components/ui/ProfileInput';
 import Avatar from '../../../components/ui/Avatar';
 import React, { useState, useEffect } from 'react';
 import { Camera, CheckCircle, XCircle, Mail } from 'lucide-react';
@@ -142,7 +143,7 @@ const ProfileSection = ({
       <form onSubmit={handleUpdateProfile} className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="space-y-2">
           <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">Full name</label>
-          <input
+          <ProfileInput
             type="text"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
@@ -151,7 +152,7 @@ const ProfileSection = ({
         </div>
         <div className="space-y-2">
           <label className="text-[10px] font-semibold uppercase tracking-normal text-slate-400 ml-4">Email address</label>
-          <input
+          <ProfileInput
             type="email"
             value={newEmail}
             onChange={(e) => setNewEmail(e.target.value)}

@@ -1,9 +1,7 @@
 import Avatar from '../../../components/ui/Avatar';
-import React, { useState, useEffect, useRef } from 'react';
-import { Loader2, MessageSquare, ChevronDown, Activity } from 'lucide-react';
-import MessageBubble from '../../chat/components/MessageBubble';
-import ChatInput from '../../chat/components/ChatInput';
-import { formatDate } from '../../../utils/formatters';
+import React, { useState, useEffect } from 'react';
+import { Loader2, MessageSquare, Activity } from 'lucide-react';
+import ChatInterface from '../../chat/components/ChatInterface';
 import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
 
 const ConsultationsSection = () => {
@@ -15,12 +13,6 @@ const ConsultationsSection = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [newMessagesCount, setNewMessagesCount] = useState(0);
-  
-  const messagesContainerRef = useRef(null);
-  const lastParticipantRef = useRef(null);
-  const lastMessagesLengthRef = useRef(0);
-
   useEffect(() => {
     const token = localStorage.getItem('medicalOfficerToken');
     if (token) {
@@ -58,50 +50,6 @@ const ConsultationsSection = () => {
       if (conversationsInterval) clearInterval(conversationsInterval);
     };
   }, [medicalOfficerId, currentConversation?._id, activeTab]);
-
-  const handleScroll = () => {
-    if (messagesContainerRef.current) {
-      const container = messagesContainerRef.current;
-      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
-      if (isAtBottom && newMessagesCount > 0) {
-        setNewMessagesCount(0);
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (messagesContainerRef.current) {
-      const container = messagesContainerRef.current;
-      const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
-      const isNewChannel = lastParticipantRef.current !== (currentConversation?.user?._id || currentConversation?.admin?._id);
-      
-      const hasNewMessages = messages.length > lastMessagesLengthRef.current;
-
-      if (isNewChannel) {
-        container.scrollTop = container.scrollHeight;
-        setNewMessagesCount(0);
-      } else if (hasNewMessages) {
-        if (isNearBottom) {
-          container.scrollTop = container.scrollHeight;
-          setNewMessagesCount(0);
-        } else {
-          setNewMessagesCount(prev => prev + (messages.length - lastMessagesLengthRef.current));
-        }
-      }
-
-      lastMessagesLengthRef.current = messages.length;
-      if (currentConversation?._id || currentConversation?.user?._id || currentConversation?.admin?._id) {
-        lastParticipantRef.current = currentConversation.user?._id || currentConversation.admin?._id;
-      }
-    }
-  }, [messages, currentConversation?._id, currentConversation?.user?._id, currentConversation?.admin?._id]);
-
-  const scrollToBottom = () => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-      setNewMessagesCount(0);
-    }
-  };
 
   const fetchConversations = async (id, silent = false) => {
     try {
@@ -141,7 +89,7 @@ const ConsultationsSection = () => {
     }
   };
 
-  const fetchMessages = async (conversationId, silent = false) => {
+  const fetchMessages = async (conversationId) => {
     if (!conversationId) return;
     try {
       const response = await fetch(`${BASE_URL}/medical-officer/chat/messages/${conversationId}`, {
@@ -325,111 +273,20 @@ const ConsultationsSection = () => {
               </div>
             </div>
 
-            <div className="flex-1 flex flex-col bg-white">
+            <div className="flex-1 min-w-0 min-h-0 flex flex-col bg-white">
               {currentConversation ? (
-                <>
-                  <div className="px-4 py-3 bg-white border-b border-slate-50 flex items-center justify-between shadow-sm relative z-10">
-                    <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-semibold text-sm shadow-sm overflow-hidden ${currentConversation.admin ? 'bg-slate-900 shadow-slate-900/10' : 'bg-emerald-600 shadow-emerald-500/10'}`}>
-                           {currentConversation.admin ? (
-                              currentConversation.admin.photoURL ? (
-                                <Avatar src={currentConversation.admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.admin.photoURL}` : currentConversation.admin.photoURL} name="Admin" />
-                              ) : currentConversation.admin.name?.charAt(0).toUpperCase()
-                           ) : (
-                              currentConversation.user?.photoURL ? (
-                                <Avatar src={currentConversation.user.photoURL?.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.user.photoURL}` : currentConversation.user.photoURL} name="User" />
-                              ) : currentConversation.user?.displayName?.charAt(0).toUpperCase() || 'U'
-                           )}
-                        </div>
-                        <div>
-                          <h3 className="text-sm font-semibold text-slate-900 tracking-tight leading-none mb-1.5">
-                             {currentConversation.user?.displayName || currentConversation.user?.email || currentConversation.admin?.name || 'Authorized User'}
-                          </h3>
-                          <div className="flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                               <span className={`text-[10px] font-semibold uppercase tracking-normal ${currentConversation.admin ? 'text-slate-500 underline decoration-slate-200 underline-offset-4' : 'text-emerald-500'}`}>
-                                  {currentConversation.admin ? 'Official System Support' : 'Support Conversation'}
-                               </span>
-                          </div>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                       <div className="hidden lg:flex flex-col items-end mr-4">
-                           <p className="text-[9px] font-semibold uppercase tracking-normal text-slate-400">Security</p>
-                          <p className="text-[10px] font-semibold text-slate-900 uppercase tracking-tight">E2E Encrypted</p>
-                       </div>
-                       <button className="p-3 bg-slate-50 text-slate-400 hover:text-slate-900 rounded-xl transition-all">
-                          <svg size={20} fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-5 h-5">
-                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                          </svg>
-                       </button>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 relative flex flex-col bg-slate-50/20 overflow-hidden">
-                    {newMessagesCount > 0 && (
-                      <button 
-                        onClick={scrollToBottom}
-                        className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white px-4 py-2.5 rounded-full text-[10px] font-semibold uppercase tracking-normal shadow-sm shadow-emerald-500/30 flex items-center gap-2 z-20 animate-bounce hover:bg-emerald-700 transition-all active:scale-95"
-                      >
-                          <ChevronDown size={14} />
-                          {newMessagesCount} New Messages Available
-                       </button>
-                    )}
-
-                    <div 
-                      className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar"
-                      ref={messagesContainerRef}
-                      onScroll={handleScroll}
-                    >
-                    {messages.length === 0 && (
-                      <div className="flex flex-col items-center justify-center h-full opacity-30 text-center">
-                        <div className="w-20 h-20 rounded-xl bg-slate-100 flex items-center justify-center mb-6">
-                           <MessageSquare size={32} className="text-slate-300" />
-                        </div>
-                         <h3 className="text-xl font-semibold text-slate-800 uppercase tracking-tight mb-2">Select a Contact</h3>
-                         <p className="text-[10px] font-bold text-slate-400 max-w-[200px] uppercase tracking-normal leading-relaxed">Your encrypted message history will appear here.</p>
-                       </div>
-                    )}
-
-                    {messages.map((message, index) => {
-                      const isMedicalOfficer = message.senderType === 'medical_officer';
-                      const showDate = index === 0 || formatDate(message.createdAt) !== formatDate(messages[index - 1].createdAt);
-
-                      return (
-                        <div key={message._id || index} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                          {showDate && (
-                            <div className="text-center my-8 flex items-center justify-center gap-4">
-                               <div className="h-px bg-slate-100 flex-1" />
-                               <span className="bg-white border border-slate-100 text-slate-400 text-[9px] px-4 py-1.5 rounded-full uppercase font-semibold tracking-normal shadow-sm">
-                                 {formatDate(message.createdAt)}
-                               </span>
-                               <div className="h-px bg-slate-100 flex-1" />
-                            </div>
-                          )}
-                          <MessageBubble 
-                            message={message} 
-                            isMe={isMedicalOfficer} 
-                            avatar={!isMedicalOfficer ? (
-                              currentConversation.admin 
-                                ? (currentConversation.admin.photoURL ? (currentConversation.admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.admin.photoURL}` : currentConversation.admin.photoURL) : null)
-                                : (currentConversation.user?.photoURL ? (currentConversation.user.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${currentConversation.user.photoURL}` : currentConversation.user.photoURL) : null)
-                            ) : null}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                  <div className="p-6 bg-white border-t border-slate-50 relative z-10">
-                     <ChatInput 
-                       onSendMessage={onSendMessage} 
-                       loading={loading} 
-                       placeholder="Type your message here..." 
-                     />
-                  </div>
-                </>
+                <ChatInterface
+                  key={currentConversation._id || currentConversation.admin?._id || currentConversation.user?.uid}
+                  participant={{
+                    ...(currentConversation.admin || currentConversation.user),
+                    name: currentConversation.admin?.name || currentConversation.user?.displayName || currentConversation.user?.email || 'User'
+                  }}
+                  messages={messages}
+                  onSendMessage={onSendMessage}
+                  loading={loading}
+                  error={error}
+                  onClearError={() => setError(null)}
+                />
               ) : (
                 <div className="flex-1 flex flex-col items-center justify-center bg-slate-50/20 p-6 text-center overflow-hidden relative">
                    <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full -mr-48 -mt-48 blur-3xl" />

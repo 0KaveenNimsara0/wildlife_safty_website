@@ -45,7 +45,7 @@ api.interceptors.request.use(
 
 // Centralized Notification API
 export const notificationApi = {
-  getNotifications: () => api.get('/notifications'),
+  getNotifications: () => getSharedNotifications(),
   getUnreadCount: () => api.get('/notifications/unread-count'),
   markAsRead: (id) => api.patch(`/notifications/${id}/read`),
   markAllAsRead: () => api.patch('/notifications/read-all'),
@@ -62,3 +62,14 @@ export const medicalOfficerApi = {
 };
 
 export default api;
+
+// Coalesce simultaneous notification reads, scoped to the current credential.
+const notificationRequests = new Map();
+function getSharedNotifications() {
+ const key = localStorage.getItem('adminToken') || localStorage.getItem('medicalOfficerToken') || localStorage.getItem('userToken') || '';
+ if (!notificationRequests.has(key)) {
+  const request = api.get('/notifications').finally(() => notificationRequests.delete(key));
+  notificationRequests.set(key, request);
+ }
+ return notificationRequests.get(key);
+}

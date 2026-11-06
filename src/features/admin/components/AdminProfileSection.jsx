@@ -1,3 +1,4 @@
+import ProfileInput from '../../../components/ui/ProfileInput';
 import ModalLayer from '../../../components/ui/ModalLayer';
 import Avatar from '../../../components/ui/Avatar';
 import React, { useState, useEffect } from 'react';
@@ -326,7 +327,7 @@ export default function AdminProfileSection() {
                   {isEditing ? (
                     <div className="relative group">
                        <field.icon className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emerald-500 transition-colors" size={18} />
-                        <input
+                        <ProfileInput
                         type={field.name === 'email' ? 'email' : 'text'}
                         name={field.name}
                         value={field.val}
@@ -463,7 +464,7 @@ export default function AdminProfileSection() {
                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Current Password</label>
                        <Shield size={12} className="text-slate-300" />
                     </div>
-                    <input 
+                    <ProfileInput 
                        type="password"
                        value={currentPassword}
                        onChange={(e) => setCurrentPassword(e.target.value)}
@@ -476,7 +477,7 @@ export default function AdminProfileSection() {
                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-normal">New Password</label>
                        <Key size={12} className="text-emerald-500" />
                     </div>
-                    <input 
+                    <ProfileInput 
                        type="password"
                        value={newPassword}
                        onChange={(e) => setNewPassword(e.target.value)}
@@ -489,7 +490,7 @@ export default function AdminProfileSection() {
                        <label className="block text-[10px] font-semibold text-slate-400 uppercase tracking-normal">Confirm Password</label>
                        <RotateCcw size={12} className={newPassword && confirmPassword ? (newPassword === confirmPassword ? 'text-emerald-500' : 'text-rose-500') : 'text-slate-300'} />
                     </div>
-                    <input 
+                    <ProfileInput 
                        type="password"
                        value={confirmPassword}
                        onChange={(e) => setConfirmPassword(e.target.value)}

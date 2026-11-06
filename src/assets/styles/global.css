@@ -164,3 +164,14 @@
 dialog.modal-layer { position:fixed; inset:0; margin:0; width:100%; height:100dvh; max-width:none; max-height:none; border:0; color:inherit; overflow-y:auto; }
 dialog.modal-layer::backdrop { background:rgba(16,28,22,.35); }
 body:has(dialog[open]) { overflow:hidden; }
+
+/* Shared profile controls; field-specific padding still accommodates icons. */
+input.profile-input {
+ width:100%; min-height:44px; border-radius:12px;
+ background-color:var(--surface); color:var(--text-main);
+ border-width:1px; border-color:var(--border-subtle);
+ font-size:14px; font-weight:500; letter-spacing:normal; text-transform:none;
+ box-shadow:none;
+}
+input.profile-input:focus { outline:2px solid #bcd8c5; outline-offset:1px; border-color:var(--primary); }
+input.profile-input:disabled { background-color:var(--background); color:var(--text-muted); }
