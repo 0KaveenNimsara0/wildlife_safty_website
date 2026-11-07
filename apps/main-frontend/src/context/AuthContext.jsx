@@ -143,6 +143,13 @@ export function AuthProvider({ children }) {
     return updateEmail(currentUser, email);
   }
 
+  async function requestPasswordOtp() {
+    const response = await fetch(`${BASE_URL}/auth/user/password-otp`, { method:'POST' });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Unable to send security code');
+    return data;
+  }
+
   async function updateUserPassword(newPassword, currentPassword, otp) {
     if (!currentUser) throw new Error('No user logged in');
 
@@ -487,6 +494,7 @@ export function AuthProvider({ children }) {
     resetPassword,
     updateEmail: updateUserEmail,
     updatePassword: updateUserPassword,
+    requestPasswordOtp,
     sendEmailVerification,
     verifyEmail,
     uploadProfilePicture,

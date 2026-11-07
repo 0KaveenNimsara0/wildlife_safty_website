@@ -3,7 +3,7 @@ import { Shield, Key, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../../../../../../packages/shared/src/context/useAuth.js';
 
 const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
-  const { activeUser, sendEmailVerification, refreshUser } = useAuth();
+  const { activeUser, requestPasswordOtp, refreshUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -24,7 +24,7 @@ const SecuritySection = ({ updatePassword, setSuccess, setError }) => {
       setOtpLoading(true);
       setError('');
       setSuccess('');
-      await sendEmailVerification();
+      await requestPasswordOtp();
       setOtpSent(true);
       setSuccess('Security code sent to your email.');
     } catch (err) {

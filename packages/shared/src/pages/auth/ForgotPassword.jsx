@@ -99,7 +99,7 @@ export default function ForgotPassword({ mode = "user" }) {
     const response = await fetch(`${BASE_URL}/shared-auth/forgot-password/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp: otpValue })
+      body: JSON.stringify({ email, otp: otpValue, role: mode })
     });
     
     const data = await response.json();

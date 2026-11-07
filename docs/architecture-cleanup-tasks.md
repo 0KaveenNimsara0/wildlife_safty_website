@@ -37,7 +37,7 @@ Status key: `[x]` verified/documented; `[ ]` pending. Existing implementation wo
 - [x] T30 Create apps/main-frontend with its own package, entry point, router, environment example, build and dev port 5173.
 - [x] T31 Create apps/admin-frontend with its own package, entry point, admin-only auth provider/router, environment example, build and dev port 5174.
 - [x] T32 Move admin login/register, administration pages and navigation into admin app; keep medical/public/user workflows in main.
-- [x] T33 Add explicit VITE_MAIN_APP_URL / VITE_ADMIN_APP_URL settings. Preserve approved legacy admin deep links using safe redirects; update cross-app navigation.
+- [x] T33 Add explicit VITE_MAIN_APP_URL / VITE_ADMIN_APP_URL settings. Main /admin/* paths remain local not-found pages, with no redirect to the admin origin, as requested.
 - [x] T34 Remove admin routes/providers/features from main imports. Evidence: main dependency graph/build has no admin application modules.
 - [ ] T35 Verify independent start/build/preview output, deep-link reloads and simultaneous separate-origin login/logout. Logout in one app must not select a different app's stale credentials.
 
@@ -82,7 +82,7 @@ Initial legacy frontend deletion batch completed after workspace/import/config r
 | 2026-11-07 | T01 | Read role/session/transport/guard implementations and representative routes | A01–A13 documented; audit endpoint auth gap identified |
 | 2026-11-07 | T02–T03 | Architecture and task documents created | Planning complete; application split and deletion work not started |
 
-Next executable batch: T04–T07, then T10. Do not start by copying the entire website into two folders: that doubles the maintenance problem.
+Current executable batch: finish T05/T13 route policy coverage, then authenticated regression and domain cleanup. The application split is already implemented.
 
 
 ## Implementation update — 2026-11-07: admin separation and RBAC foundation
@@ -119,3 +119,18 @@ Removed only the proven obsolete paths listed in the deletion ledger. Kept works
 ## Main/admin isolation correction
 
 User requested no admin redirects from the main site. Removed the legacy /admin/* redirect and its cross-origin navigation code. Unknown main-site paths, including /admin/login, now render a local Page not found screen. Prior redirect requirements/checks in this document are superseded by this decision. Admin login remains exclusively on the admin application origin.
+
+## Authentication hardening continuation — 2026-11-07
+
+Completed and checked in this batch:
+
+- User password updates require authenticated identity; private profile reads require the matching UID. The password-change OTP is sent to the stored account email.
+- Consolidated user authentication onto the unified identity middleware. Account models share password hashing, credential serialization and local-token version handling through one plugin.
+- OTPs use cryptographic randomness, keyed digests, explicit five-minute expiry, purpose/role scopes and atomic consumption. Password-reset verification now includes the selected role; web callers updated.
+- Password changes invalidate previously issued local JWTs for all three account types. Firebase tokens still use Firebase's revocation validation; local password changes do not revoke Firebase sessions automatically. Broader session lifecycle work remains T15.
+- Email verification returns explicit safe metadata; account JSON omits password hashes and internal token versions.
+- Saved articles require a published database article and use its canonical metadata instead of client-supplied title/category/excerpt.
+
+Validation: backend 15 tests passed, including OTP replay/scope/expiry, credential serialization, old-token rejection and saved-article ownership/data tests. Both frontend production builds passed; three session-isolation tests and source/build boundary checks passed. Tracked diffs pass whitespace validation. No live account data was changed by these tests.
+
+Operational note: restart the API to load these changes. Outstanding OTPs created before scoped hashing must be requested again. Authenticated browser login/reset/email delivery has not been exercised in this batch. T05/T13/T15 remain open until broader route/session checks are complete; this is not deployment sign-off.
