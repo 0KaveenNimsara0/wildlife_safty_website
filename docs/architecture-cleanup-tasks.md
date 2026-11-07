@@ -63,11 +63,16 @@ Status key: `[x]` verified/documented; `[ ]` pending. Existing implementation wo
 
 ## Deletion ledger
 
-No source deletion approved by reachability evidence in this documentation pass.
+Initial legacy frontend deletion batch completed after workspace/import/config review; broader unused-source review remains pending.
 
 | Path | Why unused/duplicated | Reference checks | Replacement | Validation | State |
 | --- | --- | --- | --- | --- | --- |
-| To be populated by T06 | — | Static + dynamic + runtime | — | — | Pending |
+| root src/ | Empty directories after source relocation; verified zero files | Recursive file inventory | apps/*/src + packages/shared/src | Both builds + boundary test | Removed |
+| root dist/ | Stale combined generated build | App Vite output configs | apps/*/dist | Both builds | Removed |
+| root vite.config.js | Compatibility forwarding config no longer required | Workspace scripts + launcher | App-local Vite configs; preview now delegates to workspace | Both builds | Removed |
+| build-main.log, build-admin.log | Generated verification logs | No runtime dependency | Task log retains outcomes | Build outputs inspected | Removed |
+| public/vite.svg | Starter branding | Both HTML references replaced | Bundled project logo favicon | Both builds | Removed |
+| packages/shared/src/assets/auth-sidebar.png | No source/config references; active layout imports auth-sidebar1.png | Repository reference search + active AuthLayout | Existing auth-sidebar1.png retained | Both builds | Removed |
 
 ## Execution log
 
@@ -105,3 +110,12 @@ T22 partial: credential policy is unified; complete error/cancellation normaliza
 - App-boundary/main-manifest checks and 3 session-isolation tests passed. Backend suite: 10 security/RBAC tests passed.
 - Frontend/backend tracked diffs pass whitespace checks. No account data or conversation identifiers migrated.
 - Next sequential batch: complete T05/T13 endpoint-policy coverage and authenticated T35/T53 regression before wider domain/file cleanup.
+
+
+## Legacy frontend cleanup batch
+
+Removed only the proven obsolete paths listed in the deletion ledger. Kept workspace package/lockfile, shared build/theme configuration, environment files and historical docs with unresolved tasks. Rewrote root README for the current workspace structure and added an admin preview command. Both app builds and boundary checks passed after deletion. T06/T46 remain open for broader source cleanup; this batch does not claim all unused-code candidates have been reviewed.
+
+## Main/admin isolation correction
+
+User requested no admin redirects from the main site. Removed the legacy /admin/* redirect and its cross-origin navigation code. Unknown main-site paths, including /admin/login, now render a local Page not found screen. Prior redirect requirements/checks in this document are superseded by this decision. Admin login remains exclusively on the admin application origin.

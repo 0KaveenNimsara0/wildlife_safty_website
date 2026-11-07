@@ -1,90 +1,26 @@
-# Wildlife Safety Web Site
+# Wildlife Safety frontend workspace
 
-A comprehensive web application for wildlife safety and identification, built with React and Vite. This project helps users identify dangerous wildlife, access emergency resources, and connect with medical officers through an integrated chat system.
+Two independently hosted React applications share reusable code:
 
-## Features
+- `apps/main-frontend`: public pages, normal users and medical officers; port 5173.
+- `apps/admin-frontend`: admin login and administration; port 5174.
+- `packages/shared`: UI, theme, transport, session helpers and shared feature components.
 
-- **Animal Identification**: AI-powered wildlife identification using TensorFlow.js
-- **Emergency Resources**: Quick access to emergency contacts and medical officers
-- **Community Feed**: User-generated content and discussions about wildlife safety
-- **Interactive Maps**: Location-based wildlife tracking and safety zones
-- **Real-time Chat**: Communication with medical officers and community members
-- **Admin Dashboard**: Management tools for administrators and medical officers
+## Commands
 
-## Tech Stack
+Run `npm ci` from this directory. Install dependencies once for the whole workspace.
 
-- **Frontend**: React 19, Vite, Tailwind CSS
-- **Backend**: Firebase (Authentication, Database, Storage)
-- **Maps**: Google Maps API, Leaflet
-- **AI/ML**: TensorFlow.js for animal identification
-- **State Management**: React Context API
-- **Routing**: React Router DOM
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start main frontend |
+| `npm run dev:admin` | Start admin frontend |
+| `npm run build` | Build both applications |
+| `npm run build:main` / `npm run build:admin` | Build one application |
+| `npm run preview` / `npm run preview:admin` | Preview its production build |
+| `npm run test:architecture` | Check session isolation and source/build boundaries; build main first |
 
-## Prerequisites
+Build outputs are `apps/main-frontend/dist` and `apps/admin-frontend/dist`. There is no combined root `src` or root `dist` application. Use workspace commands, not a root-level bare Vite command.
 
-- Node.js (version 16 or higher)
-- npm or yarn package manager
+Backend services remain separate: Node/MongoDB API, Python ML service and email worker. Firebase handles supported identity flows; application image uploads use Cloudinary through the backend.
 
-## Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd wildlife-safty-web-site
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Environment Setup**
-   - Copy `.env.example` to `.env` (if available)
-   - Configure Firebase credentials
-   - Set up Google Maps API key
-
-4. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Build for production**
-   ```bash
-   npm run build
-   ```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
-
-## Dependencies
-
-All project dependencies are listed in `requirements.txt` for reference. This project uses npm for dependency management, not pip.
-
-## Project Structure
-
-```
-src/
-├── assets/
-│   ├── components/     # Reusable UI components
-│   ├── pages/         # Page components
-│   ├── data/          # Static data files
-│   └── Database/      # Firebase configuration
-├── App.jsx           # Main app component
-└── main.jsx          # App entry point
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+See [workspace setup and deployment](docs/frontend-workspaces.md), [architecture plan](docs/architecture-cleanup-plan.md) and [task tracker](docs/architecture-cleanup-tasks.md). App-local `.env.example` files list frontend settings; never place backend secrets in `VITE_` variables.

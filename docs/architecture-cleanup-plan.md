@@ -101,7 +101,7 @@ This is a target tree, not the current tree. Backend reorganization is phased; d
 | Email worker | No browser port | Separate supervised worker |
 | ML API | localhost:5001 | Separate inference service |
 
-Admin login and admin pages must no longer be served by the main frontend. Main may expose a link to the configured admin origin; legacy /admin paths redirect to the configured admin origin using an allowlisted path mapping. Never copy arbitrary redirect query parameters across origins. Back-to-website uses the configured main origin.
+Admin login and admin pages must no longer be served by the main frontend. Main exposes no admin route or automatic admin redirect. Legacy /admin paths render the main application’s local Page not found screen. Users must open the admin origin directly. Back-to-website uses the configured main origin.
 
 A separate admin frontend/server does not require a second copy of the Node business API. The chosen design shares one API with permissions enforced on every protected operation. This avoids duplicated authentication, models and database rules. If independent admin API/network isolation becomes mandatory, add a thin admin gateway/BFF around shared backend modules; do not duplicate the entire backend.
 

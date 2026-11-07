@@ -7,7 +7,7 @@
     "dev": "npm run dev --workspace @wildlife/main-frontend",
     "build": "npm run build:main && npm run build:admin",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "npm run preview --workspace @wildlife/main-frontend",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:user": "cypress run --spec cypress/e2e/user.cy.js",
@@ -16,7 +16,8 @@
     "dev:admin": "npm run dev --workspace @wildlife/admin-frontend",
     "build:main": "npm run build --workspace @wildlife/main-frontend",
     "build:admin": "npm run build --workspace @wildlife/admin-frontend",
-    "test:architecture": "node --test packages/shared/src/features/auth/session.test.js && node scripts/check-boundaries.mjs"
+    "test:architecture": "node --test packages/shared/src/features/auth/session.test.js && node scripts/check-boundaries.mjs",
+    "preview:admin": "npm run preview --workspace @wildlife/admin-frontend"
   },
   "dependencies": {
     "axios": "^1.11.0",

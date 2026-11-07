@@ -31,8 +31,6 @@ dist-ssr
 .env
 
 
-#old pages
-/src/oldPages
 cypress/screenshots/
 cypress/videos/
 cypress/results/

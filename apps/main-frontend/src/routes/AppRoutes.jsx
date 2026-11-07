@@ -1,7 +1,5 @@
-import { ADMIN_APP_URL } from '../../../../packages/shared/src/config/app.js';
-import { useEffect } from 'react';
 import React, { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 
 // Layouts
 import UserLayout from '../layouts/UserLayout.jsx';
@@ -101,14 +99,17 @@ export default function AppRoutes() {
 
       </Route>
 
-      <Route path="/admin/*" element={<AdminRedirect />} />
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
     </Suspense>
   );
 }
-function AdminRedirect() {
- useEffect(() => { const target = new URL(window.location.pathname, ADMIN_APP_URL); window.location.replace(target.href); }, []);
- return <p role="status">Opening admin application…</p>;
+function NotFound() {
+ return <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-slate-50 p-6 text-center">
+  <p className="text-sm font-semibold text-emerald-700">404</p>
+  <h1 className="text-3xl font-semibold text-slate-900">Page not found</h1>
+  <p className="text-slate-600">This page is not available on this website.</p>
+  <Link to="/" className="rounded-lg bg-emerald-700 px-5 py-3 font-semibold text-white hover:bg-emerald-800">Back to home</Link>
+ </main>;
 }
