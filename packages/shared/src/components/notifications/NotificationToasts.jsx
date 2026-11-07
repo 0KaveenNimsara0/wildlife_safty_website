@@ -26,7 +26,9 @@ export default function NotificationToasts() {
      timers.push(setTimeout(()=>setToasts(old=>old.filter(t=>t._id!==n._id)),8000));
     });
     initialized=true;
-   } catch {} finally {pending=false;}
+   } catch {
+    // Keep existing toasts; the next notification event retries this background read.
+   } finally {pending=false;}
   };
   refresh(); const unsubscribe=subscribeNotifications(refresh);
   return ()=>{stopped=true;unsubscribe();timers.forEach(clearTimeout);};

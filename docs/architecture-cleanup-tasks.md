@@ -46,7 +46,7 @@ Status key: `[x]` verified/documented; `[ ]` pending. Existing implementation wo
 - [ ] T40 Introduce domain module boundaries and infrastructure adapters; move backend files incrementally while keeping external API contracts.
 - [ ] T41 Consolidate article lifecycle mechanics with explicit author/reviewer policies and transition tests.
 - [ ] T42 Consolidate shared chat mechanics without changing conversation IDs, participant visibility or unread semantics.
-- [ ] T43 Select canonical post-verification endpoint; retain tested aliases until web/mobile callers migrate.
+- [x] T43 Select canonical post-verification endpoint; retain tested aliases until web/mobile callers migrate. Canonical: POST /api/medical-officer/posts/:postId/verify. Legacy: POST /api/posts/verify/:postId. Both invoke the same controller with medical authentication and posts.review; HTTP regression covers anonymous, ordinary, unapproved and approved medical identities.
 - [ ] T44 Split CommunityFeed, profile sections and AuthContext by responsibility; remove repeated state/networking patterns.
 - [ ] T45 Optimize auth background/logo and verify their appearance; remove source assets only after usage review.
 - [ ] T46 Delete proven unused source/config/assets from T06 ledger; retain data, secrets, model assets and repo metadata. Run affected builds after each batch.
@@ -173,3 +173,26 @@ Next: finish service-level route policy review, role-management constraints, sta
 - Removed unused chat service dependencies and obsolete implementation comments.
 - Validation: all 30 backend tests passed. Initial sandbox run blocked two temporary localhost HTTP tests with EACCES; permitted rerun passed all tests. Regression tests cover cross-role delegation, membership/read receipt isolation, safe admin metadata and disabled recipients. Tracked whitespace checks pass.
 - T42 remains partial: conversation-list enrichment and message-send notification flows still have duplication. Authenticated browser chat/avatar checks and full remaining audit/deployment tasks remain open. No live service restart or production data changes performed.
+
+### Chat notifications continuation — 2026-11-08
+
+- Replaced three repeated message notification blocks with chatNotifications.notifyMessage. Sender display name/name, avatar, recipient and conversation linkage now follow one implementation.
+- Sender lookup/notification failures remain isolated from the already-persisted chat message. Notification text contains no message body. This preserves existing best-effort delivery semantics; durable retry/outbox delivery is not implemented.
+- Added real service-call regression coverage for user, medical and admin sends: routing, reciprocal conversation IDs, trimmed stored text, avatar metadata and audit-body exclusion. Notification tests cover missing sender and failed delivery/lookup.
+- Validation: all 10 focused chat tests pass; tracked whitespace checks pass. No frontend changes in this batch. Conversation-list enrichment, browser verification and remaining architecture/deployment work are still open.
+
+## Long-chat regression and frontend baseline — 2026-11-08
+
+- Fixed conversation history returning the oldest 100 records forever. It now selects the newest 100 with a stable createdAt/_id ordering, then returns chronological order for the existing UI.
+- Read receipts update only records returned in that response, preserving unread state for messages arriving during the request and records outside the loaded window. Older-history pagination remains to be implemented; older unread records are intentionally not silently cleared.
+- Removed unused ChatMessageRepository.aggregateConversations after repository-wide reference search found only its declaration. Active role-scoped aggregation remains.
+- Removed dead header Google-sign-in handler, unused header identity binding, legacy profile-upload state, unused profile props, unused prediction Axios import and unused Firebase auth imports. Removed redundant profile OTP catch/rethrow while preserving finally/loading cleanup.
+- Recorded remaining lint baseline in lint-baseline.md: 60 errors, 19 warnings. Lint is not passing; no suppression rules added to hide findings.
+- Validation: full backend suite 35 passed; both frontend production builds passed; five shared auth/URL tests and architecture boundary checks passed. T43 now marked complete based on existing canonical route and HTTP alias regression. No deployment, live-service restart or production data changes.
+
+### Follow-through frontend cleanup
+
+- Removed 32 unused catch bindings identified by ESLint, preserving each catch body and error fallback. Removed redundant admin OTP catch/rethrow while retaining finally cleanup.
+- Corrupt cached mongoUser JSON is now removed rather than retained after failed parsing. Documented intentional background notification retries in formerly empty catch blocks.
+- Fresh lint baseline: 24 errors and 19 warnings (down from 60 errors/19 warnings after the first source cleanup). Remaining issues are 23 unused-binding findings, one Fast Refresh export finding and 19 hook-dependency warnings; not marked clean.
+- Rebuilt both applications successfully after these edits; all five shared auth/URL tests and main/admin boundary checks pass. The command sequence exits 1 because the final lint check remains failing, not because either build failed.

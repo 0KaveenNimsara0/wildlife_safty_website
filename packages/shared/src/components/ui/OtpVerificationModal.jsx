@@ -71,7 +71,7 @@ export default function OtpVerificationModal({
       setIsVerifying(true);
       setErrorText('');
       await onVerify(otpValue);
-    } catch (err) {
+    } catch {
       const remaining = attempts - 1;
       setAttempts(remaining);
       

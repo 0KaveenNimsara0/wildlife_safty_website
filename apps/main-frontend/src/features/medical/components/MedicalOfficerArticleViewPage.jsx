@@ -37,7 +37,7 @@ export default function MedicalOfficerArticleViewPage() {
       } else {
         setError('Article not found');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load article content');
     } finally {
       setLoading(false);

@@ -35,7 +35,7 @@ const ContactPage = () => {
       } else {
         setStatus({ type: 'error', message: data.message || 'Transmission failure.' });
       }
-    } catch (error) {
+    } catch {
       setStatus({ type: 'error', message: 'Communication link interrupted.' });
     } finally {
       setLoading(false);

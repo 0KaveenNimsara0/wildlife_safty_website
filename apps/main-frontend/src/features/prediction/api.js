@@ -1,5 +1,4 @@
 import { authenticatedFetch as fetch } from '../../../../../packages/shared/src/services/authenticatedFetch.js';
-import api from '../../../../../packages/shared/src/services/api.js';
 import { API_CONFIG } from '../../../../../packages/shared/src/config/constants.js';
 
 export const predictSpecies = async (imageFile) => {

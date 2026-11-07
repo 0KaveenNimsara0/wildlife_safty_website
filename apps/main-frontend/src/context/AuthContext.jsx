@@ -5,8 +5,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import {
   auth,
   googleProvider,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signInWithPopup,
   sendPasswordResetEmail,
   sendEmailVerification as firebaseSendEmailVerification
@@ -438,7 +436,9 @@ export function AuthProvider({ children }) {
         } else {
           setCurrentUser(parsed);
         }
-      } catch (e) {}
+      } catch {
+        localStorage.removeItem('mongoUser');
+      }
     }
 
     // 2. Initialize Firebase observer

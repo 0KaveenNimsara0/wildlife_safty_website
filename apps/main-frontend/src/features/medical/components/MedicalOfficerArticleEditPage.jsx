@@ -60,7 +60,7 @@ const MedicalOfficerArticleEditPage = () => {
         } else {
           setError(data.message || 'Error occurred while retrieving article.');
         }
-      } catch (err) {
+      } catch {
         setError('Connection interrupted. Unable to reach server.');
       } finally {
         setLoadingArticle(false);
@@ -155,7 +155,7 @@ const MedicalOfficerArticleEditPage = () => {
       } else {
         setError(data.message || 'Transmission failed. Update rejected by node.');
       }
-    } catch (err) {
+    } catch {
       setError('Signal disruption: Update could not be committed.');
     } finally {
       setLoading(false);

@@ -36,7 +36,7 @@ const AdminPredictionOversight = () => {
                 setPredictions(data.predictions);
                 calculateStats(data.predictions);
             }
-        } catch (err) {
+        } catch {
             console.error('Failed to load predictions');
         } finally {
             setLoading(false);
@@ -70,7 +70,7 @@ const AdminPredictionOversight = () => {
                 setPredictions(predictions.map(p => p._id === id ? data.prediction : p));
                 alert(`Identification marked as ${status}`);
             }
-        } catch (err) {
+        } catch {
             alert('Verification failed');
         }
     };
@@ -88,7 +88,7 @@ const AdminPredictionOversight = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        } catch (err) {
+        } catch {
             alert('Export failed');
         }
     };

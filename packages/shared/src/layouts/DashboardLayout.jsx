@@ -22,7 +22,9 @@ export default function DashboardLayout({ role = 'user', children }) {
   let disposed=false, pending=false;
   const refresh=async()=>{
    if(pending) return; pending=true;
-   try {const {data}=await api.get('/notifications/sidebar-counts'); if(!disposed && data.success) setCounts(data.counts);} catch {} finally {pending=false;}
+   try {const {data}=await api.get('/notifications/sidebar-counts'); if(!disposed && data.success) setCounts(data.counts);} catch {
+    // Preserve last known counts; the polling timer retries transient failures.
+   } finally {pending=false;}
   };
   refresh(); const unsubscribe=subscribeNotifications(refresh); const timer=setInterval(refresh,15000);
   return ()=>{disposed=true;unsubscribe();clearInterval(timer);};

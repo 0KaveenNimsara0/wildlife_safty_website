@@ -136,7 +136,7 @@ export default function MedicalProfileSection() {
       } else {
         setError(data.message || 'Update failed');
       }
-    } catch (err) {
+    } catch {
       setError('Failed to transmit profile updates');
     }
   };
@@ -186,7 +186,7 @@ export default function MedicalProfileSection() {
         setError(data.message || 'Upload failed');
         setPreviewUrl(null);
       }
-    } catch (err) {
+    } catch {
       setError('Communication link failure during file transmission');
       setPreviewUrl(null);
     } finally {
@@ -211,7 +211,7 @@ export default function MedicalProfileSection() {
       } else {
         setError(data.message || 'OTP dispatch failed');
       }
-    } catch (err) {
+    } catch {
       setError('Network shielding error');
     } finally {
       setSecurityLoading(false);
@@ -256,7 +256,7 @@ export default function MedicalProfileSection() {
       } else {
         setError(data.message || 'Identity verification failed');
       }
-    } catch (err) {
+    } catch {
       setError('Communication protocol disrupted');
     } finally {
       setSecurityLoading(false);

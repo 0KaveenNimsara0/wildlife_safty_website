@@ -27,7 +27,7 @@ const PredictionHistorySection = () => {
             if (data.success) {
                 setHistory(data.predictions);
             }
-        } catch (err) {
+        } catch {
             setError('Failed to load identification history');
         } finally {
             setLoading(false);
@@ -42,7 +42,7 @@ const PredictionHistorySection = () => {
             if (data.success) {
                 setHistory(history.filter(item => item._id !== id));
             }
-        } catch (err) {
+        } catch {
             alert('Deletion failed');
         }
     };

@@ -10,19 +10,16 @@ import ProfilePhotoModal from "../../../../../../packages/shared/src/components/
 
 const ProfileSection = ({ 
   activeUser, 
-  updateEmail, 
   updateUserProfile,
   sendEmailVerification, 
   verifyEmail,
   uploadProfilePicture,
-  refreshUser,
   setSuccess,
   setError
 }) => {
   const [loading, setLoading] = useState(false);
   const [displayName, setDisplayName] = useState(activeUser?.displayName || "");
   const [newEmail, setNewEmail] = useState(activeUser?.email || "");
-  const [showProfileUpload, setShowProfileUpload] = useState(false); // Legacy, will remove usages
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
@@ -80,8 +77,6 @@ const ProfileSection = ({
       await verifyEmail(activeUser.email, otp, activeUser.role);
       setSuccess("Email address verified successfully.");
       setShowOtpModal(false);
-    } catch (err) {
-      throw err; // Let modal handle display
     } finally {
       setOtpLoading(false);
     }

@@ -95,7 +95,7 @@ const SavedArticlesSection = () => {
           } else {
             statuses[art._id] = { ...art, isRemoved: true };
           }
-        } catch (err) {
+        } catch {
           statuses[art._id] = { ...art, isRemoved: true };
         }
       }));

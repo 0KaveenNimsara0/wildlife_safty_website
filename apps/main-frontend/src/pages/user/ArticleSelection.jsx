@@ -28,7 +28,7 @@ const ArticleSelection = () => {
         setLoading(true);
         const response = await api.get(`/articles/category/${selectedCategory}`);
         setArticles(response.data.articles || []);
-      } catch (err) {
+      } catch {
         setError('Repository connection failed. Catalog unavailable.');
       } finally {
         setLoading(false);

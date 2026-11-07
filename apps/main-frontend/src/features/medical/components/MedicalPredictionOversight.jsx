@@ -65,7 +65,7 @@ export default function MedicalPredictionOversight() {
                 setPredictions(predictions.map(p => p._id === id ? data.prediction : p));
                 setSelectedItem(null);
             }
-        } catch (error) {
+        } catch {
             alert('Verification failed');
         }
     };

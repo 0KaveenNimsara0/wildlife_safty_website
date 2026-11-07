@@ -23,7 +23,7 @@ const UserPosts = () => {
         const response = await api.get('/posts');
         const filteredPosts = response.data.filter(post => post.authorId === activeUser.uid);
         setUserPosts(filteredPosts);
-      } catch (err) {
+      } catch {
         setError('Failed to sync your field logs.');
       } finally {
         setLoading(false);
@@ -85,7 +85,7 @@ const UserPosts = () => {
       });
       setUserPosts(userPosts.map(post => post._id === postId ? { ...post, animalName: response.data.animalName, experience: response.data.experience, updatedAt: response.data.updatedAt } : post));
       setEditingPostId(null);
-    } catch (err) {
+    } catch {
       setError('Update failed.');
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ const UserPosts = () => {
       setLoading(true);
       await api.delete(`/posts/${postId}`);
       setUserPosts(userPosts.filter(post => post._id !== postId));
-    } catch (err) {
+    } catch {
       setError('Deletion failed.');
     } finally {
       setLoading(false);

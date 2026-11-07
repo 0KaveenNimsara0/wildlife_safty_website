@@ -132,7 +132,7 @@ export default function AdminMedicalChatSection() {
       if (data.success) {
         setConversations(data.conversations);
       }
-    } catch (err) {
+    } catch {
       if (!silent) setError('Failed to load conversations');
     } finally {
       if (!silent) setConvLoading(false);
@@ -213,7 +213,7 @@ export default function AdminMedicalChatSection() {
         alert('Failed to send message: ' + (data.message || 'Unknown protocol error'));
         return false;
       }
-    } catch (err) {
+    } catch {
       alert('Failed to send message');
       return false;
     }

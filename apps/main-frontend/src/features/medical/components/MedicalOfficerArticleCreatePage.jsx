@@ -68,7 +68,7 @@ const MedicalOfficerArticleCreatePage = () => {
       } else {
         setError(data.message || 'Transmission failed. Data rejected by server.');
       }
-    } catch (err) {
+    } catch {
       setError('Signal disruption: Could not contact central servers.');
     } finally {
       setLoading(false);

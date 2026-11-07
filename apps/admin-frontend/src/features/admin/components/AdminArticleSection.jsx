@@ -108,7 +108,7 @@ export default function AdminArticleSection() {
         alert('Article published successfully');
         fetchArticles();
       }
-    } catch (err) {
+    } catch {
       alert('Approval failed');
     }
   };
@@ -130,7 +130,7 @@ export default function AdminArticleSection() {
         alert('Article rejected and officer notified');
         fetchArticles();
       }
-    } catch (err) {
+    } catch {
       alert('Rejection failed');
     }
   };
@@ -147,7 +147,7 @@ export default function AdminArticleSection() {
         alert('Article reverted to draft');
         fetchArticles();
       }
-    } catch (err) {
+    } catch {
       alert('Operation failed');
     }
   };

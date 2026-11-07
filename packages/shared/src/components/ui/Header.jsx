@@ -9,7 +9,7 @@ import NotificationDropdown from '../notifications/NotificationDropdown.jsx';
 export default function Header() {
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { currentUser, activeUser, logout, googleSignIn, medicalOfficerLogout } = useAuth();
+    const { activeUser, logout, medicalOfficerLogout } = useAuth();
     const navigate = useNavigate();
 
     const navigation = [
@@ -34,15 +34,6 @@ export default function Header() {
         if (activeUser.role === 'medicalOfficer') await medicalOfficerLogout();
         else await logout();
         navigate('/');
-    };
-
-    const handleGoogleSignIn = async () => {
-        try {
-            await googleSignIn();
-            navigate('/home');
-        } catch (error) {
-            console.error('Google sign-in failed:', error);
-        }
     };
 
     const handleNavigation = (path) => {

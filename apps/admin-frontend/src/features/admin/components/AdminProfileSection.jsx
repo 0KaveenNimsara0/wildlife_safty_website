@@ -109,7 +109,7 @@ export default function AdminProfileSection() {
       } else {
         setError(data.message || 'Transmission failed.');
       }
-    } catch (err) {
+    } catch {
       setError('Signal disruption: Update could not be committed.');
     } finally {
       setLoading(false);
@@ -133,7 +133,7 @@ export default function AdminProfileSection() {
         const data = await response.json();
         setError(data.message || 'Security protocol failure.');
       }
-    } catch (err) {
+    } catch {
       setError('Connection interrupted.');
     } finally {
       setLoading(false);
@@ -163,9 +163,6 @@ export default function AdminProfileSection() {
         // Throw error so the modal can handle incorrect attempt
         throw new Error(data.message || 'Verification rejected.');
       }
-    } catch (err) {
-      // Propagate error to modal
-      throw err;
     } finally {
       setLoading(false);
     }
@@ -210,7 +207,7 @@ export default function AdminProfileSection() {
       } else {
         setModalError(data.message || 'Security reset rejected.');
       }
-    } catch (err) {
+    } catch {
       setModalError('Protocol error during security reset.');
     } finally {
       setLoading(false);
