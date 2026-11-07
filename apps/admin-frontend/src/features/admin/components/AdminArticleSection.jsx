@@ -164,7 +164,7 @@ export default function AdminArticleSection() {
               Return to Database
            </button>
            <div className="flex gap-3">
-              {(selectedArticle.status === 'pending_review' || selectedArticle.status === 'draft') && (
+              {(selectedArticle.status === 'pending_review' || selectedArticle.status === 'pending') && (
                  <>
                     <button 
                       onClick={() => handleApprove(selectedArticle._id)}
@@ -391,7 +391,7 @@ export default function AdminArticleSection() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap text-right">
                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {(article.status === 'pending_review' || article.status === 'draft') && (
+                          {(article.status === 'pending_review' || article.status === 'pending') && (
                              <>
                                 <button 
                                   onClick={() => handleApprove(article._id)}

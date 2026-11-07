@@ -142,3 +142,15 @@ Operational note: restart the API to load these changes. Outstanding OTPs create
 - Medical article updates are restricted to draft/rejected states. Pending, approved and published content cannot be changed behind the reviewer's approval. Full shared article lifecycle extraction remains T41.
 - Validation: all 18 backend tests passed, including unrelated-parent rejection, missing-post rejection, submitted/approved article edit rejection and wrong-author rejection. Whitespace checks passed.
 - T05/T13 remain partial: a complete route matrix, remaining alternate-route checks and authenticated browser regression are still outstanding. No deployment or live data migration performed.
+
+## Continued domain and operations cleanup — 2026-11-07
+
+- T05: generated backend `docs/route-inventory.md` for 120 mounted router endpoints, including source locations, handlers and preceding router middleware. Regenerate using `node scripts/routeInventory.cjs`. This is an inventory, not proof that all service-level policies are audited; inline server endpoints and global middleware are explicitly excluded.
+- T13/T43: the legacy post-verification alias now requires the same posts.review permission as the canonical medical route. Both URLs retained for existing consumers.
+- T41: centralized legacy pending/pending_review filtering. New re-review requests write pending_review, preserving visibility of legacy records. Admin approval/rejection now requires submitted content; frontend no longer offers approval for drafts. Retained existing one-step admin approve-and-publish behavior and two-step legacy review behavior deliberately.
+- T41: removed duplicate legacy publication implementation. Both publication URLs now use the canonical service, ARTICLE_PUBLISHED notifications and global article announcement. Broader article concurrency and lifecycle extraction remain open.
+- T50: launcher no longer kills unknown processes occupying configured ports. Busy services are skipped; clean/kill commands report ports rather than killing by port number. Unified shutdown checks tracked children are still alive; POSIX children get separate process sessions. Startup-interruption and real cross-platform shutdown validation remain open.
+- T51: added repository-local GitHub Actions workflows for backend tests and both frontend builds plus architecture checks. Cypress binary download skipped for the build job. CI has not yet run on GitHub; mobile contract and authenticated E2E jobs remain open.
+- Validation: backend 21 tests pass; admin production build passes; launcher two safety tests pass; Python syntax passes. Existing main build was not rerun because this batch changes only the admin frontend. No production service restarted or data migrated.
+
+Next: finish service-level route policy review, role-management constraints, startup-interruption handling and authenticated staging workflows. Complete cleanup/deployment is not yet claimed.
