@@ -324,6 +324,7 @@ const CommunityFeed = () => {
   return (
     <>
       <div className="w-full py-2 animate-fade-in text-slate-900">
+        {articlesError && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-red-700">{articlesError}</p>}
         <header className="bg-white/95 backdrop-blur-sm shadow-sm relative z-10 w-full rounded-xl border border-slate-200 mb-6 py-4 px-4 sm:px-6">
         <div className="flex flex-wrap gap-4 justify-between items-center">
           <div className="flex items-center gap-6">

@@ -57,6 +57,7 @@ export default function MedicalArticleSection() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-red-700">{error}</p>}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
            <h1 className="text-xl font-semibold tracking-tight text-slate-900 uppercase">Article <span className="text-emerald-600">Hub</span></h1>

@@ -25,5 +25,25 @@ export default defineConfig([
     rules: {
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
+    plugins: {
+      'jsx-bindings': {
+        rules: {
+          'used-components': {
+            create(context) {
+              return {
+                JSXOpeningElement(node) {
+                  let name = node.name;
+                  while (name.type === 'JSXMemberExpression') name = name.object;
+                  if (name.type === 'JSXIdentifier' && /^[A-Z]/.test(name.name)) {
+                    context.sourceCode.markVariableAsUsed(name.name, node);
+                  }
+                },
+              };
+            },
+          },
+        },
+      },
+    },
   },
+  { files: ['**/*.jsx'], rules: { 'jsx-bindings/used-components': 'error' } },
 ])

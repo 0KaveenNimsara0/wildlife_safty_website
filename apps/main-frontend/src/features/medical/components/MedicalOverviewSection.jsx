@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../../../../../packages/shared/src/config/constants.js';
 import {
@@ -12,17 +12,12 @@ import {
 import MedicalOfficerArticleHub from './MedicalOfficerArticleHub.jsx';
 
 export default function MedicalOverviewSection() {
-  const [medicalOfficerData, setMedicalOfficerData] = useState(null);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const medicalOfficer = localStorage.getItem('medicalOfficerData');
-    if (medicalOfficer) {
-      setMedicalOfficerData(JSON.parse(medicalOfficer));
-    }
     fetchDashboardData();
   }, []);
 

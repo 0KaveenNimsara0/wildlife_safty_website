@@ -1,6 +1,6 @@
 import { authenticatedFetch as fetch } from '../../../../../../packages/shared/src/services/authenticatedFetch.js';
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../../../../packages/shared/src/config/constants.js';
 import { 
   MessageSquare, 
@@ -17,7 +17,7 @@ import ChatInput from '../../../../../../packages/shared/src/features/chat/compo
 
 export default function AdminMedicalChatSection() {
   const { officerId: paramOfficerId } = useParams();
-  const navigate = useNavigate();
+
   const [conversations, setConversations] = useState([]);
   const [currentOfficer, setCurrentOfficer] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -230,6 +230,7 @@ export default function AdminMedicalChatSection() {
   return (
     <div className="h-[calc(100vh-220px)] flex gap-6 animate-fade-in">
       <div className="w-80 flex flex-col bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        {error && <p role="alert" className="m-3 rounded-xl bg-red-50 p-3 text-red-700">{error}</p>}
         <div className="p-6 border-b border-slate-50 bg-slate-50/30">
            <h2 className="text-lg font-semibold uppercase tracking-tight mb-4 flex items-center gap-2">
               <Activity size={18} className="text-emerald-500" />

@@ -196,3 +196,11 @@ Next: finish service-level route policy review, role-management constraints, sta
 - Corrupt cached mongoUser JSON is now removed rather than retained after failed parsing. Documented intentional background notification retries in formerly empty catch blocks.
 - Fresh lint baseline: 24 errors and 19 warnings (down from 60 errors/19 warnings after the first source cleanup). Remaining issues are 23 unused-binding findings, one Fast Refresh export finding and 19 hook-dependency warnings; not marked clean.
 - Rebuilt both applications successfully after these edits; all five shared auth/URL tests and main/admin boundary checks pass. The command sequence exits 1 because the final lint check remains failing, not because either build failed.
+
+### Frontend lint errors resolved — 2026-11-08
+
+- App/shared lint now exits 0: zero errors, 19 hook-dependency warnings. Remaining warning locations are in lint-baseline.md. Hook rules were not disabled.
+- Added visible role=alert feedback for medical articles, prediction history, admin chat, community articles and notifications where error state was previously discarded. Notification list now respects its limit prop and resets stale fetch errors on retry.
+- Removed unused navigation hooks, medical cached profile parsing, unreachable loading UI, unused medical cancel handler and unused modal props. Removed unused AuthContext hook re-export; callers already use the shared hook module.
+- Added a JSX component binding rule to identify real JSX-only variable usage. Verified used Icon parameters pass while genuinely unused Icon parameters still fail; no broad unused-variable suppression added.
+- Both frontend production builds pass; five shared auth/URL tests and architecture checks pass. No backend behavior changed in this continuation. Remaining: hook fixes, full route-policy audit/role management, broader feature extraction, authenticated staging tests and deployment gates.

@@ -2,7 +2,7 @@ import ProfileInput from '../../../../../../packages/shared/src/components/ui/Pr
 import ModalLayer from '../../../../../../packages/shared/src/components/ui/ModalLayer.jsx';
 import Avatar from '../../../../../../packages/shared/src/components/ui/Avatar.jsx';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import {
   Shield,
   User,
@@ -42,7 +42,7 @@ export default function AdminProfileSection() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [verifiedOtp, setVerifiedOtp] = useState('');
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import {
   FileText,
   Search,
@@ -33,7 +33,7 @@ export default function AdminArticleSection() {
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isFullViewOpen, setIsFullViewOpen] = useState(false);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchArticles();

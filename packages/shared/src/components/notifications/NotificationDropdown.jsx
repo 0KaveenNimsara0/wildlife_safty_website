@@ -15,7 +15,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { notificationApi } from '../../services/api.js';
-import { useAuth } from '../../context/useAuth.js';
+
 import { formatDate, formatTime } from '../../utils/formatters.js';
 
 const NotificationDropdown = ({ role }) => {
@@ -25,7 +25,7 @@ const NotificationDropdown = ({ role }) => {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+
 
   // Mapping role names to API endpoints
   const fetchSummary = async () => {

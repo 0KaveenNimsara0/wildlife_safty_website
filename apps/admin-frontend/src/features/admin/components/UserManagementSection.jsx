@@ -1,6 +1,6 @@
 import { authenticatedFetch as fetch } from '../../../../../../packages/shared/src/services/authenticatedFetch.js';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../../../../packages/shared/src/config/constants.js';
 import {
   Users,
@@ -22,7 +22,7 @@ export default function UserManagementSection() {
   const [totalPages, setTotalPages] = useState(1);
   const [editingUser, setEditingUser] = useState(null);
   const [editForm, setEditForm] = useState({ email: '', displayName: '' });
-  const navigate = useNavigate();
+
 
   useEffect(() => {
     fetchUsers();

@@ -8,8 +8,7 @@ export default function OtpVerificationModal({
   onClose, 
   email, 
   onVerify, 
-  onResend, 
-  mode = 'register' 
+  onResend
 }) {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [attempts, setAttempts] = useState(3);

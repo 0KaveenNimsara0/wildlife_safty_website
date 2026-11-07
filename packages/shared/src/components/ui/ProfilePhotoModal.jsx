@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Camera, Upload, Check, AlertCircle, RefreshCw, Image as ImageIcon } from 'lucide-react';
 
-export default function ProfilePhotoModal({ isOpen, onClose, currentPhoto, onUpload }) {
+export default function ProfilePhotoModal({ isOpen, onClose, onUpload }) {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [isUploading, setIsUploading] = useState(false);

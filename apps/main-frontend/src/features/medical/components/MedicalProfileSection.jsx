@@ -1,7 +1,7 @@
 import ProfileInput from '../../../../../../packages/shared/src/components/ui/ProfileInput.jsx';
 import ModalLayer from '../../../../../../packages/shared/src/components/ui/ModalLayer.jsx';
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { useAuth } from '../../../../../../packages/shared/src/context/useAuth.js';
 import { BASE_URL, IMAGE_BASE_URL } from '../../../../../../packages/shared/src/config/constants.js';
 import {
@@ -30,7 +30,7 @@ import { createPortal } from 'react-dom';
 
 export default function MedicalProfileSection() {
   const { activeUser, refreshUser } = useAuth();
-  const [loading, setLoading] = useState(false);
+
   const [isEditing, setIsEditing] = useState(false);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [securityStep, setSecurityStep] = useState(1); // 1: Request OTP, 2: Perform Change
@@ -56,7 +56,7 @@ export default function MedicalProfileSection() {
 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
+
 
   // 1. Keep form data in sync with activeUser (reactive)
   // Only sync when not editing to prevent overwriting user input
@@ -88,20 +88,6 @@ export default function MedicalProfileSection() {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setError('');
-    setSuccess('');
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setFormData({
-      name: activeUser?.name || '',
-      email: activeUser?.email || '',
-      specialization: activeUser?.specialization || '',
-      licenseNumber: activeUser?.licenseNumber || '',
-      phoneNumber: activeUser?.phoneNumber || '',
-      hospital: activeUser?.hospital || ''
-    });
     setError('');
     setSuccess('');
   };
@@ -262,17 +248,6 @@ export default function MedicalProfileSection() {
       setSecurityLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="py-20 flex items-center justify-center bg-transparent">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mx-auto"></div>
-          <p className="mt-4 text-slate-500 font-semibold uppercase tracking-normal text-[10px]">Verifying Personnel Record...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-5 animate-fade-in relative">

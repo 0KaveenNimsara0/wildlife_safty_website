@@ -63,6 +63,7 @@ const PredictionHistorySection = () => {
 
     return (
         <div className="space-y-5 animate-fade-in relative">
+            {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-red-700">{error}</p>}
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-50">
                 <div>

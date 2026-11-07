@@ -14,7 +14,6 @@ import { onAuthStateChanged, signOut, updateEmail, updatePassword } from 'fireba
 import { BASE_URL, IMAGE_BASE_URL } from '../../../../packages/shared/src/config/constants.js';
 
 import { AuthContext } from '../../../../packages/shared/src/context/auth-context.js';
-export { useAuth } from '../../../../packages/shared/src/context/useAuth.js';
 
 export function AuthProvider({ children }) {
   const { pathname } = useLocation();

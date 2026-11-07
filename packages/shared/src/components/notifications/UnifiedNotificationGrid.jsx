@@ -30,6 +30,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await notificationApi.getNotifications();
       if (res.data.success) {
         setNotifications(res.data.notifications);
@@ -157,6 +158,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in">
+      {error && <p role="alert" className="mb-4 rounded-xl bg-red-50 p-3 text-red-700">{error}</p>}
       {showHeader && (
         <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 px-4 sm:px-0">
           <div>
@@ -207,7 +209,7 @@ const UnifiedNotificationGrid = ({ limit = 50, showHeader = true }) => {
         </div>
       ) : (
         <div className="space-y-4 px-4 sm:px-0">
-          {notifications.map((notification) => (
+          {notifications.slice(0, limit).map((notification) => (
             <div 
               key={notification._id}
               onClick={() => handleRedirect(notification)}

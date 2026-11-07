@@ -78,7 +78,7 @@ export default function MapPage() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => setMapCenter([position.coords.latitude, position.coords.longitude]),
-        (error) => alert('Unable to get your location. Please enable location services.')
+        () => alert('Unable to get your location. Please enable location services.')
       );
     }
   };
