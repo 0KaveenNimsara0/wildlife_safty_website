@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/useAuth';
 import { RefreshCcw, Loader2 } from 'lucide-react';
 
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 
 const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
   const { currentUser } = useAuth();
@@ -113,7 +113,7 @@ const MedicalOfficerSelector = ({ onSelect, selectedMedicalOfficer }) => {
                 <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-semibold text-xs shadow-lg group-hover:scale-110 transition-transform overflow-hidden">
                   {officer.photoURL ? (
                     <img
-                      src={officer.photoURL.startsWith('http') ? officer.photoURL : `${IMAGE_BASE_URL}${officer.photoURL}`}
+                      src={officer.photoURL.startsWith('http') ? officer.photoURL : imageUrl(officer.photoURL)}
                       alt={officer.name?.charAt(0) || 'O'}
                       className="w-full h-full object-cover"
                       onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = officer.name?.charAt(0) || 'O'; }}

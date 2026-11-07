@@ -1,6 +1,7 @@
+import { authenticatedFetch as fetch } from '../../../services/authenticatedFetch';
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 import { 
   MessageSquare, 
   Search, 
@@ -272,7 +273,7 @@ export default function AdminMedicalChatSection() {
                     <div className="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-white font-semibold text-xs shadow-md overflow-hidden">
                        {conv.medicalOfficer?.photoURL ? (
                          <img 
-                           src={conv.medicalOfficer.photoURL.startsWith('http') ? conv.medicalOfficer.photoURL : `${IMAGE_BASE_URL}${conv.medicalOfficer.photoURL}`} 
+                           src={conv.medicalOfficer.photoURL.startsWith('http') ? conv.medicalOfficer.photoURL : imageUrl(conv.medicalOfficer.photoURL)}
                            alt="" 
                            className="w-full h-full object-cover" 
                          />
@@ -313,7 +314,7 @@ export default function AdminMedicalChatSection() {
                   <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-semibold text-sm shadow-lg shadow-emerald-500/20 overflow-hidden">
                      {currentOfficer.photoURL ? (
                        <img 
-                         src={currentOfficer.photoURL.startsWith('http') ? currentOfficer.photoURL : `${IMAGE_BASE_URL}${currentOfficer.photoURL}`} 
+                         src={currentOfficer.photoURL.startsWith('http') ? currentOfficer.photoURL : imageUrl(currentOfficer.photoURL)}
                          alt="" 
                          className="w-full h-full object-cover" 
                        />

@@ -5,7 +5,7 @@ import MedicalOfficerSelector from '../../features/chat/components/MedicalOffice
 import ChatInterface from '../../features/chat/components/ChatInterface';
 import { Shield, MessageCircle, Users, Activity, ChevronRight, XCircle, Search } from 'lucide-react';
 import api from '../../services/api';
-import { IMAGE_BASE_URL } from '../../config/constants';
+import { IMAGE_BASE_URL , imageUrl } from '../../config/constants';
 
 const UserChatPage = () => {
   const { activeUser: currentUser } = useAuth();
@@ -215,7 +215,7 @@ const UserChatPage = () => {
                           <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-emerald-100 group-hover:text-emerald-600 transition-colors overflow-hidden">
                             {conversation.medicalOfficer?.photoURL ? (
                               <img
-                                src={conversation.medicalOfficer.photoURL.startsWith('http') ? conversation.medicalOfficer.photoURL : `${IMAGE_BASE_URL}${conversation.medicalOfficer.photoURL}`}
+                                src={conversation.medicalOfficer.photoURL.startsWith('http') ? conversation.medicalOfficer.photoURL : imageUrl(conversation.medicalOfficer.photoURL)}
                                 alt={conversation.medicalOfficer.name?.charAt(0) || 'M'}
                                 className="w-full h-full object-cover"
                                 onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = conversation.medicalOfficer?.name?.charAt(0) || 'M'; }}

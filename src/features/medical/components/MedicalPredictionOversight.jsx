@@ -1,3 +1,4 @@
+import { authenticatedFetch as fetch } from '../../../services/authenticatedFetch';
 import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { 
@@ -15,7 +16,7 @@ import {
     ArrowRight,
     X
 } from 'lucide-react';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 import { createPortal } from 'react-dom';
 
 export default function MedicalPredictionOversight() {
@@ -159,7 +160,7 @@ export default function MedicalPredictionOversight() {
                                 <td className="px-4 py-3">
                                     <div className="flex items-center gap-4">
                                         <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
-                                            <img src={`${IMAGE_BASE_URL}${item.imagePath}`} className="w-full h-full object-cover" />
+                                            <img src={imageUrl(item.imagePath)} className="w-full h-full object-cover" />
                                         </div>
                                         <div>
                                             <p className="text-sm font-semibold text-slate-900 tracking-tight">{item.commonName}</p>
@@ -173,7 +174,7 @@ export default function MedicalPredictionOversight() {
                                             {!item.isAnonymous && item.user ? (
                                                 item.user.photoURL ? (
                                                     <img 
-                                                        src={item.user.photoURL.startsWith('http') ? item.user.photoURL : `${IMAGE_BASE_URL}${item.user.photoURL}`} 
+                                                        src={item.user.photoURL.startsWith('http') ? item.user.photoURL : imageUrl(item.user.photoURL)}
                                                         alt="" 
                                                         className="w-full h-full object-cover" 
                                                     />
@@ -231,7 +232,7 @@ export default function MedicalPredictionOversight() {
                         </button>
 
                         <div className="w-full lg:w-1/2 h-64 lg:h-full relative overflow-hidden group">
-                            <img src={`${IMAGE_BASE_URL}${selectedItem.imagePath}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                            <img src={imageUrl(selectedItem.imagePath)} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                         </div>
 
                         <div className="flex-1 overflow-y-auto custom-scrollbar p-5 lg:p-16 space-y-6 bg-white">

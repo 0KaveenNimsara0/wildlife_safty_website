@@ -1,61 +1,62 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layouts
 import UserLayout from '../layouts/UserLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import MedicalOfficerLayout from '../layouts/MedicalLayout';
-import Landing from '../pages/user/Landing';
+const Landing = lazy(() => import('../pages/user/Landing'));
 
 // Public User Pages
-import Dashboard from '../pages/user/Dashboard';
-import Identifier from '../pages/user/Identifier';
-import Emergency from '../pages/user/Emergency';
-import Learn from '../pages/user/Learn';
-import Map from '../pages/user/Map';
-import AnimalDetails from '../pages/user/AnimalDetails';
-import CommunityFeed from '../pages/user/CommunityFeed';
-import UserPosts from '../pages/user/UserPosts';
-import Chat from '../pages/user/Chat';
-import NotificationsPage from '../pages/NotificationsPage';
-import ContactPage from '../pages/user/ContactPage';
+const Dashboard = lazy(() => import('../pages/user/Dashboard'));
+const Identifier = lazy(() => import('../pages/user/Identifier'));
+const Emergency = lazy(() => import('../pages/user/Emergency'));
+const Learn = lazy(() => import('../pages/user/Learn'));
+const Map = lazy(() => import('../pages/user/Map'));
+const AnimalDetails = lazy(() => import('../pages/user/AnimalDetails'));
+const CommunityFeed = lazy(() => import('../pages/user/CommunityFeed'));
+const UserPosts = lazy(() => import('../pages/user/UserPosts'));
+const Chat = lazy(() => import('../pages/user/Chat'));
+const NotificationsPage = lazy(() => import('../pages/NotificationsPage'));
+const ContactPage = lazy(() => import('../pages/user/ContactPage'));
 
 // Auth Pages
-import Login from '../pages/auth/Login';
-import Register from '../pages/auth/Register';
-import AdminLogin from '../pages/admin/AdminLoginPage'; 
-import AdminRegister from '../pages/admin/AdminRegisterPage';
-import MedicalLogin from '../pages/medical/MedicalOfficerLoginPage';
-import MedicalRegister from '../pages/medical/MedicalOfficerRegisterPage';
-import ForgotPassword from '../pages/auth/ForgotPassword';
+const Login = lazy(() => import('../pages/auth/Login'));
+const Register = lazy(() => import('../pages/auth/Register'));
+const AdminLogin = lazy(() => import('../pages/admin/AdminLoginPage'));
+const AdminRegister = lazy(() => import('../pages/admin/AdminRegisterPage'));
+const MedicalLogin = lazy(() => import('../pages/medical/MedicalOfficerLoginPage'));
+const MedicalRegister = lazy(() => import('../pages/medical/MedicalOfficerRegisterPage'));
+const ForgotPassword = lazy(() => import('../pages/auth/ForgotPassword'));
 
 // Admin Sections
-import AdminOverviewSection from '../features/admin/components/AdminOverviewSection';
-import UserManagementSection from '../features/admin/components/UserManagementSection';
-import MedicalOfficerManagementSection from '../features/admin/components/MedicalOfficerManagementSection';
-import AdminMedicalChatSection from '../features/admin/components/AdminMedicalChatSection';
-import AdminArticleSection from '../features/admin/components/AdminArticleSection';
-import AdminProfileSection from '../features/admin/components/AdminProfileSection';
-import AdminPredictionOversight from '../features/admin/components/AdminPredictionOversight';
-import GlobalAuditOversight from '../features/admin/components/GlobalAuditOversight';
-import AdminContactSection from '../features/admin/components/AdminContactSection';
+const AdminOverviewSection = lazy(() => import('../features/admin/components/AdminOverviewSection'));
+const UserManagementSection = lazy(() => import('../features/admin/components/UserManagementSection'));
+const MedicalOfficerManagementSection = lazy(() => import('../features/admin/components/MedicalOfficerManagementSection'));
+const AdminMedicalChatSection = lazy(() => import('../features/admin/components/AdminMedicalChatSection'));
+const AdminArticleSection = lazy(() => import('../features/admin/components/AdminArticleSection'));
+const AdminProfileSection = lazy(() => import('../features/admin/components/AdminProfileSection'));
+const AdminPredictionOversight = lazy(() => import('../features/admin/components/AdminPredictionOversight'));
+const GlobalAuditOversight = lazy(() => import('../features/admin/components/GlobalAuditOversight'));
+const AdminContactSection = lazy(() => import('../features/admin/components/AdminContactSection'));
 
 // Medical Officer Sections
-import MedicalOverviewSection from '../features/medical/components/MedicalOverviewSection';
-import ConsultationsSection from '../features/medical/components/ConsultationsSection';
-import MedicalArticleSection from '../features/medical/components/MedicalArticleSection';
-import MedicalProfileSection from '../features/medical/components/MedicalProfileSection';
-import MedicalArticleCreate from '../features/medical/components/MedicalOfficerArticleCreatePage';
-import MedicalArticleEdit from '../features/medical/components/MedicalOfficerArticleEditPage';
-import MedicalPredictionOversight from '../features/medical/components/MedicalPredictionOversight';
-import MedicalActivitySection from '../features/medical/components/MedicalActivitySection';
-import MedicalOfficerArticleViewPage from '../features/medical/components/MedicalOfficerArticleViewPage';
-import UserArticleViewPage from '../features/user/components/UserArticleViewPage';
+const MedicalOverviewSection = lazy(() => import('../features/medical/components/MedicalOverviewSection'));
+const ConsultationsSection = lazy(() => import('../features/medical/components/ConsultationsSection'));
+const MedicalArticleSection = lazy(() => import('../features/medical/components/MedicalArticleSection'));
+const MedicalProfileSection = lazy(() => import('../features/medical/components/MedicalProfileSection'));
+const MedicalArticleCreate = lazy(() => import('../features/medical/components/MedicalOfficerArticleCreatePage'));
+const MedicalArticleEdit = lazy(() => import('../features/medical/components/MedicalOfficerArticleEditPage'));
+const MedicalPredictionOversight = lazy(() => import('../features/medical/components/MedicalPredictionOversight'));
+const MedicalActivitySection = lazy(() => import('../features/medical/components/MedicalActivitySection'));
+const MedicalOfficerArticleViewPage = lazy(() => import('../features/medical/components/MedicalOfficerArticleViewPage'));
+const UserArticleViewPage = lazy(() => import('../features/user/components/UserArticleViewPage'));
 
 import ProtectedRoute from './ProtectedRoute';
 
 export default function AppRoutes() {
   return (
+    <Suspense fallback={<div role="status" className="p-8 text-center text-emerald-900">Loading page…</div>}>
     <Routes>
       {/* Public & General User Site - Wrapped in UserLayout */}
       <Route element={<UserLayout />}>
@@ -134,5 +135,6 @@ export default function AppRoutes() {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </Suspense>
   );
 }

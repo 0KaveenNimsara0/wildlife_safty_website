@@ -1,8 +1,9 @@
+import { authenticatedFetch as fetch } from '../../../services/authenticatedFetch';
 import ModalLayer from '../../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../../../context/useAuth';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 import { Clock, Trash2, Eye, ShieldAlert, CheckCircle, Search, Info, X, AlertTriangle } from 'lucide-react';
 
 const PredictionHistorySection = () => {
@@ -98,7 +99,7 @@ const PredictionHistorySection = () => {
                             {/* Image Header */}
                             <div className="relative h-56 overflow-hidden">
                                 <img 
-                                    src={`${IMAGE_BASE_URL}${item.imagePath}`} 
+                                    src={imageUrl(item.imagePath)}
                                     alt={item.commonName} 
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                 />
@@ -180,7 +181,7 @@ const PredictionHistorySection = () => {
                         {/* Visual Header - Left Side */}
                         <div className="w-full lg:w-1/2 h-64 lg:h-full relative flex-shrink-0">
                             <img 
-                                src={`${IMAGE_BASE_URL}${selectedPrediction.imagePath}`} 
+                                src={imageUrl(selectedPrediction.imagePath)}
                                 alt={selectedPrediction.commonName} 
                                 className="w-full h-full object-cover"
                             />

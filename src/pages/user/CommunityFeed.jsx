@@ -1,7 +1,7 @@
 import ModalLayer from '../../components/ui/ModalLayer';
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/useAuth';
-import { BASE_URL, IMAGE_BASE_URL } from '../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../config/constants';
 import NestedComment from '../../features/community/components/NestedComment';
 import api from '../../services/api';
 import { formatDistanceToNow } from 'date-fns';
@@ -408,7 +408,7 @@ const CommunityFeed = () => {
                   <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-semibold text-lg shadow-lg overflow-hidden">
                     {post.authorAvatar ? (
                       <img 
-                        src={post.authorAvatar.startsWith('http') ? post.authorAvatar : `${IMAGE_BASE_URL}${post.authorAvatar}`} 
+                        src={post.authorAvatar.startsWith('http') ? post.authorAvatar : imageUrl(post.authorAvatar)}
                         alt={post.authorName?.charAt(0) || 'A'}
                         className="w-full h-full object-cover"
                         onError={(e) => { e.target.style.display='none'; e.target.parentNode.innerText = post.authorName?.charAt(0) || 'A'; }}
@@ -470,7 +470,7 @@ const CommunityFeed = () => {
 
                 {post.photoUrl && (
                   <div className="rounded-3xl overflow-hidden border border-slate-100 shadow-inner brightness-95 group-hover:brightness-100 transition-all duration-700">
-                    <img src={`${IMAGE_BASE_URL}${post.photoUrl}`} alt="Observation Data" className="w-full h-auto max-h-[500px] object-cover" />
+                    <img src={imageUrl(post.photoUrl)} alt="Observation Data" className="w-full h-auto max-h-[500px] object-cover" />
                   </div>
                 )}
               </div>
@@ -628,7 +628,7 @@ const CommunityFeed = () => {
                 <div className="flex items-center gap-4 mt-6">
                    <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg overflow-hidden border-2 border-white shadow-emerald-200">
                       {popupArticle.author?.photoURL ? (
-                        <img src={popupArticle.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${popupArticle.author.photoURL}` : popupArticle.author.photoURL} alt="Author" className="w-full h-full object-cover" />
+                        <img src={popupArticle.author.photoURL.startsWith('/uploads') ? imageUrl(popupArticle.author.photoURL) : popupArticle.author.photoURL} alt="Author" className="w-full h-full object-cover" />
                       ) : (
                         popupArticle.author?.name?.charAt(0) || 'E'
                       )}
@@ -697,7 +697,7 @@ const CommunityFeed = () => {
                  <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white font-semibold text-xl shadow-lg overflow-hidden">
                     {selectedPost.authorAvatar ? (
                       <img 
-                        src={selectedPost.authorAvatar.startsWith('http') ? selectedPost.authorAvatar : `${IMAGE_BASE_URL}${selectedPost.authorAvatar}`} 
+                        src={selectedPost.authorAvatar.startsWith('http') ? selectedPost.authorAvatar : imageUrl(selectedPost.authorAvatar)}
                         alt={selectedPost.authorName?.charAt(0) || 'A'}
                         className="w-full h-full object-cover"
                         onError={(e) => { e.target.style.display='none'; e.target.parentNode.innerText = selectedPost.authorName?.charAt(0) || 'A'; }}
@@ -729,7 +729,7 @@ const CommunityFeed = () => {
                   
                   {selectedPost.photoUrl && (
                     <div className="rounded-3xl overflow-hidden border-2 border-slate-50 shadow-inner">
-                       <img src={`${IMAGE_BASE_URL}${selectedPost.photoUrl}`} alt="Observation Detail" className="w-full h-auto object-cover" />
+                       <img src={imageUrl(selectedPost.photoUrl)} alt="Observation Detail" className="w-full h-auto object-cover" />
                     </div>
                   )}
 

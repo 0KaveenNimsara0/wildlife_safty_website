@@ -20,7 +20,7 @@ import {
   MessageSquare,
   RotateCcw
 } from 'lucide-react';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 import ArticlePreviewModal from '../../../components/common/ArticlePreviewModal';
 
 export default function AdminArticleSection() {
@@ -198,7 +198,7 @@ export default function AdminArticleSection() {
                     <div className="flex items-center gap-3">
                        <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 border border-slate-200 shadow-inner">
                           {selectedArticle.author?.photoURL ? (
-                             <img src={selectedArticle.author.photoURL.startsWith('http') ? selectedArticle.author.photoURL : `${IMAGE_BASE_URL}${selectedArticle.author.photoURL}`} alt="" className="w-full h-full object-cover" />
+                             <img src={selectedArticle.author.photoURL.startsWith('http') ? selectedArticle.author.photoURL : imageUrl(selectedArticle.author.photoURL)} alt="" className="w-full h-full object-cover" />
                           ) : (
                              <UserIcon size={16} className="w-full h-full p-2 text-slate-400" />
                           )}
@@ -233,7 +233,7 @@ export default function AdminArticleSection() {
                        {selectedArticle.image_url && !selectedArticle.images?.length && (
                           <div className="rounded-2xl overflow-hidden border-8 border-slate-50 shadow-sm bg-slate-100">
                              <img 
-                               src={selectedArticle.image_url.startsWith('http') ? selectedArticle.image_url : `${IMAGE_BASE_URL}${selectedArticle.image_url}`} 
+                               src={selectedArticle.image_url.startsWith('http') ? selectedArticle.image_url : imageUrl(selectedArticle.image_url)}
                                alt="" 
                                className="w-full h-auto" 
                              />
@@ -350,7 +350,7 @@ export default function AdminArticleSection() {
                                 <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
                                    {article.author?.photoURL ? (
                                      <img 
-                                       src={article.author.photoURL.startsWith('http') ? article.author.photoURL : `${IMAGE_BASE_URL}${article.author.photoURL}`} 
+                                       src={article.author.photoURL.startsWith('http') ? article.author.photoURL : imageUrl(article.author.photoURL)}
                                        alt="" 
                                        className="w-full h-full object-cover" 
                                      />

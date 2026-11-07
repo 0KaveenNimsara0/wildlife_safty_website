@@ -1,3 +1,4 @@
+import { authenticatedFetch as fetch } from '../../services/authenticatedFetch';
 import api from '../../services/api';
 import { API_CONFIG } from '../../config/constants';
 

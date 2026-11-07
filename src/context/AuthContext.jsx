@@ -1,6 +1,8 @@
+import { authenticatedFetch as fetch } from '../services/authenticatedFetch';
+import { resolveSession } from '../features/auth/session';
 import React, { useEffect, useState, useCallback } from 'react';
-import { 
-  auth, 
+import {
+  auth,
   googleProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -18,102 +20,8 @@ export { useAuth } from './useAuth';
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeUser, setActiveUser] = useState(() => {
-    // Eagerly read from localStorage on first render so profile photos
-    // are available immediately for medical officers and admins
-    const applyPhotoURL = (parsed) => {
-      if (parsed?.photoURL && parsed.photoURL.startsWith('/uploads')) {
-        parsed.photoURL = `${IMAGE_BASE_URL}${parsed.photoURL}`;
-      }
-      return parsed;
-    };
-    try {
-      const adminData = localStorage.getItem('adminData');
-      if (adminData) {
-        const parsed = JSON.parse(adminData);
-        parsed.uid = parsed._id || parsed.id || parsed.uid;
-        parsed.role = 'admin';
-        return applyPhotoURL(parsed);
-      }
-      const medicalData = localStorage.getItem('medicalOfficerData');
-      if (medicalData) {
-        const parsed = JSON.parse(medicalData);
-        parsed.uid = parsed._id || parsed.id || parsed.uid;
-        parsed.displayName = parsed.name || parsed.displayName;
-        parsed.role = 'medicalOfficer';
-        return applyPhotoURL(parsed);
-      }
-      const mongoUser = localStorage.getItem('mongoUser');
-      if (mongoUser) {
-        const parsed = JSON.parse(mongoUser);
-        parsed.uid = parsed._id || parsed.id || parsed.uid;
-        return applyPhotoURL(parsed);
-      }
-    } catch (e) {}
-    return null;
-  });
-
-  const getActiveUser = useCallback(() => {
-    // Helper to process photo URL
-    const applyPhotoURL = (user) => {
-      if (user?.photoURL && user.photoURL.startsWith('/uploads')) {
-        return { ...user, photoURL: `${IMAGE_BASE_URL}${user.photoURL}` };
-      }
-      return user;
-    };
-
-    // 1. Check for Admin persistence
-    const adminData = localStorage.getItem("adminData");
-    if (adminData) {
-      try {
-        const parsed = JSON.parse(adminData);
-        const user = {
-          ...parsed,
-          uid: parsed._id || parsed.id || parsed.uid,
-          displayName: parsed.name || parsed.displayName,
-          email: parsed.email,
-          role: "admin",
-          source: "mongodb"
-        };
-        return applyPhotoURL(user);
-      } catch (e) {}
-    }
-
-    // 2. Check for Medical Officer persistence
-    const medicalData = localStorage.getItem("medicalOfficerData");
-    if (medicalData) {
-      try {
-        const parsed = JSON.parse(medicalData);
-        const user = {
-          ...parsed,
-          uid: parsed._id || parsed.id || parsed.uid,
-          displayName: parsed.name || parsed.displayName,
-          email: parsed.email,
-          role: "medicalOfficer",
-          source: "mongodb"
-        };
-        return applyPhotoURL(user);
-      } catch (e) {}
-    }
-
-    // 3. Fallback to standard User session
-    if (currentUser) {
-      const isMongoUser = localStorage.getItem("mongoUser");
-      const user = {
-        ...currentUser,
-        uid: currentUser.uid || currentUser._id,
-        displayName: currentUser.displayName || currentUser.name || currentUser.email,
-        email: currentUser.email,
-        emailVerified: currentUser.emailVerified ?? false,
-        role: currentUser.role || "user",
-        source: isMongoUser ? "mongodb" : "firebase",
-        hasPassword: currentUser.hasPassword ?? false
-      };
-      return applyPhotoURL(user);
-    }
-
-    return null;
-  }, [currentUser]); // currentUser is still needed to trigger updates when Firebase state changes
+  const [activeUser, setActiveUser] = useState(() => resolveSession(localStorage, null, IMAGE_BASE_URL));
+  const getActiveUser = useCallback(() => resolveSession(localStorage, currentUser, IMAGE_BASE_URL), [currentUser]);
 
   const syncActiveUser = useCallback(() => {
     setActiveUser(getActiveUser());
@@ -143,7 +51,7 @@ export function AuthProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyData)
       });
-      
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Login failed');
 
@@ -168,7 +76,7 @@ export function AuthProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, displayName, otp })
       });
-      
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Registration failed');
 
@@ -193,11 +101,11 @@ export function AuthProvider({ children }) {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      
+
       // Sync with MongoDB backend
       const response = await fetch(`${BASE_URL}/auth/user/social-sync`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${await user.getIdToken()}` },
         body: JSON.stringify({
           email: user.email,
           uid: user.uid,
@@ -205,16 +113,16 @@ export function AuthProvider({ children }) {
           photoURL: user.photoURL
         })
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('userToken', data.token);
         localStorage.setItem('mongoUser', JSON.stringify(data.user));
         setCurrentUser(data.user);
       } else {
-        setCurrentUser(user);
+        throw new Error('Unable to complete sign-in. Please try again.');
       }
-      
+
       return result;
     } catch (error) {
       console.error("Google sign-in error:", error);
@@ -232,10 +140,10 @@ export function AuthProvider({ children }) {
 
   async function updateUserPassword(newPassword, currentPassword, otp) {
     if (!currentUser) throw new Error('No user logged in');
-    
+
     // Determine if we need to use MongoDB or Firebase
     const isMongoUser = localStorage.getItem("mongoUser");
-    
+
     if (isMongoUser) {
       const response = await fetch(`${BASE_URL}/auth/user/update-password`, {
         method: 'PUT',
@@ -250,7 +158,7 @@ export function AuthProvider({ children }) {
           otp
         })
       });
-      
+
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Failed to update password');
       return data;
@@ -300,7 +208,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem("mongoUser", JSON.stringify(data.user));
         setCurrentUser(data.user);
       }
-      
+
       // Post-verification protocol: Force hard sync from backend to update flags
       await refreshUser();
     }
@@ -330,7 +238,7 @@ export function AuthProvider({ children }) {
 
       const response = await fetch(`${BASE_URL}${endpoint}`, { headers });
       if (!response.ok) throw new Error('Identity synchronization failed');
-      
+
       const data = await response.json();
       // Extract the actual user data based on the response shape of each endpoint
       let updatedData;
@@ -356,7 +264,7 @@ export function AuthProvider({ children }) {
 
       // Trigger activeUser sync
       syncActiveUser();
-      
+
       return updatedData;
     } catch (error) {
       console.error('Deep-sync synchronization error:', error);
@@ -368,7 +276,7 @@ export function AuthProvider({ children }) {
   async function uploadProfilePicture(file) {
     try {
       if (!currentUser) throw new Error('No user logged in');
-      
+
       const formData = new FormData();
       formData.append('profilePicture', file);
 
@@ -382,12 +290,12 @@ export function AuthProvider({ children }) {
       }
 
       const data = await response.json();
-      
+
       // Update local state and storage
       const updatedUser = { ...currentUser, ...data };
       localStorage.setItem('mongoUser', JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
-      
+
       return data.photoURL;
     } catch (error) {
       console.error('Error uploading profile picture:', error);
@@ -399,7 +307,7 @@ export function AuthProvider({ children }) {
   async function updateUserProfile(profileData) {
     try {
       if (!currentUser) throw new Error('No user logged in');
-      
+
       const response = await fetch(`${BASE_URL}/users/${currentUser.uid}`, {
         method: 'PUT',
         headers: {
@@ -408,18 +316,18 @@ export function AuthProvider({ children }) {
         },
         body: JSON.stringify(profileData)
       });
- 
+
       if (!response.ok) {
         throw new Error('Failed to update user profile');
       }
- 
+
       const data = await response.json();
-      
+
       // Synchronize with global state and local storage
       const updatedUser = { ...currentUser, ...data.user };
       localStorage.setItem('mongoUser', JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
-      
+
       return data.user;
     } catch (error) {
       console.error('Error updating user profile:', error);

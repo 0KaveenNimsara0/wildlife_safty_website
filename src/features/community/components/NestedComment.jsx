@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaHeart, FaRegHeart, FaReply, FaEdit, FaTrash, FaCheck, FaTimes } from 'react-icons/fa';
 import { useAuth } from '../../../context/useAuth';
 import api from '../../../services/api';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 
 const NestedComment = ({ 
   comment, 
@@ -151,7 +151,7 @@ const NestedComment = ({
           }`}>
             {comment.authorAvatar ? (
               <img 
-                src={comment.authorAvatar.startsWith('http') ? comment.authorAvatar : `${IMAGE_BASE_URL}${comment.authorAvatar}`} 
+                src={comment.authorAvatar.startsWith('http') ? comment.authorAvatar : imageUrl(comment.authorAvatar)}
                 alt={comment.authorName?.charAt(0)?.toUpperCase() || 'U'}
                 className="w-full h-full object-cover" 
                 onError={(e) => { e.target.style.display='none'; e.target.parentNode.innerText = comment.authorName?.charAt(0)?.toUpperCase() || 'U'; }}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Camera, Shield, Leaf, Heart } from 'lucide-react';
+import logo from '../../assets/logo.png';
 import sidebarImage from '../../assets/auth-sidebar1.png';
 
 export default function AuthLayout({ children, title, subtitle, quote, author, role = 'user' }) {
@@ -16,7 +17,7 @@ export default function AuthLayout({ children, title, subtitle, quote, author, r
         
         {/* Mobile Header (Visible only on small screens) */}
         <div className="lg:hidden mb-6 flex items-center space-x-3 pointer-events-none opacity-50">
-           <img src="/src/assets/logo.png" alt="Logo" className="w-8 h-8" />
+           <img src={logo} alt="Logo" className="w-8 h-8" />
            <span className="text-sm font-semibold tracking-tighter text-slate-900">WildLife Safety</span>
         </div>
 
@@ -65,7 +66,7 @@ export default function AuthLayout({ children, title, subtitle, quote, author, r
         {/* Content */}
         <div className="absolute top-12 left-12 flex items-center space-x-4">
            <div className="w-14 h-14 bg-white/10 backdrop-blur-3xl rounded-2xl flex items-center justify-center border border-white/20 shadow-sm">
-              <img src="/src/assets/logo.png" alt="Logo" className="w-10 h-10 object-contain shadow-inner" />
+              <img src={logo} alt="Logo" className="w-10 h-10 object-contain shadow-inner" />
            </div>
            <div className="flex flex-col">
               <span className="text-white text-xl font-semibold tracking-tighter italic">WildLife Safety</span>

@@ -1,6 +1,7 @@
+import { authenticatedFetch as fetch } from '../../../services/authenticatedFetch';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 import {
   Users,
   Search,
@@ -211,7 +212,7 @@ export default function UserManagementSection() {
                           <div className={`w-12 h-12 rounded-2xl ${(user.sources || []).includes('firebase') ? 'bg-amber-500' : 'bg-slate-900'} border-4 border-slate-100 flex items-center justify-center text-white font-semibold text-sm shadow-lg group-hover:scale-110 transition-transform relative overflow-hidden`}>
                             {user.photoURL ? (
                               <img 
-                                src={user.photoURL.startsWith('http') ? user.photoURL : `${IMAGE_BASE_URL}${user.photoURL}`} 
+                                src={user.photoURL.startsWith('http') ? user.photoURL : imageUrl(user.photoURL)}
                                 alt="" 
                                 className="w-full h-full object-cover" 
                                 onError={(e) => {

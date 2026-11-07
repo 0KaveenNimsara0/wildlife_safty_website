@@ -1,7 +1,7 @@
 import ModalLayer from '../ui/ModalLayer';
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { IMAGE_BASE_URL } from '../../config/constants';
+import { IMAGE_BASE_URL , imageUrl } from '../../config/constants';
 import { ArrowLeft, Award, Clock, User, ShieldAlert } from 'lucide-react';
 
 const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
@@ -38,7 +38,7 @@ const ArticlePreviewModal = ({ article, isOpen, onClose, actionButton }) => {
                 <div className="w-6 h-6 rounded-full overflow-hidden bg-slate-100 border border-slate-200">
                   {article.author?.photoURL ? (
                     <img 
-                      src={article.author.photoURL.startsWith('http') ? article.author.photoURL : `${IMAGE_BASE_URL}${article.author.photoURL}`} 
+                      src={article.author.photoURL.startsWith('http') ? article.author.photoURL : imageUrl(article.author.photoURL)}
                       alt="" 
                       className="w-full h-full object-cover" 
                     />

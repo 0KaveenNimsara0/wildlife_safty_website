@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 import { 
   Plus, 
   Search, 
@@ -153,7 +153,7 @@ export default function MedicalArticleSection() {
                          <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 text-[10px] font-semibold overflow-hidden shadow-sm">
                             {article.author?.photoURL ? (
                               <img 
-                                src={article.author.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${article.author.photoURL}` : article.author.photoURL} 
+                                src={article.author.photoURL.startsWith('/uploads') ? imageUrl(article.author.photoURL) : article.author.photoURL}
                                 alt="" 
                                 className="w-full h-full object-cover"
                               />

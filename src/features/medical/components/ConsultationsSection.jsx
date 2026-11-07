@@ -1,8 +1,8 @@
 import Avatar from '../../../components/ui/Avatar';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Loader2, MessageSquare, Activity } from 'lucide-react';
 import ChatInterface from '../../chat/components/ChatInterface';
-import { BASE_URL, IMAGE_BASE_URL } from '../../../config/constants';
+import { BASE_URL, IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 
 const ConsultationsSection = () => {
   const [medicalOfficerId, setMedicalOfficerId] = useState(null);
@@ -13,6 +13,8 @@ const ConsultationsSection = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const selectedConversationRef = useRef(null);
+  selectedConversationRef.current = currentConversation?._id;
   useEffect(() => {
     const token = localStorage.getItem('medicalOfficerToken');
     if (token) {
@@ -21,6 +23,65 @@ const ConsultationsSection = () => {
       setError('Medical officer not logged in');
     }
   }, []);
+
+  const fetchConversations = useCallback(async (id, silent = false) => {
+    try {
+      const response = await fetch(`${BASE_URL}/medical-officer/chat/conversations`, {
+        headers: {
+          'Authorization': `Bearer ${id}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setConversations(data.conversations);
+      } else {
+        if (!silent) setError(data.message || 'Failed to load conversations');
+      }
+    } catch (error) {
+      console.error('Error fetching conversations:', error);
+      if (!silent) setError('Failed to load conversations');
+    }
+  }, []);
+
+  const fetchAdmins = useCallback(async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/medical-officer/chat/admins`, {
+        headers: {
+          'Authorization': `Bearer ${medicalOfficerId}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setAdmins(data.admins);
+      }
+    } catch (error) {
+      console.error('Error fetching admins:', error);
+    }
+  }, [medicalOfficerId]);
+
+  const fetchMessages = useCallback(async (conversationId) => {
+    if (!conversationId) return;
+    try {
+      const response = await fetch(`${BASE_URL}/medical-officer/chat/messages/${conversationId}`, {
+        headers: {
+          'Authorization': `Bearer ${medicalOfficerId}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        if (selectedConversationRef.current !== conversationId) return;
+        setMessages(data.messages);
+        window.dispatchEvent(new Event("chat-messages-read"));
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  }, [medicalOfficerId]);
 
   useEffect(() => {
     let messagesInterval = null;
@@ -49,65 +110,7 @@ const ConsultationsSection = () => {
       if (messagesInterval) clearInterval(messagesInterval);
       if (conversationsInterval) clearInterval(conversationsInterval);
     };
-  }, [medicalOfficerId, currentConversation?._id, activeTab]);
-
-  const fetchConversations = async (id, silent = false) => {
-    try {
-      const response = await fetch(`${BASE_URL}/medical-officer/chat/conversations`, {
-        headers: {
-          'Authorization': `Bearer ${id}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setConversations(data.conversations);
-      } else {
-        if (!silent) setError(data.message || 'Failed to load conversations');
-      }
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-      if (!silent) setError('Failed to load conversations');
-    }
-  };
-
-  const fetchAdmins = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/medical-officer/chat/admins`, {
-        headers: {
-          'Authorization': `Bearer ${medicalOfficerId}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setAdmins(data.admins);
-      }
-    } catch (error) {
-      console.error('Error fetching admins:', error);
-    }
-  };
-
-  const fetchMessages = async (conversationId) => {
-    if (!conversationId) return;
-    try {
-      const response = await fetch(`${BASE_URL}/medical-officer/chat/messages/${conversationId}`, {
-        headers: {
-          'Authorization': `Bearer ${medicalOfficerId}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setMessages(data.messages);
-        window.dispatchEvent(new Event("chat-messages-read"));
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
-  };
+  }, [medicalOfficerId, currentConversation?._id, activeTab, fetchConversations, fetchAdmins, fetchMessages]);
 
   const onSendMessage = async (messageText) => {
     if (!messageText.trim() || !currentConversation) return false;
@@ -220,7 +223,7 @@ const ConsultationsSection = () => {
                           <div className="flex items-center gap-4 flex-1 min-w-0">
                             <div className="w-10 h-10 rounded-xl bg-slate-200 flex-shrink-0 overflow-hidden flex items-center justify-center text-[10px] font-semibold text-slate-400">
                                {conversation.user?.photoURL ? (
-                                 <Avatar src={conversation.user.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${conversation.user.photoURL}` : conversation.user.photoURL} name="User" />
+                                 <Avatar src={conversation.user.photoURL.startsWith('/uploads') ? imageUrl(conversation.user.photoURL) : conversation.user.photoURL} name="User" />
                                ) : (
                                  conversation.user?.displayName?.charAt(0).toUpperCase() || 'U'
                                )}
@@ -252,7 +255,7 @@ const ConsultationsSection = () => {
                              <div className="flex items-center gap-3">
                                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-semibold shadow-inner overflow-hidden flex-shrink-0 ${currentConversation?.admin?._id === admin._id ? 'bg-white text-emerald-600' : 'bg-slate-900 text-white'}`}>
                                    {admin.photoURL ? (
-                                      <Avatar src={admin.photoURL.startsWith('/uploads') ? `${IMAGE_BASE_URL}${admin.photoURL}` : admin.photoURL} name="Admin" />
+                                      <Avatar src={admin.photoURL.startsWith('/uploads') ? imageUrl(admin.photoURL) : admin.photoURL} name="Admin" />
                                    ) : admin.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div className="min-w-0">

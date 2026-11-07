@@ -3,7 +3,7 @@ import { Shield, MessageSquare, AlertCircle, XCircle, ChevronDown } from 'lucide
 import { formatDate } from '../../../utils/formatters';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
-import { IMAGE_BASE_URL } from '../../../config/constants';
+import { IMAGE_BASE_URL , imageUrl } from '../../../config/constants';
 
 const ChatInterface = ({ 
   participant, 
@@ -112,7 +112,7 @@ const ChatInterface = ({
                  }`}>
                    {admin.photoURL ? (
                      <img referrerPolicy="no-referrer"
-                       src={admin.photoURL.startsWith('http') ? admin.photoURL : `${IMAGE_BASE_URL}${admin.photoURL}`}
+                       src={admin.photoURL.startsWith('http') ? admin.photoURL : imageUrl(admin.photoURL)}
                        alt={admin.name?.charAt(0) || 'A'}
                        className="w-full h-full object-cover"
                        onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = admin.name?.charAt(0) || 'A'; }}
@@ -136,7 +136,7 @@ const ChatInterface = ({
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-xl translate-y-[-2px] transition-all duration-500 overflow-hidden ${participant ? 'bg-emerald-700' : 'bg-slate-300 animate-pulse'}`}>
               {participant?.photoURL ? (
                 <img referrerPolicy="no-referrer"
-                  src={participant.photoURL.startsWith('http') ? participant.photoURL : `${IMAGE_BASE_URL}${participant.photoURL}`}
+                  src={participant.photoURL.startsWith('http') ? participant.photoURL : imageUrl(participant.photoURL)}
                   alt={participant.name?.charAt(0) || '?'}
                   className="w-full h-full object-cover"
                   onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = participant.name?.charAt(0) || '?'; }}
