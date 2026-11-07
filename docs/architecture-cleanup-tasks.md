@@ -154,3 +154,11 @@ Operational note: restart the API to load these changes. Outstanding OTPs create
 - Validation: backend 21 tests pass; admin production build passes; launcher two safety tests pass; Python syntax passes. Existing main build was not rerun because this batch changes only the admin frontend. No production service restarted or data migrated.
 
 Next: finish service-level route policy review, role-management constraints, startup-interruption handling and authenticated staging workflows. Complete cleanup/deployment is not yet claimed.
+
+## Launcher and transport continuation — 2026-11-07
+
+- T50: unified startup, readiness polling and monitoring now share a finally cleanup block. Ctrl+C during startup/readiness stops the children already launched, not unrelated listeners. Four mocked launcher tests pass, including interruptions in both phases. Real OS process-tree behavior still needs staging verification.
+- T13: added explicit chat.moderate permission to existing admin/superadmin roles and moderation routes. Direct admin conversations use chat.participate. Existing admin access is preserved; user/medical principals cannot moderate.
+- T43: HTTP regression verifies both post-review URLs reject anonymous, user and unapproved medical sessions while accepting approved medical sessions. Legacy URL retained for compatibility.
+- T22: fetch/Axios now share a pure API URL boundary helper. Fixed protocol-relative Axios URLs and per-request baseURL overrides bypassing the intended destination check. Fetch also preserves Request headers. Added destination-boundary tests to the architecture CI command. Error/cancellation normalization remains pending.
+- Validation: backend 23 tests pass; launcher four tests pass; main and admin production builds pass; shared URL tests pass. No live service restart, external deployment or account-data changes.

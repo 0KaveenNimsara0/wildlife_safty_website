@@ -1,6 +1,7 @@
 import { sessionToken } from '../config/app.js';
 import axios from 'axios';
 import { API_CONFIG } from '../config/constants.js';
+import { axiosTarget, isApiUrl } from './apiScope.js';
 
 const api = axios.create({
   baseURL: API_CONFIG.BASE_URL,
@@ -10,9 +11,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(config => {
- const target = new URL(/^https?:/.test(config.url) ? config.url : API_CONFIG.BASE_URL.replace(/\/$/, '') + '/' + config.url.replace(/^\//, ''));
- const base = new URL(API_CONFIG.BASE_URL);
- if (target.origin !== base.origin || !target.pathname.startsWith(base.pathname.replace(/\/$/, '') + '/')) throw new Error('API client cannot send credentials outside its API');
+ const target = axiosTarget(config.url, config.baseURL || API_CONFIG.BASE_URL);
+ if (!isApiUrl(target, API_CONFIG.BASE_URL)) throw new Error('API client cannot send credentials outside its API');
  const token = sessionToken();
  if (token) config.headers.Authorization = `Bearer ${token}`;
  return config;

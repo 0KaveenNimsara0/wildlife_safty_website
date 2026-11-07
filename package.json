@@ -16,7 +16,7 @@
     "dev:admin": "npm run dev --workspace @wildlife/admin-frontend",
     "build:main": "npm run build --workspace @wildlife/main-frontend",
     "build:admin": "npm run build --workspace @wildlife/admin-frontend",
-    "test:architecture": "node --test packages/shared/src/features/auth/session.test.js && node scripts/check-boundaries.mjs",
+    "test:architecture": "node --test packages/shared/src/features/auth/session.test.js packages/shared/src/services/apiScope.test.js && node scripts/check-boundaries.mjs",
     "preview:admin": "npm run preview --workspace @wildlife/admin-frontend"
   },
   "dependencies": {
