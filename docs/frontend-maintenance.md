@@ -1,3 +1,5 @@
+> Updated workspace layout: see [frontend-workspaces.md](frontend-workspaces.md). App routes/providers now live under apps/main-frontend/src and apps/admin-frontend/src; reusable modules formerly under src live under packages/shared/src.
+
 # Frontend maintenance guide
 
 ## Ownership

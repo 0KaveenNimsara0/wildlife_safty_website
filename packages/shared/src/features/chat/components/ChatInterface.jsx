@@ -1,0 +1,253 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Shield, MessageSquare, AlertCircle, XCircle, ChevronDown } from 'lucide-react';
+import { formatDate } from '../../../utils/formatters.js';
+import MessageBubble from './MessageBubble.jsx';
+import ChatInput from './ChatInput.jsx';
+import { IMAGE_BASE_URL , imageUrl } from '../../../config/constants.js';
+
+const ChatInterface = ({ 
+  participant, 
+  messages, 
+  onSendMessage, 
+  loading, 
+  error, 
+  onClearError,
+  admins = [],
+  selectedAdminId = null,
+  onAdminSelect,
+  currentSenderId = null
+}) => {
+  const lastParticipantRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const [newMessagesCount, setNewMessagesCount] = useState(0);
+  const lastMessagesLengthRef = useRef(messages.length);
+
+  // Reset new message count when user manually scrolls to bottom
+  const handleScroll = () => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      const isAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 50;
+      if (isAtBottom && newMessagesCount > 0) {
+        setNewMessagesCount(0);
+      }
+    }
+  };
+
+  const isFirstLoadRef = useRef(true);
+  
+  // Reset transformers on channel switch
+  useEffect(() => {
+    isFirstLoadRef.current = true;
+  }, [participant?._id]);
+
+  // Scroll to bottom when new messages arrive, but only if user is at bottom or switching chats
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      // Check if user is near bottom (within 100px)
+      const isNearBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+      
+      // Determine if this is a fresh selection of a participant
+      const isNewChannel = lastParticipantRef.current !== participant?._id;
+      
+      const hasNewMessages = messages.length > lastMessagesLengthRef.current;
+
+      if (isNewChannel) {
+        container.scrollTop = container.scrollHeight;
+        setNewMessagesCount(0);
+        // Important: Use a small timeout to allow layout to settle before marking first load as done
+        setTimeout(() => {
+          if (lastParticipantRef.current === participant?._id) {
+            isFirstLoadRef.current = false;
+          }
+        }, 100);
+      } else if (hasNewMessages) {
+        if (isNearBottom) {
+          container.scrollTo({
+             top: container.scrollHeight,
+             behavior: 'smooth'
+          });
+          setNewMessagesCount(0);
+        } else if (!isFirstLoadRef.current) {
+          // User is reading history AND it's not the initial initial load batch
+          setNewMessagesCount(prev => prev + (messages.length - lastMessagesLengthRef.current));
+        }
+      }
+
+      // Update trackers
+      lastMessagesLengthRef.current = messages.length;
+      if (participant?._id) {
+        lastParticipantRef.current = participant._id;
+      }
+    }
+  }, [messages, participant?._id]);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+      setNewMessagesCount(0);
+    }
+  };
+
+  return (
+    <div className="flex flex-col flex-1 min-h-0 h-full bg-white relative overflow-hidden">
+      {/* Node Selector Row (Optional) */}
+      {admins.length > 0 && (
+        <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center gap-3 overflow-x-auto no-scrollbar">
+           <div className="flex items-center gap-1.5 mr-2">
+              <div className="w-1 h-1 rounded-full bg-slate-300" />
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 whitespace-nowrap">Admin Support</p>
+           </div>
+           {admins.filter(a => a && a._id).map(admin => (
+             <button
+               key={admin._id}
+               onClick={() => onAdminSelect(admin)}
+               className={`relative shrink-0 transition-all duration-300 ${selectedAdminId === admin._id ? 'scale-110' : 'opacity-40 hover:opacity-100 scale-90'}`}
+             >
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-semibold text-xs border-2 transition-all overflow-hidden ${
+                   selectedAdminId === admin._id ? 'bg-slate-900 text-white border-emerald-500 shadow-lg shadow-emerald-500/20' : 'bg-white text-slate-400 border-slate-100'
+                 }`}>
+                   {admin.photoURL ? (
+                     <img referrerPolicy="no-referrer"
+                       src={admin.photoURL.startsWith('http') ? admin.photoURL : imageUrl(admin.photoURL)}
+                       alt={admin.name?.charAt(0) || 'A'}
+                       className="w-full h-full object-cover"
+                       onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = admin.name?.charAt(0) || 'A'; }}
+                     />
+                   ) : (
+                     admin.name.charAt(0).toUpperCase()
+                   )}
+                 </div>
+                {selectedAdminId === admin._id && (
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,1)]" />
+                )}
+             </button>
+           ))}
+        </div>
+      )}
+
+      {/* Chat Header */}
+      <div className="shrink-0 px-4 sm:px-6 py-3 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md bg-white/90">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-xl translate-y-[-2px] transition-all duration-500 overflow-hidden ${participant ? 'bg-emerald-700' : 'bg-slate-300 animate-pulse'}`}>
+              {participant?.photoURL ? (
+                <img referrerPolicy="no-referrer"
+                  src={participant.photoURL.startsWith('http') ? participant.photoURL : imageUrl(participant.photoURL)}
+                  alt={participant.name?.charAt(0) || '?'}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.innerText = participant.name?.charAt(0) || '?'; }}
+                />
+              ) : (
+                participant?.name?.charAt(0).toUpperCase() || '?'
+              )}
+            </div>
+
+          </div>
+          <div>
+            <h3 className="text-base font-semibold text-slate-900 truncate max-w-[240px]">
+              {participant?.name || 'Awaiting Selection...'}
+            </h3>
+            <div className="flex items-center gap-2 mt-0.5">
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-md border ${participant ? 'text-emerald-600 bg-emerald-50 border-emerald-100' : 'text-slate-400 bg-slate-50 border-slate-100'}`}>
+                   {participant ? (selectedAdminId ? 'Admin Support' : 'Messaging') : 'Selecting Contact...'}
+                </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Error Message */}
+      {error && (
+        <div className="bg-rose-50 border-y border-rose-100 p-4 animate-in slide-in-from-top duration-300">
+          <div className="flex items-center justify-between max-w-2xl mx-auto">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="text-rose-500" size={18} />
+              <p className="text-sm text-rose-700">{error}</p>
+            </div>
+            <button
+              onClick={onClearError}
+              className="p-2 text-rose-400 hover:text-rose-600 transition-colors"
+            >
+              <XCircle size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* New Message Indicator */}
+      {newMessagesCount > 0 && (
+        <button 
+          onClick={scrollToBottom}
+          className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-emerald-700 text-white px-6 py-2.5 rounded-full text-[10px] font-semibold uppercase tracking-[0.2em] shadow-sm shadow-emerald-900/40 flex items-center gap-2 z-20 animate-bounce hover:bg-emerald-500 transition-all active:scale-95"
+        >
+           <ChevronDown size={14} className="stroke-[3px]" />
+           {newMessagesCount} New Messages
+        </button>
+      )}
+
+      {/* Messages Area */}
+      <div 
+        className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-2 custom-scrollbar bg-slate-50" 
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+      >
+        {messages.length === 0 && !loading && (
+          <div className="h-full flex flex-col items-center justify-center space-y-4">
+            <MessageSquare size={64} className="text-slate-200" />
+            <div className="text-center">
+                <h3 className="text-base font-semibold text-slate-700">Start a conversation</h3>
+                <p className="text-sm text-slate-500 mt-2">Type a message to start the conversation.</p>
+            </div>
+          </div>
+        )}
+
+        {messages.map((message, index) => {
+          const isMe = message.senderId === currentSenderId || (message.senderType === 'medical_officer' && !currentSenderId);
+          const showDate = index === 0 || formatDate(message.createdAt) !== formatDate(messages[index - 1].createdAt);
+
+          return (
+            <div key={message._id || index} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              {showDate && (
+                <div className="flex items-center gap-4 my-6">
+                  <div className="h-[1px] flex-1 bg-slate-200" />
+                  <span className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                    {formatDate(message.createdAt)}
+                  </span>
+                  <div className="h-[1px] flex-1 bg-slate-200" />
+                </div>
+              )}
+
+              <MessageBubble message={message} isMe={isMe} />
+            </div>
+          );
+        })}
+
+        {loading && (
+          <div className="flex justify-center py-8">
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.15s] mx-1" />
+            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce" />
+          </div>
+        )}
+      </div>
+
+      {/* Message Input */}
+      <ChatInput 
+        onSendMessage={onSendMessage} 
+        loading={loading} 
+        placeholder="Write a message…" 
+      />
+    </div>
+  );
+};
+
+export default ChatInterface;
+
+
+
+

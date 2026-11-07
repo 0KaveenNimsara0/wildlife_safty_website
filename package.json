@@ -4,15 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "npm run dev --workspace @wildlife/main-frontend",
+    "build": "npm run build:main && npm run build:admin",
     "lint": "eslint .",
     "preview": "vite preview",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:user": "cypress run --spec cypress/e2e/user.cy.js",
-    "cy:admin": "cypress run --spec cypress/e2e/admin.cy.js",
-    "cy:medical": "cypress run --spec cypress/e2e/medical.cy.js"
+    "cy:admin": "cypress run --config baseUrl=http://localhost:5174 --spec cypress/e2e/admin.cy.js",
+    "cy:medical": "cypress run --spec cypress/e2e/medical.cy.js",
+    "dev:admin": "npm run dev --workspace @wildlife/admin-frontend",
+    "build:main": "npm run build --workspace @wildlife/main-frontend",
+    "build:admin": "npm run build --workspace @wildlife/admin-frontend",
+    "test:architecture": "node --test packages/shared/src/features/auth/session.test.js && node scripts/check-boundaries.mjs"
   },
   "dependencies": {
     "axios": "^1.11.0",
@@ -40,5 +44,9 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "vite": "^8.0.8"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

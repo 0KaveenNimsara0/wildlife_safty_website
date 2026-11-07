@@ -36,3 +36,7 @@ dist-ssr
 cypress/screenshots/
 cypress/videos/
 cypress/results/
+
+apps/*/dist/
+apps/*/.env
+apps/*/.env.local

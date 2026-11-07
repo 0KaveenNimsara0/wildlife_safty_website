@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build:main",
+  "outputDirectory": "apps/main-frontend/dist",
   "rewrites": [
     {
       "source": "/(.*)",
