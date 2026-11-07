@@ -134,3 +134,11 @@ Completed and checked in this batch:
 Validation: backend 15 tests passed, including OTP replay/scope/expiry, credential serialization, old-token rejection and saved-article ownership/data tests. Both frontend production builds passed; three session-isolation tests and source/build boundary checks passed. Tracked diffs pass whitespace validation. No live account data was changed by these tests.
 
 Operational note: restart the API to load these changes. Outstanding OTPs created before scoped hashing must be requested again. Authenticated browser login/reset/email delivery has not been exercised in this batch. T05/T13/T15 remain open until broader route/session checks are complete; this is not deployment sign-off.
+
+## Resource-policy continuation — 2026-11-07
+
+- Nested comment edit/delete/like and reaction read/write routes now check that the comment belongs to the post in the URL. A shared guard covers both route modules.
+- Comment creation checks the post exists and reply parents belong to that same post before writing. Removed an unused comment-service dependency.
+- Medical article updates are restricted to draft/rejected states. Pending, approved and published content cannot be changed behind the reviewer's approval. Full shared article lifecycle extraction remains T41.
+- Validation: all 18 backend tests passed, including unrelated-parent rejection, missing-post rejection, submitted/approved article edit rejection and wrong-author rejection. Whitespace checks passed.
+- T05/T13 remain partial: a complete route matrix, remaining alternate-route checks and authenticated browser regression are still outstanding. No deployment or live data migration performed.
