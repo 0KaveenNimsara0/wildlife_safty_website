@@ -1,6 +1,6 @@
 # Architecture cleanup tasks
 
-Updated: 2026-11-07
+Updated: 2026-11-08
 Design: [architecture-cleanup-plan.md](architecture-cleanup-plan.md).
 Status key: `[x]` verified/documented; `[ ]` pending. Existing implementation work is not marked complete merely because it is described in the plan.
 
@@ -162,3 +162,14 @@ Next: finish service-level route policy review, role-management constraints, sta
 - T43: HTTP regression verifies both post-review URLs reject anonymous, user and unapproved medical sessions while accepting approved medical sessions. Legacy URL retained for compatibility.
 - T22: fetch/Axios now share a pure API URL boundary helper. Fixed protocol-relative Axios URLs and per-request baseURL overrides bypassing the intended destination check. Fetch also preserves Request headers. Added destination-boundary tests to the architecture CI command. Error/cancellation normalization remains pending.
 - Validation: backend 23 tests pass; launcher four tests pass; main and admin production builds pass; shared URL tests pass. No live service restart, external deployment or account-data changes.
+
+## Chat service cleanup — 2026-11-08
+
+- T42: user, medical and admin conversation reads delegate to shared chatAccess.readConversation. Membership checks and read receipts include both participant ID and account type. Conversation IDs and the existing 100-message retrieval limit remain unchanged.
+- Conversation participant responses use an explicit field projection, including avatar URLs, instead of spreading complete account objects. This also protects plain/lean objects which bypass Mongoose JSON transforms.
+- Fixed the medical conversation fallback referencing an undefined userRepository; legacy Mongo IDs resolve through the User model and the same safe projection.
+- Shared message validation returns 400 for non-string/blank messages. Medical send rejects disabled admin recipients before writing.
+- New chat-send audit events store message length rather than the private message body. Existing historical audit data was not modified.
+- Removed unused chat service dependencies and obsolete implementation comments.
+- Validation: all 30 backend tests passed. Initial sandbox run blocked two temporary localhost HTTP tests with EACCES; permitted rerun passed all tests. Regression tests cover cross-role delegation, membership/read receipt isolation, safe admin metadata and disabled recipients. Tracked whitespace checks pass.
+- T42 remains partial: conversation-list enrichment and message-send notification flows still have duplication. Authenticated browser chat/avatar checks and full remaining audit/deployment tasks remain open. No live service restart or production data changes performed.
